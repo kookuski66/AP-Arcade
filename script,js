@@ -1,0 +1,198 @@
+const AP_EXAM_DATE = new Date("2027-05-11T08:00:00"); // Change this for your target AP exam.
+
+const questions = [
+  {id:1, course:"AP Physics 1", unit:"Unit 1", text:"A car moves with constant velocity. Which statement must be true?", answers:["Its acceleration is zero.","Its net force is increasing.","Its speed is increasing.","Its displacement is zero."], correct:0, explain:"Constant velocity means both speed and direction stay constant, so acceleration is zero."},
+  {id:2, course:"AP Physics 1", unit:"Unit 1", text:"A 2 kg object experiences a net force of 10 N. What is its acceleration?", answers:["0.2 m/s²","5 m/s²","12 m/s²","20 m/s²"], correct:1, explain:"Newton's second law gives a = F/m = 10/2 = 5 m/s²."},
+  {id:3, course:"AP Physics 1", unit:"Unit 2", text:"If the net force on an object is zero, which could be true?", answers:["The object is accelerating.","The object is moving at constant velocity.","The object must be at rest.","The object's mass is zero."], correct:1, explain:"Zero net force means zero acceleration. The object can be at rest or move with constant velocity."},
+  {id:4, course:"AP Physics 1", unit:"Unit 3", text:"Which quantity is a vector?", answers:["Mass","Temperature","Displacement","Energy"], correct:2, explain:"Displacement has both magnitude and direction, making it a vector."},
+  {id:5, course:"AP Physics 1", unit:"Unit 4", text:"A ball is thrown upward. Ignoring air resistance, what is its acceleration at the highest point?", answers:["Zero","9.8 m/s² downward","9.8 m/s² upward","It depends on its mass"], correct:1, explain:"Gravity acts throughout the motion, including at the highest point."}
+];
+
+const courseUnits = {
+  "AP Physics 1":[
+    ["Unit 1","Kinematics","Motion, position, velocity and acceleration.",10,72],
+    ["Unit 2","Dynamics","Forces, Newton's laws and free-body diagrams.",18,45],
+    ["Unit 3","Circular Motion & Gravitation","Uniform circular motion and gravitational interactions.",8,35],
+    ["Unit 4","Energy","Work, energy, conservation and power.",18,30],
+    ["Unit 5","Momentum","Impulse, momentum and collisions.",12,20],
+    ["Unit 6","Simple Harmonic Motion","Oscillations and simple harmonic motion.",5,15]
+  ],
+  "AP Chemistry":[
+    ["Unit 1","Atomic Structure & Properties","Atoms, isotopes, mass and electron structure.",7,0],
+    ["Unit 2","Molecular & Ionic Compound Structure","Chemical bonding and molecular structure.",7,0],
+    ["Unit 3","Intermolecular Forces & Properties","Interactions, gases, solutions and properties.",18,0],
+    ["Unit 4","Chemical Reactions","Equations, reactions and stoichiometry.",7,0],
+    ["Unit 5","Kinetics","Reaction rates and mechanisms.",7,0],
+    ["Unit 6","Thermodynamics","Energy, enthalpy and calorimetry.",7,0]
+  ],
+  "AP Calculus AB":[
+    ["Unit 1","Limits & Continuity","Limits, continuity and estimating behavior.",10,0],
+    ["Unit 2","Differentiation","Definition and fundamental rules of derivatives.",10,0],
+    ["Unit 3","Composite, Implicit & Inverse Functions","Advanced differentiation techniques.",15,0],
+    ["Unit 4","Contextual Applications of Differentiation","Motion, rates and optimization.",15,0],
+    ["Unit 5","Analytical Applications of Differentiation","Graphing and behavior using derivatives.",15,0],
+    ["Unit 6","Integration & Accumulation","Antiderivatives and definite integrals.",17,0]
+  ],
+  "AP Biology":[
+    ["Unit 1","Chemistry of Life","Water, macromolecules and molecular structure.",8,0],
+    ["Unit 2","Cell Structure & Function","Organelles, membranes and cell communication.",10,0],
+    ["Unit 3","Cellular Energetics","Photosynthesis and cellular respiration.",10,0],
+    ["Unit 4","Cell Communication & Cell Cycle","Signals, feedback and cell division.",10,0],
+    ["Unit 5","Heredity","Mitosis, meiosis and inheritance.",8,0],
+    ["Unit 6","Gene Expression & Regulation","DNA, RNA, protein synthesis and regulation.",12,0]
+  ]
+};
+
+let state = {
+  questions: 0, correct: 0, xp: 0, level: 1, streak: 1,
+  reviewed: [], answeredIds: [], currentCourse:"AP Physics 1",
+  currentQuestionIndex:0, runXp:0, bossHealth:100, currentReview:false,
+  mastery:{}
+};
+
+function save(){ localStorage.setItem("apStemQuestState", JSON.stringify(state)); }
+function load(){
+  const saved=localStorage.getItem("apStemQuestState");
+  if(saved) state={...state,...JSON.parse(saved)};
+}
+load();
+
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+  if(id==="analytics") renderAnalytics();
+  if(id==="practice") renderQuestion();
+  updateUI();
+}
+
+function selectCourse(course){
+  state.currentCourse=course;
+  document.getElementById("selectedCourseTitle").textContent=course.toUpperCase();
+  const grid=document.getElementById("unitGrid");
+  grid.innerHTML=(courseUnits[course]||[]).map((u,i)=>`
+    <div class="unit-card">
+      <div class="weight">UNIT ${i+1}</div>
+      <h3>${u[1]}</h3>
+      <p>${u[2]}</p>
+      <small>EXAM WEIGHT: ${u[3]}%</small>
+      <div class="progress"><div style="width:${u[4]}%"></div></div>
+      <button class="pixel-btn" style="margin-top:15px" onclick="startUnit(${i})">ENTER UNIT ▶</button>
+    </div>`).join("");
+  document.getElementById("courseDetail").classList.remove("hidden");
+  showPage("courses");
+  setTimeout(()=>document.getElementById("courseDetail").scrollIntoView({behavior:"smooth"}),50);
+}
+
+function startUnit(i){ showPage("practice"); state.currentQuestionIndex=i%questions.length; renderQuestion(); }
+function startBoss(){ showPage("practice"); state.currentQuestionIndex=0; state.runXp=0; state.bossHealth=100; renderQuestion(); }
+
+function renderQuestion(){
+  const q=questions[state.currentQuestionIndex%questions.length];
+  document.getElementById("questionTag").textContent=`${q.unit.toUpperCase()} • MULTIPLE CHOICE`;
+  document.getElementById("questionText").textContent=q.text;
+  document.getElementById("answers").innerHTML=q.answers.map((a,i)=>`<button class="answer" onclick="answerQuestion(${i})">${String.fromCharCode(65+i)}. ${a}</button>`).join("");
+  document.getElementById("feedback").textContent="";
+  document.getElementById("feedback").className="feedback";
+  document.getElementById("nextBtn").classList.add("hidden");
+  state.currentReview=state.reviewed.includes(q.id);
+  const rb=document.getElementById("reviewBtn");
+  rb.textContent=state.currentReview?"★ MARKED FOR REVIEW":"☆ MARK FOR REVIEW";
+  rb.classList.toggle("marked",state.currentReview);
+  document.getElementById("questionNumber").textContent=`${(state.currentQuestionIndex%questions.length)+1} / ${questions.length}`;
+  document.getElementById("bossHealth").style.width=state.bossHealth+"%";
+  document.getElementById("runXp").textContent=state.runXp;
+  document.getElementById("practiceEnergy").style.width=Math.max(25,100-(state.questions%8)*8)+"%";
+}
+
+function answerQuestion(choice){
+  const q=questions[state.currentQuestionIndex%questions.length];
+  const buttons=[...document.querySelectorAll(".answer")];
+  if(buttons.some(b=>b.disabled))return;
+  buttons.forEach(b=>b.disabled=true);
+  state.questions++;
+  state.answeredIds.push(q.id);
+  const correct=choice===q.correct;
+  if(correct){
+    state.correct++;
+    state.xp+=20;
+    state.runXp+=20;
+    state.bossHealth=Math.max(0,state.bossHealth-20);
+    document.getElementById("feedback").textContent="✓ CORRECT! "+q.explain;
+    document.getElementById("feedback").className="feedback good";
+    buttons[choice].classList.add("correct");
+    if(state.bossHealth===0){
+      state.xp+=100; state.runXp+=100;
+      document.getElementById("feedback").textContent="★ BOSS DEFEATED! +100 BONUS XP ★";
+    }
+  }else{
+    if(!state.reviewed.includes(q.id)) state.reviewed.push(q.id);
+    document.getElementById("feedback").textContent="✗ NOT QUITE. "+q.explain;
+    document.getElementById("feedback").className="feedback bad";
+    buttons[choice].classList.add("wrong");
+    buttons[q.correct].classList.add("correct");
+  }
+  const oldLevel=state.level;
+  state.level=Math.floor(state.xp/200)+1;
+  if(state.level>oldLevel){document.getElementById("newLevel").textContent=state.level;document.getElementById("levelUp").classList.remove("hidden")}
+  document.getElementById("nextBtn").classList.remove("hidden");
+  save(); updateUI();
+}
+
+function nextQuestion(){
+  state.currentQuestionIndex=(state.currentQuestionIndex+1)%questions.length;
+  if(state.bossHealth===0) state.bossHealth=100;
+  renderQuestion();
+}
+
+function toggleReview(){
+  const q=questions[state.currentQuestionIndex%questions.length];
+  if(state.reviewed.includes(q.id)) state.reviewed=state.reviewed.filter(id=>id!==q.id);
+  else state.reviewed.push(q.id);
+  save(); renderQuestion(); renderAnalytics();
+}
+
+function updateUI(){
+  const accuracy=state.questions?Math.round(state.correct/state.questions*100):0;
+  document.getElementById("homeQuestions").textContent=state.questions;
+  document.getElementById("homeAccuracy").textContent=accuracy+"%";
+  document.getElementById("homeStreak").textContent=state.streak+" DAY"+(state.streak===1?"":"S");
+  document.getElementById("homeXp").textContent=state.xp;
+  document.getElementById("navLevel").textContent="LVL "+state.level;
+  document.getElementById("navXp").style.width=((state.xp%200)/2)+"%";
+}
+
+function renderAnalytics(){
+  const accuracy=state.questions?Math.round(state.correct/state.questions*100):0;
+  document.getElementById("aQuestions").textContent=state.questions;
+  document.getElementById("aCorrect").textContent=state.correct;
+  document.getElementById("aAccuracy").textContent=accuracy+"%";
+  document.getElementById("aStreak").textContent=state.streak;
+  const units=courseUnits[state.currentCourse]||[];
+  document.getElementById("mastery").innerHTML=units.map(u=>`
+    <div class="mastery-row"><label>${u[0]}</label><div class="mastery-bar"><div style="width:${u[4]}%"></div></div><span>${u[4]}%</span></div>`).join("");
+  const list=document.getElementById("reviewList");
+  list.innerHTML=state.reviewed.length?state.reviewed.map(id=>{
+    const q=questions.find(x=>x.id===id);
+    return q?`<div class="review-item"><span>${q.unit}: ${q.text}</span><span class="wrong-text">REVIEW</span></div>`:"";
+  }).join(""):`<p style="color:#8d83a5">No questions marked yet. Missed questions will automatically appear here.</p>`;
+}
+
+function completeDay(btn){
+  const card=btn.closest(".day-card");
+  if(!card.classList.contains("completed")){
+    card.classList.add("completed"); btn.textContent="✓ QUEST COMPLETE";
+    state.xp+=25; state.level=Math.floor(state.xp/200)+1; save(); updateUI();
+  }
+}
+function resetPlanner(){document.querySelectorAll(".day-card").forEach(c=>{c.classList.remove("completed");c.querySelector("button").textContent="COMPLETE QUEST"})}
+function closeModal(){document.getElementById("levelUp").classList.add("hidden")}
+
+function updateCountdown(){
+  const diff=AP_EXAM_DATE-new Date();
+  if(diff<=0){document.getElementById("countdown").textContent="EXAM DAY";return}
+  const d=Math.floor(diff/86400000), h=Math.floor(diff/3600000)%24, m=Math.floor(diff/60000)%60, s=Math.floor(diff/1000)%60;
+  document.getElementById("countdown").textContent=`${d} DAYS ${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`;
+}
+
+updateUI(); updateCountdown(); setInterval(updateCountdown,1000);
