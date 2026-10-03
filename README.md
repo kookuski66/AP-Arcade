@@ -1,6 +1,6 @@
-# AP STEM QUEST — Prototype
+# AP Arcade — Prototype
 
-This is a front-end prototype for the AP STEM Quest idea.
+This is a front-end prototype for the AP Arcade idea.
 
 ## Run it
 1. Keep `index.html`, `style.css`, and `script.js` in the same folder.
@@ -17,13 +17,17 @@ This is a front-end prototype for the AP STEM Quest idea.
 - Boss fight system
 - Energy bar
 - XP and levels
+- Character profile with class selection and level-unlocked outfits and weapons
+- 15-question practice and boss-battle runs
+- One-time level and XP rewards for completing a course unit
+- Character sprite that attacks and takes damage in boss battles
 - Review/missed-question system
 - Basic analytics
 - Weekly study planner
 - Local browser save using localStorage
 
 ## Important
-The questions and exam data in this prototype are placeholder/demo content. Before publishing, replace them with original questions or properly licensed/officially released material and verify current College Board information.
+The questions and exam data in this prototype are placeholder/demo content. A 15-question run currently shuffles and reuses each unit's available question pool when that pool has fewer than 15 authored questions. Before publishing, replace these with original questions or properly licensed/officially released material and verify current College Board information.
 
 ## First things to customize
 - Change the AP exam date in `script.js`
