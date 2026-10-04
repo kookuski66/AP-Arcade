@@ -1,0 +1,161 @@
+.unit-practice-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 15px;
+}
+
+.unit-practice-actions .pixel-btn {
+  flex: 1 1 145px;
+  margin: 0 !important;
+}
+
+.unit-practice-actions .frq-choice {
+  border-color: #b38cff;
+  color: #dfc9ff;
+}
+
+.frq-workspace {
+  max-width: 980px;
+  margin: 0 auto 48px;
+  padding: clamp(20px, 4vw, 42px);
+  border: 2px solid rgba(179, 140, 255, .55);
+  background: rgba(24, 19, 43, .92);
+  box-shadow: 8px 8px 0 rgba(8, 6, 18, .35);
+}
+
+.frq-heading {
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(179, 140, 255, .3);
+}
+
+.frq-heading h2 {
+  margin: 12px 0;
+}
+
+.frq-heading p,
+.frq-part p {
+  line-height: 1.6;
+}
+
+.frq-parts {
+  display: grid;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.frq-part {
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, .13);
+  background: rgba(255, 255, 255, .035);
+}
+
+.frq-part h3 {
+  margin: 0 0 8px;
+  color: #b8ffdf;
+}
+
+.frq-response {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 110px;
+  margin: 14px 0;
+  padding: 12px;
+  resize: vertical;
+  border: 1px solid rgba(179, 140, 255, .55);
+  background: #100d1d;
+  color: #fff;
+  font: inherit;
+  line-height: 1.5;
+}
+
+.frq-response:focus {
+  outline: 2px solid #b8ffdf;
+  outline-offset: 2px;
+}
+
+.frq-guide-button {
+  border-color: #f1cf72;
+  color: #f1cf72;
+}
+
+.frq-guide {
+  margin-top: 14px;
+  padding: 4px 16px;
+  border-left: 3px solid #b8ffdf;
+  background: rgba(184, 255, 223, .07);
+}
+
+.frq-guide p {
+  margin: 10px 0;
+}
+
+.frq-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.frq-navigation button:disabled {
+  cursor: not-allowed;
+  opacity: .45;
+}
+
+.exam-countdowns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  margin: 18px 0 36px;
+}
+
+.exam-countdown-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(184, 255, 223, .28);
+  background: rgba(24, 19, 43, .82);
+}
+
+.exam-countdown-card label {
+  color: #b8ffdf;
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.exam-countdown-card input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 9px;
+  border: 1px solid rgba(179, 140, 255, .55);
+  background: #100d1d;
+  color: #fff;
+  font: inherit;
+}
+
+.exam-countdown-card input:focus {
+  outline: 2px solid #b8ffdf;
+  outline-offset: 2px;
+}
+
+.exam-countdown-value {
+  color: #f1cf72;
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 600px) {
+  .frq-workspace {
+    padding: 18px;
+  }
+
+  .frq-part {
+    padding: 14px;
+  }
+
+  .frq-navigation button {
+    flex: 1 1 100%;
+  }
+}

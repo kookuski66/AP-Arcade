@@ -1,5 +1,6 @@
-const AP_EXAM_DATE = new Date("2027-05-11T08:00:00");
 const QUESTIONS_PER_RUN = 15;
+const FRQS_PER_UNIT = 3;
+const ENERGY_PER_QUESTION = 8;
 const outfitOptions = [
   { id: "rookie", name: "Rookie Tunic", unlockLevel: 1, color: "#5ce1b6" },
   { id: "ember", name: "Ember Jacket", unlockLevel: 2, color: "#ff754f" },
@@ -67,7 +68,7 @@ const questions = [
   {id:5, course:"AP Physics 1", unit:"Unit 4", text:"A ball is thrown upward. Ignoring air resistance, what is its acceleration at the highest point?", answers:["Zero","9.8 m/s² downward","9.8 m/s² upward","It depends on its mass"], correct:1, explain:"Gravity acts throughout the motion, including at the highest point."}
 ];
 
-const unitQuestionBank = {
+const legacyUnitQuestionBank = {
   "AP Physics 1": {
     "Unit 1": [
       {id:101, course:"AP Physics 1", unit:"Unit 1", text:"A train travels 60 m in 3 s at constant speed. What is its speed?", answers:["15 m/s","20 m/s","30 m/s","180 m/s"], correct:1, explain:"Speed = distance / time = 60 / 3 = 20 m/s."},
@@ -92,6 +93,11 @@ const unitQuestionBank = {
       {id:403, course:"AP Chemistry", unit:"Unit 2", text:"A Lewis structure is used to show:", answers:["Atomic mass","Bonding and lone pairs","Radioactivity","Phase changes"], correct:1, explain:"Lewis structures represent valence electrons and bonding arrangements."}
     ]
   },
+  "AP Biology": {
+    "Unit 2": "Unit 2 Cell Structure & Function",
+    "Unit 4": "Unit 4 Cell Communication & Cell Cycle",
+    "Unit 6": "Unit 6 Gene Expression & Regulation"
+  },
   "AP Calculus AB": {
     "Unit 1": [
       {id:501, course:"AP Calculus AB", unit:"Unit 1", text:"What does lim x→3 f(x) describe?", answers:["The value of f(3)","The behavior of f(x) near x=3","The derivative at x=3","The integral from 0 to 3"], correct:1, explain:"A limit describes the value a function approaches near a point."},
@@ -110,36 +116,45 @@ const unitQuestionBank = {
 
 const courseUnits = {
   "AP Physics 1":[
-    ["Unit 1","Kinematics","Motion, position, velocity and acceleration.",10,72],
-    ["Unit 2","Dynamics","Forces, Newton's laws and free-body diagrams.",18,45],
-    ["Unit 3","Circular Motion & Gravitation","Uniform circular motion and gravitational interactions.",8,35],
-    ["Unit 4","Energy","Work, energy, conservation and power.",18,30],
-    ["Unit 5","Momentum","Impulse, momentum and collisions.",12,20],
-    ["Unit 6","Simple Harmonic Motion","Oscillations and simple harmonic motion.",5,15]
+    ["Unit 1","Kinematics","Motion, position, velocity and acceleration.","10–15",0],
+    ["Unit 2","Force and Translational Dynamics","Interactions, forces, Newton's laws, and translational motion.","18–23",0],
+    ["Unit 3","Work, Energy, and Power","Work, energy transfer, conservation, and power.","18–23",0],
+    ["Unit 4","Linear Momentum","Impulse, momentum, and collisions.","10–15",0],
+    ["Unit 5","Torque and Rotational Dynamics","Rotational motion, torque, and angular acceleration.","10–15",0],
+    ["Unit 6","Energy and Momentum of Rotating Systems","Rotational kinetic energy, angular momentum, and rolling.","10–15",0],
+    ["Unit 7","Oscillations","Periodic motion and simple harmonic motion.","5–8",0],
+    ["Unit 8","Fluids","Fluid statics, pressure, buoyancy, and flow.","10–15",0]
   ],
   "AP Chemistry":[
-    ["Unit 1","Atomic Structure & Properties","Atoms, isotopes, mass and electron structure.",7,0],
-    ["Unit 2","Molecular & Ionic Compound Structure","Chemical bonding and molecular structure.",7,0],
-    ["Unit 3","Intermolecular Forces & Properties","Interactions, gases, solutions and properties.",18,0],
-    ["Unit 4","Chemical Reactions","Equations, reactions and stoichiometry.",7,0],
-    ["Unit 5","Kinetics","Reaction rates and mechanisms.",7,0],
-    ["Unit 6","Thermodynamics","Energy, enthalpy and calorimetry.",7,0]
+    ["Unit 1","Atomic Structure & Properties","Atoms, isotopes, mass and electron structure.","7–9",0],
+    ["Unit 2","Molecular & Ionic Compound Structure","Chemical bonding and molecular structure.","7–9",0],
+    ["Unit 3","Intermolecular Forces & Properties","Interactions, gases, solutions and properties.","18–22",0],
+    ["Unit 4","Chemical Reactions","Equations, reactions and stoichiometry.","7–9",0],
+    ["Unit 5","Kinetics","Reaction rates and mechanisms.","7–9",0],
+    ["Unit 6","Thermodynamics","Energy, enthalpy and calorimetry.","7–9",0],
+    ["Unit 7","Equilibrium","Dynamic equilibrium, reaction quotients, and equilibrium calculations.","7–9",0],
+    ["Unit 8","Acids and Bases","Acid-base models, pH, buffers, and titrations.","11–15",0],
+    ["Unit 9","Applications of Thermodynamics","Entropy, free energy, and thermodynamic predictions.","7–9",0]
   ],
   "AP Calculus AB":[
-    ["Unit 1","Limits & Continuity","Limits, continuity and estimating behavior.",10,0],
-    ["Unit 2","Differentiation","Definition and fundamental rules of derivatives.",10,0],
-    ["Unit 3","Composite, Implicit & Inverse Functions","Advanced differentiation techniques.",15,0],
-    ["Unit 4","Contextual Applications of Differentiation","Motion, rates and optimization.",15,0],
-    ["Unit 5","Analytical Applications of Differentiation","Graphing and behavior using derivatives.",15,0],
-    ["Unit 6","Integration & Accumulation","Antiderivatives and definite integrals.",17,0]
+    ["Unit 1","Limits and Continuity","Limits, continuity, and estimating behavior.","10–12",0],
+    ["Unit 2","Differentiation: Definition and Fundamental Properties","Derivative definition and fundamental differentiation rules.","10–12",0],
+    ["Unit 3","Composite, Implicit, and Inverse Functions","Chain rule, implicit differentiation, and inverse functions.","9–13",0],
+    ["Unit 4","Contextual Applications of Differentiation","Motion, rates and optimization.","10–15",0],
+    ["Unit 5","Analytical Applications of Differentiation","Graphing and behavior using derivatives.","15–18",0],
+    ["Unit 6","Integration and Accumulation of Change","Antiderivatives, definite integrals, and accumulation.","17–20",0],
+    ["Unit 7","Differential Equations","Differential equations, slope fields, and exponential models.","6–12",0],
+    ["Unit 8","Applications of Integration","Area, volume, and accumulation applications.","10–15",0]
   ],
   "AP Biology":[
-    ["Unit 1","Chemistry of Life","Water, macromolecules and molecular structure.",8,0],
-    ["Unit 2","Cell Structure & Function","Organelles, membranes and cell communication.",10,0],
-    ["Unit 3","Cellular Energetics","Photosynthesis and cellular respiration.",10,0],
-    ["Unit 4","Cell Communication & Cell Cycle","Signals, feedback and cell division.",10,0],
-    ["Unit 5","Heredity","Mitosis, meiosis and inheritance.",8,0],
-    ["Unit 6","Gene Expression & Regulation","DNA, RNA, protein synthesis and regulation.",12,0]
+    ["Unit 1","Chemistry of Life","Water, macromolecules, and molecular structure.","8–11",0],
+    ["Unit 2","Cell Structure and Function","Organelles, membranes, and cell structure-function relationships.","10–13",0],
+    ["Unit 3","Cellular Energetics","Photosynthesis, cellular respiration, and energy transfer.","12–16",0],
+    ["Unit 4","Cell Communication and Cell Cycle","Signals, feedback, and cell division.","10–15",0],
+    ["Unit 5","Heredity","Mitosis, meiosis, and patterns of inheritance.","8–11",0],
+    ["Unit 6","Gene Expression and Regulation","DNA, RNA, protein synthesis, and regulation.","12–16",0],
+    ["Unit 7","Natural Selection","Evolutionary mechanisms and population change.","13–20",0],
+    ["Unit 8","Ecology","Population interactions, ecosystems, and energy flow.","10–15",0]
   ]
 };
 
@@ -149,6 +164,7 @@ let state = {
   currentUnit: "Unit 1", currentQuestionIndex: 0, runXp: 0,
   bossHealth: 160, playerHealth: 100, mode: "practice", currentReview: false,
   mastery: {}, completedUnits: [], currentRun: [],
+  currentFrqIndex: 0, frqDrafts: {}, energy: 0, examDates: {},
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
 };
 
@@ -165,40 +181,112 @@ function load(){
   }
 }
 load();
+if (!state.frqDrafts || typeof state.frqDrafts !== "object" || Array.isArray(state.frqDrafts)) {
+  state.frqDrafts = {};
+}
+if (!Number.isFinite(state.energy)) state.energy = 0;
+state.energy = Math.max(0, Math.min(100, state.energy));
+if (!state.examDates || typeof state.examDates !== "object" || Array.isArray(state.examDates)) {
+  state.examDates = {};
+}
+const previousPhysicsUnitNumbers = { 3: 2, 4: 3, 5: 4, 6: 7 };
+state.completedUnits = [...new Set((Array.isArray(state.completedUnits) ? state.completedUnits : []).map(key => {
+  const separator = key.lastIndexOf("::");
+  if (separator < 0) return key;
+  const course = key.slice(0, separator);
+  const unit = key.slice(separator + 2);
+  const match = unit.match(/^Unit ([1-6])$/);
+  if (course !== "AP Physics 1" || !match) return key;
+  const newNumber = previousPhysicsUnitNumbers[Number(match[1])] || Number(match[1]);
+  return `${course}::Unit ${newNumber}`;
+}))];
+
+function unitContentKey(course, unit){
+  const definition = (courseUnits[course] || []).find(entry => entry[0] === unit);
+  if (!definition) return unit;
+  const aliases = {
+    "AP Physics 1": {
+      "Unit 3": "Unit 4 Energy",
+      "Unit 4": "Unit 5 Momentum",
+      "Unit 7": "Unit 6 Simple Harmonic Motion"
+    },
+    "AP Biology": {
+      "Unit 2": "Unit 2 Cell Structure & Function",
+      "Unit 4": "Unit 4 Cell Communication & Cell Cycle",
+      "Unit 6": "Unit 6 Gene Expression & Regulation"
+    },
+    "AP Calculus AB": {
+      "Unit 1": "Unit 1 Limits & Continuity",
+      "Unit 2": "Unit 2 Differentiation",
+      "Unit 3": "Unit 3 Composite, Implicit & Inverse Functions",
+      "Unit 6": "Unit 6 Integration & Accumulation"
+    }
+  };
+  return aliases[course]?.[unit] || `${unit} ${definition[1]}`;
+}
 
 function getQuestionPool(course = state.currentCourse, unit = state.currentUnit) {
   const coursePool = unitQuestionBank[course] || {};
-  const pool = coursePool[unit] || Object.values(coursePool)[0] || questions;
-  return pool;
+  const contentKey = unitContentKey(course, unit);
+  const pool = coursePool[unit] || coursePool[contentKey];
+  if (!pool) throw new Error(`No MCQ bank found for ${course}, ${unit}.`);
+  if (pool.length < QUESTIONS_PER_RUN) throw new Error(`${course}, ${unit} needs at least ${QUESTIONS_PER_RUN} authored MCQs.`);
+  const canonicalUnit = `${unit} ${(courseUnits[course] || []).find(entry => entry[0] === unit)?.[1] || ""}`.trim();
+  return pool.map(question => ({ ...question, unit: canonicalUnit }));
 }
 
 function allQuestions(){
-  return [...questions, ...Object.values(unitQuestionBank).flatMap(course => Object.values(course).flat())];
+  const bankQuestions = Object.entries(unitQuestionBank).flatMap(([course, courseBank]) =>
+    Object.entries(courseBank).flatMap(([contentKey, pool]) => {
+      const activeUnit = (courseUnits[course] || []).find(unit =>
+        unitContentKey(course, unit[0]) === contentKey
+      );
+      return pool.map(question => ({
+        ...question,
+        unit: activeUnit ? `${activeUnit[0]} ${activeUnit[1]}` : question.unit
+      }));
+    })
+  );
+  return [
+    ...questions,
+    ...Object.values(legacyUnitQuestionBank).flatMap(course => Object.values(course).flat()),
+    ...bankQuestions
+  ];
 }
 
 function createQuestionRun(){
   const pool = getQuestionPool();
-  const run = [];
-  while (run.length < QUESTIONS_PER_RUN) {
-    const deck = [...pool];
-    for (let index = deck.length - 1; index > 0; index -= 1) {
-      const swapIndex = Math.floor(Math.random() * (index + 1));
-      [deck[index], deck[swapIndex]] = [deck[swapIndex], deck[index]];
-    }
-    if (run.length && deck.length > 1 && deck[0].id === run[run.length - 1].id) {
-      [deck[0], deck[1]] = [deck[1], deck[0]];
-    }
-    run.push(...deck.slice(0, QUESTIONS_PER_RUN - run.length));
+  const deck = [...pool];
+  for (let index = deck.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [deck[index], deck[swapIndex]] = [deck[swapIndex], deck[index]];
   }
-  return run.map((question, index) => ({ ...question, runId: `${question.id}-${Date.now()}-${index}` }));
+  return deck.slice(0, QUESTIONS_PER_RUN).map((question, index) => ({
+    ...question,
+    runId: `${question.id}-${Date.now()}-${index}`
+  }));
 }
 
 function activeQuestion(){
-  if (!Array.isArray(state.currentRun) || state.currentRun.length !== QUESTIONS_PER_RUN) {
+  const poolIds = new Set(getQuestionPool().map(question => question.id));
+  const runIds = Array.isArray(state.currentRun)
+    ? state.currentRun.map(question => question?.id)
+    : [];
+  const validRun = runIds.length === QUESTIONS_PER_RUN
+    && new Set(runIds).size === QUESTIONS_PER_RUN
+    && runIds.every(id => poolIds.has(id));
+  const validIndex = Number.isInteger(state.currentQuestionIndex)
+    && state.currentQuestionIndex >= 0
+    && state.currentQuestionIndex < QUESTIONS_PER_RUN;
+  if (!validRun || !validIndex) {
     state.currentRun = createQuestionRun();
     state.currentQuestionIndex = 0;
   }
   return state.currentRun[state.currentQuestionIndex];
+}
+
+function rechargeEnergy(){
+  state.energy = Math.min(100, state.energy + ENERGY_PER_QUESTION);
 }
 
 function currentBossTheme(){
@@ -217,6 +305,7 @@ function showPage(id){
   if (id === "analytics") renderAnalytics();
   if (id === "practice") renderPracticeQuestion();
   if (id === "boss") renderBossQuestion();
+  if (id === "frq") renderFrqPractice();
   updateUI();
 }
 
@@ -233,7 +322,10 @@ function selectCourse(course){
       <small>EXAM WEIGHT: ${u[3]}%</small>
       <small class="unit-clear-state">${state.completedUnits.includes(`${course}::${u[0]}`) ? "✓ CLEARED" : "NOT YET CLEARED"}</small>
       <div class="progress"><div style="width:${u[4]}%"></div></div>
-      <button class="pixel-btn" style="margin-top:15px" onclick="startUnit(${i})">ENTER UNIT ▶</button>
+      <div class="unit-practice-actions">
+        <button class="pixel-btn" onclick="startUnit(${i}, 'mcq')">PRACTICE MCQ ▶</button>
+        <button class="pixel-btn frq-choice" onclick="startUnit(${i}, 'frq')">PRACTICE FRQ ▶</button>
+      </div>
     </div>`).join("");
   document.getElementById("courseDetail").classList.remove("hidden");
   showPage("courses");
@@ -248,16 +340,89 @@ function startPractice(){
   showPage("practice");
 }
 
-function startUnit(index){
+function startUnit(index, practiceType = "mcq"){
   const units = courseUnits[state.currentCourse] || [];
   const selected = units[index] || units[0] || ["Unit 1"];
   state.currentUnit = selected[0];
+  if (practiceType === "frq") {
+    state.mode = "frq";
+    state.currentFrqIndex = 0;
+    showPage("frq");
+    return;
+  }
   state.mode = "practice";
   state.currentQuestionIndex = 0;
   state.runXp = 0;
   state.currentRun = createQuestionRun();
   showPage("practice");
   renderPracticeQuestion();
+}
+
+function renderFrqPractice(){
+  const courseFrqs = frqBank[state.currentCourse] || {};
+  const items = courseFrqs[state.currentUnit] || courseFrqs[unitContentKey(state.currentCourse, state.currentUnit)];
+  if (!items || items.length !== FRQS_PER_UNIT) {
+    throw new Error(`Expected ${FRQS_PER_UNIT} FRQs for ${state.currentCourse}, ${state.currentUnit}.`);
+  }
+  const frq = items[state.currentFrqIndex];
+  document.getElementById("frqCourseLabel").textContent = `${state.currentCourse} • ${state.currentUnit}`;
+  document.getElementById("frqProgress").textContent = `FRQ ${state.currentFrqIndex + 1} / ${FRQS_PER_UNIT}`;
+  document.getElementById("frqTitle").textContent = frq.title;
+  document.getElementById("frqScenario").textContent = frq.scenario;
+
+  const parts = document.getElementById("frqParts");
+  parts.replaceChildren();
+  frq.parts.forEach(part => {
+    const card = document.createElement("article");
+    card.className = "frq-part";
+    const heading = document.createElement("h3");
+    heading.textContent = `(${part.label})`;
+    const prompt = document.createElement("p");
+    prompt.textContent = part.prompt;
+    const key = `${state.currentCourse}::${state.currentUnit}::${frq.id}::${part.label}`;
+    const response = document.createElement("textarea");
+    response.className = "frq-response";
+    response.rows = 4;
+    response.placeholder = "Write your reasoning here...";
+    response.setAttribute("aria-label", `Your response to part ${part.label}`);
+    response.value = state.frqDrafts[key] || "";
+    response.addEventListener("input", () => {
+      state.frqDrafts[key] = response.value;
+      save();
+    });
+    const guideButton = document.createElement("button");
+    guideButton.className = "pixel-btn frq-guide-button";
+    guideButton.type = "button";
+    guideButton.textContent = "SHOW SCORING GUIDE";
+    const guide = document.createElement("div");
+    guide.className = "frq-guide hidden";
+    const rubric = document.createElement("p");
+    rubric.textContent = `Scoring guide: ${part.rubric}`;
+    const solution = document.createElement("p");
+    solution.textContent = `Expected response: ${part.solution}`;
+    guide.append(rubric, solution);
+    guideButton.addEventListener("click", () => {
+      const showing = guide.classList.toggle("hidden");
+      guideButton.textContent = showing ? "SHOW SCORING GUIDE" : "HIDE SCORING GUIDE";
+    });
+    card.append(heading, prompt, response, guideButton, guide);
+    parts.append(card);
+  });
+
+  document.getElementById("frqPrevBtn").disabled = state.currentFrqIndex === 0;
+  document.getElementById("frqNextBtn").textContent =
+    state.currentFrqIndex === FRQS_PER_UNIT - 1 ? "RETURN TO UNIT MAP" : "NEXT FRQ ▶";
+}
+
+function moveFrq(direction){
+  const nextIndex = state.currentFrqIndex + direction;
+  if (nextIndex < 0) return;
+  if (nextIndex >= FRQS_PER_UNIT) {
+    showPage("courses");
+    return;
+  }
+  state.currentFrqIndex = nextIndex;
+  renderFrqPractice();
 }
 
 function startBossBattle(){
@@ -289,7 +454,6 @@ function renderPracticeQuestion(){
   document.getElementById("practiceProgressText").textContent = `${questionNumber} / ${QUESTIONS_PER_RUN}`;
   document.getElementById("practiceProgress").style.width = `${(questionNumber / QUESTIONS_PER_RUN) * 100}%`;
   document.getElementById("runXp").textContent = state.runXp;
-  document.getElementById("practiceEnergy").style.width = `${Math.max(25, 100 - (state.questions % 8) * 8)}%`;
 }
 
 function renderBossQuestion(){
@@ -371,6 +535,7 @@ function answerQuestion(choice, mode = state.mode){
   buttons.forEach(b => b.disabled = true);
   state.questions += 1;
   state.answeredIds.push(q.id);
+  if (mode === "practice") rechargeEnergy();
 
   const correct = choice === q.correct;
 
@@ -494,6 +659,10 @@ function updateUI(){
   document.getElementById("homeAccuracy").textContent = `${accuracy}%`;
   document.getElementById("homeStreak").textContent = `${state.streak} DAY${state.streak === 1 ? "" : "S"}`;
   document.getElementById("homeXp").textContent = state.xp;
+  document.getElementById("homeEnergy").style.width = `${state.energy}%`;
+  document.getElementById("homeEnergyLabel").textContent = `${state.energy}%`;
+  document.getElementById("practiceEnergy").style.width = `${state.energy}%`;
+  document.getElementById("practiceEnergyLabel").textContent = `${state.energy}%`;
   document.getElementById("homeCourse").textContent = state.currentCourse;
   document.getElementById("homeUnit").textContent = `${state.currentUnit.toUpperCase()} MINI BOSS`;
   document.getElementById("navLevel").textContent = `LVL ${state.level}`;
@@ -639,19 +808,89 @@ function closeModal(){
   document.getElementById("levelUp").classList.add("hidden");
 }
 
-function updateCountdown(){
-  const diff = AP_EXAM_DATE - new Date();
-  if (diff <= 0) {
-    document.getElementById("countdown").textContent = "EXAM DAY";
-    return;
-  }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor(diff / 3600000) % 24;
-  const m = Math.floor(diff / 60000) % 60;
-  const s = Math.floor(diff / 1000) % 60;
-  document.getElementById("countdown").textContent = `${d} DAYS ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+function renderExamCountdowns(){
+  const container = document.getElementById("examCountdowns");
+  container.replaceChildren();
+  Object.keys(courseUnits).forEach(course => {
+    const card = document.createElement("section");
+    card.className = "exam-countdown-card";
+    const label = document.createElement("label");
+    label.textContent = course;
+    const input = document.createElement("input");
+    input.type = "datetime-local";
+    const savedDate = state.examDates[course] || "";
+    input.value = /^\d{4}-\d{2}-\d{2}$/.test(savedDate) ? `${savedDate}T08:00` : savedDate;
+    input.setAttribute("aria-label", `${course} exam date and time`);
+    input.addEventListener("input", () => {
+      state.examDates[course] = input.value;
+      save();
+      updateCountdown();
+    });
+    const countdown = document.createElement("strong");
+    countdown.className = "exam-countdown-value";
+    countdown.dataset.course = course;
+    card.append(label, input, countdown);
+    container.append(card);
+  });
 }
 
+function parseExamDate(dateValue){
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?$/.exec(dateValue || "");
+  if (!match) return null;
+  const [, yearText, monthText, dayText, hourText, minuteText] = match;
+  const year = Number(yearText);
+  const month = Number(monthText);
+  const day = Number(dayText);
+  const hour = hourText === undefined ? 8 : Number(hourText);
+  const minute = minuteText === undefined ? 0 : Number(minuteText);
+  const date = new Date(year, month - 1, day, hour, minute);
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day
+      || date.getHours() !== hour || date.getMinutes() !== minute) return null;
+  return date;
+}
+
+function formatTimeRemaining(milliseconds){
+  const seconds = Math.max(0, Math.floor(milliseconds / 1000));
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor(seconds / 3600) % 24;
+  const minutes = Math.floor(seconds / 60) % 60;
+  const remainingSeconds = seconds % 60;
+  return `${days} DAY${days === 1 ? "" : "S"} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
+function updateCountdown(){
+  const now = new Date();
+  const exams = Object.keys(courseUnits)
+    .map(course => ({ course, date: parseExamDate(state.examDates[course]) }))
+    .filter(exam => exam.date !== null)
+    .map(exam => ({ ...exam, remaining: exam.date.getTime() - now.getTime() }));
+  document.querySelectorAll(".exam-countdown-value").forEach(element => {
+    const exam = exams.find(item => item.course === element.dataset.course);
+    if (!exam) {
+      element.textContent = "SET EXAM DATE";
+    } else if (exam.remaining <= 0) {
+      element.textContent = "EXAM PASSED";
+    } else {
+      element.textContent = formatTimeRemaining(exam.remaining);
+    }
+  });
+
+  const nextExam = exams
+    .filter(exam => exam.remaining > 0)
+    .sort((a, b) => a.remaining - b.remaining)[0];
+  if (!exams.length) {
+    document.getElementById("countdown").textContent = "ADD YOUR EXAM DATES";
+    document.getElementById("nextExamLabel").textContent = "Set a date for each course below.";
+  } else if (nextExam) {
+    document.getElementById("countdown").textContent = formatTimeRemaining(nextExam.remaining);
+    document.getElementById("nextExamLabel").textContent = `Next up: ${nextExam.course}`;
+  } else {
+    document.getElementById("countdown").textContent = "ALL EXAMS PASSED";
+    document.getElementById("nextExamLabel").textContent = "Update any date below to start a new countdown.";
+  }
+}
+
+renderExamCountdowns();
 updateUI();
 updateCountdown();
 setInterval(updateCountdown, 1000);

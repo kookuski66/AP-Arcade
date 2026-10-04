@@ -10,15 +10,19 @@ This is a front-end prototype for the AP Arcade idea.
 ## What is included
 - Retro 8-bit / arcade visual theme
 - Home page
-- AP countdown
+- Editable per-course AP exam countdowns
 - Course selection
-- Unit/world map
+- Course unit maps (8 AP Physics 1, 9 AP Chemistry, 8 AP Calculus AB, 8 AP Biology units)
+- Per-course AP exam date settings and countdowns
 - Multiple-choice practice
+- Separate FRQ practice with three five-part prompts per unit
 - Boss fight system
 - Energy bar
 - XP and levels
 - Character profile with class selection and level-unlocked outfits and weapons
-- 15-question practice and boss-battle runs
+- 15-question MCQ runs with no repeated item in a run
+- Saved FRQ response drafts with revealable scoring guides
+- Persistent energy meter recharged by answering practice MCQs (boss victories do not reset it)
 - One-time level and XP rewards for completing a course unit
 - Character sprite that attacks and takes damage in boss battles
 - Review/missed-question system
@@ -27,10 +31,12 @@ This is a front-end prototype for the AP Arcade idea.
 - Local browser save using localStorage
 
 ## Important
-The questions and exam data in this prototype are placeholder/demo content. A 15-question run currently shuffles and reuses each unit's available question pool when that pool has fewer than 15 authored questions. Before publishing, replace these with original questions or properly licensed/officially released material and verify current College Board information.
+The original practice items are authored in `academic-content.js`; they are not copied from College Board materials. The course maps follow the published AP unit frameworks. Subject-matter experts should still review the questions, answer keys, scoring guides, and exam alignment against current AP Course and Exam Descriptions before publishing.
+
+Framework references: [AP Physics 1](https://apcentral.collegeboard.org/courses/ap-physics-1), [AP Chemistry](https://apcentral.collegeboard.org/courses/ap-chemistry), [AP Calculus AB](https://apcentral.collegeboard.org/courses/ap-calculus-ab), and [AP Biology](https://apcentral.collegeboard.org/courses/ap-biology).
 
 ## First things to customize
-- Change the AP exam date in `script.js`
-- Add your own questions to the `questions` array
-- Add/edit courses and units in `courseUnits`
+- Set exam dates for each course on the home page
+- Add or revise MCQs and FRQs in `academic-content.js`
+- Add/edit courses and units in `courseUnits` and author matching banks in `academic-content.js`
 - Change colors/fonts in `style.css`

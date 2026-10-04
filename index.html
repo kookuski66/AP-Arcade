@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="academic-practice.css">
 </head>
 <body>
   <div class="scanlines"></div>
@@ -51,18 +52,19 @@
           <div class="boss-art">⚡</div>
           <h2 id="homeCourse">AP PHYSICS 1</h2>
           <p id="homeUnit">UNIT 1 MINI BOSS</p>
-          <div class="energy"><span>ENERGY</span><div class="energy-bar"><div style="width:82%"></div></div></div>
+          <div class="energy"><span>ENERGY <strong id="homeEnergyLabel">0%</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:0%"></div></div></div>
           <button class="pixel-btn danger" onclick="startBossBattle()">ENTER BOSS FIGHT</button>
         </div>
       </div>
 
       <div class="countdown">
         <div>
-          <div class="eyebrow">AP EXAM COUNTDOWN</div>
-          <div class="countdown-number" id="countdown">-- DAYS --:--:--</div>
+          <div class="eyebrow">YOUR AP EXAM COUNTDOWNS</div>
+          <div class="countdown-number" id="countdown">ADD YOUR EXAM DATES</div>
+          <div class="countdown-note" id="nextExamLabel">Set each exam date and time below.</div>
         </div>
-        <div class="countdown-note">AP exam date can be changed in <code>script.js</code>.</div>
       </div>
+      <div id="examCountdowns" class="exam-countdowns"></div>
 
       <div class="stats-grid">
         <div class="stat-card"><span>QUESTIONS</span><strong id="homeQuestions">0</strong></div>
@@ -109,7 +111,7 @@
     <section id="practice" class="page">
       <div class="page-header">
         <div><div class="eyebrow">TRAIN YOUR SKILLS</div><h1>PRACTICE ARENA</h1></div>
-        <div class="energy-wrap">ENERGY <div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div></div>
+        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">0%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:0%"></div></div><small>+8% PER PRACTICE MCQ • PERSISTS BETWEEN BOSSES</small></div>
       </div>
 
       <div id="questionScreen" class="question-layout">
@@ -131,6 +133,25 @@
           <div class="side-stat"><span>QUESTION</span><strong id="questionNumber">1 / 15</strong></div>
           <div class="side-stat"><span>RUN XP</span><strong id="runXp">0</strong></div>
         </aside>
+      </div>
+    </section>
+
+    <section id="frq" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">FREE-RESPONSE WORKSHOP</div><h1>FRQ PRACTICE</h1></div>
+        <div class="level-badge" id="frqProgress">FRQ 1 / 3</div>
+      </div>
+      <div class="frq-workspace">
+        <div class="frq-heading">
+          <div class="eyebrow" id="frqCourseLabel">AP PHYSICS 1 • UNIT 1</div>
+          <h2 id="frqTitle">Loading prompt...</h2>
+          <p id="frqScenario"></p>
+        </div>
+        <div id="frqParts" class="frq-parts"></div>
+        <div class="frq-navigation">
+          <button id="frqPrevBtn" class="pixel-btn" onclick="moveFrq(-1)">◀ PREVIOUS FRQ</button>
+          <button id="frqNextBtn" class="pixel-btn primary" onclick="moveFrq(1)">NEXT FRQ ▶</button>
+        </div>
       </div>
     </section>
 
@@ -301,6 +322,7 @@
     <span>BUILT BY STUDENTS, FOR STUDENTS</span>
   </footer>
 
+  <script src="academic-content.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
