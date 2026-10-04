@@ -52,7 +52,7 @@
           <div class="boss-art">⚡</div>
           <h2 id="homeCourse">AP PHYSICS 1</h2>
           <p id="homeUnit">UNIT 1 MINI BOSS</p>
-          <div class="energy"><span>ENERGY <strong id="homeEnergyLabel">0%</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:0%"></div></div></div>
+          <div class="energy"><span>ENERGY <strong id="homeEnergyLabel">100%</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:100%"></div></div></div>
           <button class="pixel-btn danger" onclick="startBossBattle()">ENTER BOSS FIGHT</button>
         </div>
       </div>
@@ -111,7 +111,7 @@
     <section id="practice" class="page">
       <div class="page-header">
         <div><div class="eyebrow">TRAIN YOUR SKILLS</div><h1>PRACTICE ARENA</h1></div>
-        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">0%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:0%"></div></div><small>+8% PER PRACTICE MCQ • PERSISTS BETWEEN BOSSES</small></div>
+        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">100%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8% PER PRACTICE MCQ • -8% PER WRONG BOSS ANSWER • PERSISTS</small></div>
       </div>
 
       <div id="questionScreen" class="question-layout">
@@ -200,8 +200,8 @@
 
           <div class="battle-bars">
             <div class="bar-row">
-              <span>PLAYER HP <strong id="playerHpValue">100/100</strong></span>
-              <div class="hp-bar player" id="playerHpMeter" role="meter" aria-label="Player health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="playerHpBar" style="width:100%"></div></div>
+              <span>PLAYER ENERGY / HP <strong id="playerHpValue">100/100</strong></span>
+              <div class="hp-bar player" id="playerHpMeter" role="meter" aria-label="Player energy and health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="playerHpBar" style="width:100%"></div></div>
             </div>
             <div class="bar-row">
               <span>ENEMY HP <strong id="bossHpValue">160/160</strong></span>

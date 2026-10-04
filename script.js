@@ -162,9 +162,9 @@ let state = {
   questions: 0, correct: 0, xp: 0, level: 1, streak: 1,
   reviewed: [], answeredIds: [], currentCourse: "AP Physics 1",
   currentUnit: "Unit 1", currentQuestionIndex: 0, runXp: 0,
-  bossHealth: 160, playerHealth: 100, mode: "practice", currentReview: false,
+  bossHealth: 160, mode: "practice", currentReview: false,
   mastery: {}, completedUnits: [], currentRun: [],
-  currentFrqIndex: 0, frqDrafts: {}, energy: 0, examDates: {},
+  currentFrqIndex: 0, frqDrafts: {}, energy: 100, energyVersion: 0, examDates: {},
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
 };
 
@@ -184,8 +184,14 @@ load();
 if (!state.frqDrafts || typeof state.frqDrafts !== "object" || Array.isArray(state.frqDrafts)) {
   state.frqDrafts = {};
 }
-if (!Number.isFinite(state.energy)) state.energy = 0;
+if (state.energyVersion < 1) {
+  state.energy = 100;
+  state.energyVersion = 1;
+} else if (!Number.isFinite(state.energy)) {
+  state.energy = 100;
+}
 state.energy = Math.max(0, Math.min(100, state.energy));
+save();
 if (!state.examDates || typeof state.examDates !== "object" || Array.isArray(state.examDates)) {
   state.examDates = {};
 }
@@ -287,6 +293,20 @@ function activeQuestion(){
 
 function rechargeEnergy(){
   state.energy = Math.min(100, state.energy + ENERGY_PER_QUESTION);
+  updateEnergyUI();
+  save();
+}
+
+function drainEnergy(){
+  state.energy = Math.max(0, state.energy - ENERGY_PER_QUESTION);
+  updateEnergyUI();
+}
+
+function updateEnergyUI(){
+  document.getElementById("homeEnergy").style.width = `${state.energy}%`;
+  document.getElementById("homeEnergyLabel").textContent = `${state.energy}%`;
+  document.getElementById("practiceEnergy").style.width = `${state.energy}%`;
+  document.getElementById("practiceEnergyLabel").textContent = `${state.energy}%`;
 }
 
 function currentBossTheme(){
@@ -307,6 +327,7 @@ function showPage(id){
   if (id === "boss") renderBossQuestion();
   if (id === "frq") renderFrqPractice();
   updateUI();
+  save();
 }
 
 function selectCourse(course){
@@ -430,7 +451,6 @@ function startBossBattle(){
   state.currentQuestionIndex = 0;
   state.runXp = 0;
   state.bossHealth = 160;
-  state.playerHealth = 100;
   state.currentRun = createQuestionRun();
   showPage("boss");
   renderBossQuestion();
@@ -477,12 +497,13 @@ function renderBossQuestion(){
 function updateBattleBars(){
   const bossFill = document.getElementById("bossHpBar");
   const playerFill = document.getElementById("playerHpBar");
+  const playerHealth = state.energy;
   bossFill.style.width = `${Math.max(0, state.bossHealth) / 160 * 100}%`;
-  playerFill.style.width = `${Math.max(0, state.playerHealth)}%`;
+  playerFill.style.width = `${playerHealth}%`;
   document.getElementById("bossHpMeter").setAttribute("aria-valuenow", state.bossHealth);
-  document.getElementById("playerHpMeter").setAttribute("aria-valuenow", state.playerHealth);
+  document.getElementById("playerHpMeter").setAttribute("aria-valuenow", playerHealth);
   document.getElementById("bossHpValue").textContent = `${state.bossHealth}/160`;
-  document.getElementById("playerHpValue").textContent = `${state.playerHealth}/100`;
+  document.getElementById("playerHpValue").textContent = `${playerHealth}/100`;
   document.getElementById("bossFightLabel").textContent = `${state.bossHealth}/160`;
 }
 
@@ -558,8 +579,8 @@ function answerQuestion(choice, mode = state.mode){
         completeUnit();
       }
     } else {
+      drainEnergy();
       if (!state.reviewed.includes(q.id)) state.reviewed.push(q.id);
-      state.playerHealth = Math.max(0, state.playerHealth - 15);
       animateBossAttack();
       document.getElementById("bossFeedback").textContent = `✗ THE BOSS STRIKES! ${q.explain}`;
       document.getElementById("bossFeedback").className = "feedback bad";
@@ -567,16 +588,16 @@ function answerQuestion(choice, mode = state.mode){
       buttons[q.correct].classList.add("correct");
       updateBattleBars();
 
-      if (state.playerHealth <= 0) {
+      if (state.energy <= 0) {
         document.getElementById("bossFeedback").textContent = "☠ YOU WERE DEFEATED. THE BOSS WINS THIS ROUND.";
       }
     }
 
     const lastBossQuestion = state.currentQuestionIndex === QUESTIONS_PER_RUN - 1;
-    if (lastBossQuestion && state.bossHealth > 0 && state.playerHealth > 0) {
+    if (lastBossQuestion && state.bossHealth > 0 && state.energy > 0) {
       document.getElementById("bossFeedback").textContent = "THE BOSS ESCAPED THIS ROUND. Clear the unit in the Practice Arena to earn its level.";
     }
-    document.getElementById("bossNextBtn").textContent = state.playerHealth <= 0 ? "RETREAT" : state.bossHealth <= 0 ? "CLAIM VICTORY" : lastBossQuestion ? "END BATTLE" : "NEXT ATTACK ▶";
+    document.getElementById("bossNextBtn").textContent = state.energy <= 0 ? "RETREAT" : state.bossHealth <= 0 ? "CLAIM VICTORY" : lastBossQuestion ? "END BATTLE" : "NEXT ATTACK ▶";
     document.getElementById("bossNextBtn").classList.remove("hidden");
     save();
     updateUI();
@@ -625,7 +646,7 @@ function nextQuestion(){
 }
 
 function nextBossQuestion(){
-  if (state.playerHealth <= 0 || state.bossHealth <= 0 || state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
+  if (state.energy <= 0 || state.bossHealth <= 0 || state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
     showPage("courses");
     return;
   }
@@ -659,10 +680,7 @@ function updateUI(){
   document.getElementById("homeAccuracy").textContent = `${accuracy}%`;
   document.getElementById("homeStreak").textContent = `${state.streak} DAY${state.streak === 1 ? "" : "S"}`;
   document.getElementById("homeXp").textContent = state.xp;
-  document.getElementById("homeEnergy").style.width = `${state.energy}%`;
-  document.getElementById("homeEnergyLabel").textContent = `${state.energy}%`;
-  document.getElementById("practiceEnergy").style.width = `${state.energy}%`;
-  document.getElementById("practiceEnergyLabel").textContent = `${state.energy}%`;
+  updateEnergyUI();
   document.getElementById("homeCourse").textContent = state.currentCourse;
   document.getElementById("homeUnit").textContent = `${state.currentUnit.toUpperCase()} MINI BOSS`;
   document.getElementById("navLevel").textContent = `LVL ${state.level}`;

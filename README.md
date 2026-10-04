@@ -22,7 +22,7 @@ This is a front-end prototype for the AP Arcade idea.
 - Character profile with class selection and level-unlocked outfits and weapons
 - 15-question MCQ runs with no repeated item in a run
 - Saved FRQ response drafts with revealable scoring guides
-- Persistent energy meter recharged by answering practice MCQs (boss victories do not reset it)
+- Energy meter starts full and persists between sessions; it is also the player's HP in boss battles. Practice MCQs recharge it, and wrong boss answers drain it.
 - One-time level and XP rewards for completing a course unit
 - Character sprite that attacks and takes damage in boss battles
 - Review/missed-question system
