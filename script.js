@@ -686,6 +686,7 @@ function updateUI(){
   document.getElementById("navLevel").textContent = `LVL ${state.level}`;
   document.getElementById("navXp").style.width = `${(state.xp % 200) / 2}%`;
   document.getElementById("navProfileName").textContent = state.profile.name || "PLAYER_001";
+  document.getElementById("homeWelcomeName").textContent = state.profile.name || "PLAYER_001";
   renderProfile();
 }
 
@@ -720,6 +721,7 @@ function setProfileName(value){
   state.profile.name = value.trim().slice(0, 18) || "PLAYER_001";
   save();
   document.getElementById("navProfileName").textContent = state.profile.name;
+  document.getElementById("homeWelcomeName").textContent = state.profile.name;
 }
 
 function chooseClass(characterClass){
