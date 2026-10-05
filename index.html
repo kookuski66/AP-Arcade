@@ -244,16 +244,18 @@
         <label>FOCUS COURSE
           <select id="plannerCourse" onchange="updatePlannerPreference('focusCourse', this.value)"></select>
         </label>
-        <label>SESSIONS THIS WEEK
-          <select id="plannerSessions" onchange="updatePlannerPreference('sessionsPerWeek', this.value)">
-            <option value="3">3 sessions · steady</option>
-            <option value="5">5 sessions · balanced</option>
-            <option value="7">7 sessions · daily</option>
-          </select>
+        <label>UNIT FOCUS
+          <select id="plannerUnit" onchange="updatePlannerPreference('targetUnit', this.value)"></select>
         </label>
+        <fieldset class="planner-days"><legend>STUDY DAYS</legend><div id="plannerDayChoices"></div></fieldset>
       </div>
       <p id="plannerSummary" class="planner-summary"></p>
       <div id="plannerGrid" class="planner-grid"></div>
+      <div class="planner-transfer">
+        <div><strong>TAKE YOUR PLAN WITH YOU</strong><p>Export your local progress and import it on another device.</p></div>
+        <button class="pixel-btn" type="button" onclick="exportProgress()">EXPORT SAVE</button>
+        <label class="pixel-btn import-save">IMPORT SAVE<input type="file" accept="application/json,.json" onchange="importProgress(this.files[0]); this.value=''"></label>
+      </div>
     </section>
   </main>
 

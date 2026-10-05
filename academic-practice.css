@@ -194,6 +194,34 @@
   outline-offset: 2px;
 }
 
+.planner-days {
+  flex: 1 1 100%;
+  margin: 0;
+  padding: 10px 12px 12px;
+  border: 1px solid rgba(179, 140, 255, .4);
+  color: #b8ffdf;
+  font: 9px "Press Start 2P", monospace;
+}
+
+.planner-days > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.planner-days label {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 6px;
+  font: 16px "VT323", monospace;
+}
+
+.planner-days input {
+  accent-color: #5ce1b6;
+}
+
 .planner-summary {
   margin: 0 0 18px;
   padding: 14px 16px;
@@ -222,6 +250,11 @@
 #planner .day-card.has-quest {
   border-color: rgba(184, 255, 223, .45);
   box-shadow: inset 0 3px 0 rgba(184, 255, 223, .55);
+}
+
+#planner .day-card.completed {
+  border-color: #f1cf72;
+  box-shadow: inset 0 3px 0 #f1cf72;
 }
 
 #planner .day-card.recovery-day {
@@ -258,8 +291,58 @@
   margin-top: 12px;
 }
 
+.planner-transfer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px solid rgba(179, 140, 255, .4);
+  background: rgba(24, 19, 43, .82);
+}
+
+.planner-transfer > div {
+  flex: 1 1 250px;
+}
+
+.planner-transfer strong {
+  color: #b8ffdf;
+  font: 9px "Press Start 2P", monospace;
+  line-height: 1.7;
+}
+
+.planner-transfer p {
+  margin: 8px 0 0;
+}
+
+.planner-transfer .pixel-btn {
+  margin: 0;
+}
+
+.import-save {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  cursor: pointer;
+}
+
+.import-save input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
 @media (max-width: 600px) {
   #planner .day-card {
     min-height: 0;
+  }
+
+  .planner-transfer > .pixel-btn {
+    flex: 1 1 100%;
+    justify-content: center;
   }
 }

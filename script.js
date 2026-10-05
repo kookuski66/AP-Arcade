@@ -165,7 +165,8 @@ let state = {
   bossHealth: 160, mode: "practice", currentReview: false,
   mastery: {}, completedUnits: [], currentRun: [],
   currentFrqIndex: 0, frqDrafts: {}, energy: 100, energyVersion: 0, examDates: {},
-  plannerPrefs: { focusCourse: "AP Physics 1", sessionsPerWeek: 5 },
+  plannerPrefs: { focusCourse: "AP Physics 1", targetUnit: "auto", studyDays: [1, 2, 3, 4, 5] },
+  plannerCompleted: {},
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
 };
 
@@ -197,15 +198,29 @@ if (!state.examDates || typeof state.examDates !== "object" || Array.isArray(sta
   state.examDates = {};
 }
 if (!state.plannerPrefs || typeof state.plannerPrefs !== "object" || Array.isArray(state.plannerPrefs)) {
-  state.plannerPrefs = { focusCourse: state.currentCourse, sessionsPerWeek: 5 };
+  state.plannerPrefs = { focusCourse: state.currentCourse, targetUnit: "auto", studyDays: [1, 2, 3, 4, 5] };
 }
 if (!courseUnits[state.plannerPrefs.focusCourse]) {
   state.plannerPrefs.focusCourse = state.currentCourse;
 }
-if (![3, 5, 7].includes(Number(state.plannerPrefs.sessionsPerWeek))) {
-  state.plannerPrefs.sessionsPerWeek = 5;
+if (!Array.isArray(state.plannerPrefs.studyDays)) {
+  const oldCount = [3, 5, 7].includes(Number(state.plannerPrefs.sessionsPerWeek))
+    ? Number(state.plannerPrefs.sessionsPerWeek) : 5;
+  state.plannerPrefs.studyDays = Array.from({ length: oldCount }, (_, index) =>
+    Math.round(index * 6 / (oldCount - 1))
+  );
 }
-state.plannerPrefs.sessionsPerWeek = Number(state.plannerPrefs.sessionsPerWeek);
+state.plannerPrefs.studyDays = [...new Set(state.plannerPrefs.studyDays.filter(day =>
+  Number.isInteger(day) && day >= 0 && day <= 6
+))].sort((a, b) => a - b);
+if (!state.plannerPrefs.studyDays.length) state.plannerPrefs.studyDays = [1, 2, 3, 4, 5];
+if (state.plannerPrefs.targetUnit !== "auto"
+    && !(courseUnits[state.plannerPrefs.focusCourse] || []).some(unit => unit[0] === state.plannerPrefs.targetUnit)) {
+  state.plannerPrefs.targetUnit = "auto";
+}
+if (!state.plannerCompleted || typeof state.plannerCompleted !== "object" || Array.isArray(state.plannerCompleted)) {
+  state.plannerCompleted = {};
+}
 const previousPhysicsUnitNumbers = { 3: 2, 4: 3, 5: 4, 6: 7 };
 state.completedUnits = [...new Set((Array.isArray(state.completedUnits) ? state.completedUnits : []).map(key => {
   const separator = key.lastIndexOf("::");
@@ -451,7 +466,10 @@ function moveFrq(direction){
   const nextIndex = state.currentFrqIndex + direction;
   if (nextIndex < 0) return;
   if (nextIndex >= FRQS_PER_UNIT) {
-    showPage("courses");
+    finishPlannerQuest();
+    const returnToPlanner = state.plannerReturnPending;
+    state.plannerReturnPending = false;
+    showPage(returnToPlanner ? "planner" : "courses");
     return;
   }
   state.currentFrqIndex = nextIndex;
@@ -589,6 +607,7 @@ function answerQuestion(choice, mode = state.mode){
         state.runXp += 100;
         document.getElementById("bossFeedback").textContent = "★ BOSS DEFEATED! +100 BONUS XP ★";
         completeUnit();
+        finishPlannerQuest();
       }
     } else {
       drainEnergy();
@@ -643,14 +662,19 @@ function answerQuestion(choice, mode = state.mode){
   document.getElementById("practiceProgressText").textContent = `${state.currentQuestionIndex + 1} / ${QUESTIONS_PER_RUN}`;
   document.getElementById("practiceProgress").style.width = `${((state.currentQuestionIndex + 1) / QUESTIONS_PER_RUN) * 100}%`;
   document.getElementById("runXp").textContent = state.runXp;
-  if (lastPracticeQuestion) completeUnit();
+  if (lastPracticeQuestion) {
+    completeUnit();
+    finishPlannerQuest();
+  }
   save();
   updateUI();
 }
 
 function nextQuestion(){
   if (state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
-    showPage("courses");
+    const returnToPlanner = state.plannerReturnPending;
+    state.plannerReturnPending = false;
+    showPage(returnToPlanner ? "planner" : "courses");
     return;
   }
   state.currentQuestionIndex += 1;
@@ -659,7 +683,9 @@ function nextQuestion(){
 
 function nextBossQuestion(){
   if (state.energy <= 0 || state.bossHealth <= 0 || state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
-    showPage("courses");
+    const returnToPlanner = state.plannerReturnPending;
+    state.plannerReturnPending = false;
+    showPage(returnToPlanner ? "planner" : "courses");
     return;
   }
   state.currentQuestionIndex += 1;
@@ -820,9 +846,24 @@ function renderAnalytics(){
 function updatePlannerPreference(key, value){
   if (key === "focusCourse" && courseUnits[value]) {
     state.plannerPrefs.focusCourse = value;
-  } else if (key === "sessionsPerWeek" && [3, 5, 7].includes(Number(value))) {
-    state.plannerPrefs.sessionsPerWeek = Number(value);
+    state.plannerPrefs.targetUnit = "auto";
+  } else if (key === "targetUnit" && (value === "auto"
+      || (courseUnits[state.plannerPrefs.focusCourse] || []).some(unit => unit[0] === value))) {
+    state.plannerPrefs.targetUnit = value;
   }
+  save();
+  renderPlanner();
+}
+
+function togglePlannerDay(day, enabled){
+  const days = new Set(state.plannerPrefs.studyDays);
+  if (enabled) days.add(day);
+  else days.delete(day);
+  if (!days.size) {
+    renderPlanner();
+    return;
+  }
+  state.plannerPrefs.studyDays = [...days].sort((a, b) => a - b);
   save();
   renderPlanner();
 }
@@ -843,6 +884,8 @@ function getPlannerUnitProgress(course){
 }
 
 function plannerTargetUnit(units){
+  const preferred = state.plannerPrefs.targetUnit;
+  if (preferred !== "auto") return units.find(unit => unit.unit === preferred) || units[0];
   const unitsWithMisses = units.filter(unit => unit.reviewCount > 0);
   if (unitsWithMisses.length) {
     return unitsWithMisses.sort((a, b) => b.reviewCount - a.reviewCount || a.index - b.index)[0];
@@ -892,6 +935,8 @@ function createPlannerQuest(kind, course, target, exam){
 function startPlannerQuest(quest){
   state.currentCourse = quest.course;
   state.currentUnit = quest.unit;
+  state.activePlannerQuest = { date: quest.date, kind: quest.kind };
+  save();
   if (quest.kind === "review") {
     showPage("analytics");
     document.getElementById("reviewList").scrollIntoView({ behavior: "smooth", block: "center" });
@@ -916,9 +961,10 @@ function startPlannerQuest(quest){
 
 function renderPlanner(){
   const courseSelect = document.getElementById("plannerCourse");
-  const sessionsSelect = document.getElementById("plannerSessions");
+  const unitSelect = document.getElementById("plannerUnit");
+  const dayChoices = document.getElementById("plannerDayChoices");
   const grid = document.getElementById("plannerGrid");
-  if (!courseSelect || !sessionsSelect || !grid) return;
+  if (!courseSelect || !unitSelect || !dayChoices || !grid) return;
   courseSelect.replaceChildren(...Object.keys(courseUnits).map(course => {
     const option = document.createElement("option");
     option.value = course;
@@ -926,57 +972,72 @@ function renderPlanner(){
     return option;
   }));
   courseSelect.value = state.plannerPrefs.focusCourse;
-  sessionsSelect.value = String(state.plannerPrefs.sessionsPerWeek);
-
   const course = state.plannerPrefs.focusCourse;
+  unitSelect.replaceChildren();
+  const autoOption = document.createElement("option");
+  autoOption.value = "auto";
+  autoOption.textContent = "Adaptive · choose my next unit";
+  unitSelect.append(autoOption);
+  (courseUnits[course] || []).forEach(unit => {
+    const option = document.createElement("option");
+    option.value = unit[0];
+    option.textContent = `${unit[0]} · ${unit[1]}`;
+    unitSelect.append(option);
+  });
+  unitSelect.value = state.plannerPrefs.targetUnit;
+  dayChoices.replaceChildren();
+  ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].forEach((label, day) => {
+    const choice = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = state.plannerPrefs.studyDays.includes(day);
+    checkbox.addEventListener("change", () => togglePlannerDay(day, checkbox.checked));
+    choice.append(checkbox, document.createTextNode(label));
+    dayChoices.append(choice);
+  });
   const units = getPlannerUnitProgress(course);
   const target = plannerTargetUnit(units);
   const exam = getPlannerExam(course);
-  const availableReviews = target.reviewCount;
-  const sessions = state.plannerPrefs.sessionsPerWeek;
+  const sessions = state.plannerPrefs.studyDays;
   const today = new Date();
   const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  const selectedDays = new Set(Array.from({ length: sessions }, (_, index) =>
-    Math.round(index * 6 / (sessions - 1))
-  ));
+  const selectedDays = new Set(sessions);
   const sequence = exam && exam.days <= 21
-    ? [
-      "practice",
-      availableReviews ? "review" : "boss",
-      "boss",
-      "frq",
-      "practice",
-      availableReviews ? "review" : "practice",
-      "boss"
-    ]
-    : [
-      "practice",
-      availableReviews ? "review" : "frq",
-      "practice",
-      "boss",
-      "frq",
-      availableReviews ? "review" : "practice",
-      "boss"
-    ];
+  ? ["practice", "boss", "boss", "frq", "practice", "practice", "boss"]
+  : ["practice", "frq", "practice", "boss", "frq", "practice", "boss"];
   const summary = document.getElementById("plannerSummary");
   summary.textContent = exam
-    ? `${course} focus · ${sessions} sessions · exam in ${exam.days} days · starting with ${target.unit}: ${target.title}`
-    : `${course} focus · ${sessions} sessions · starting with ${target.unit}: ${target.title}`;
+    ? `${course} focus · ${sessions.length} sessions · exam in ${exam.days} days · ${state.plannerPrefs.targetUnit === "auto" ? "adaptive unit" : target.unit}: ${target.title}`
+    : `${course} focus · ${sessions.length} sessions · ${state.plannerPrefs.targetUnit === "auto" ? "adaptive unit" : target.unit}: ${target.title}`;
 
   grid.replaceChildren();
   for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
     const date = new Date(today);
     date.setDate(today.getDate() + dayIndex);
+    const dateKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    const scheduled = selectedDays.has(date.getDay());
+    let quest = null;
+    let done = false;
+    if (scheduled) {
+      const orderedUnits = [...units].sort((a, b) =>
+        b.reviewCount - a.reviewCount || Number(a.completed) - Number(b.completed) || a.index - b.index
+      );
+      const dayTarget = state.plannerPrefs.targetUnit === "auto"
+        ? orderedUnits[[...selectedDays].indexOf(date.getDay()) % orderedUnits.length]
+        : target;
+      const kind = sequence[[...selectedDays].indexOf(date.getDay())];
+      quest = createPlannerQuest(kind, course, dayTarget, exam);
+      quest.course = course;
+      quest.unit = dayTarget.unit;
+      quest.date = `${dateKey}::${course}::${dayTarget.unit}::${kind}`;
+      done = Boolean(state.plannerCompleted[quest.date]);
+    }
     const card = document.createElement("article");
-    card.className = `day-card${selectedDays.has(dayIndex) ? " has-quest" : " recovery-day"}`;
+    card.className = `day-card${scheduled ? " has-quest" : " recovery-day"}${done ? " completed" : ""}`;
     const dateLabel = document.createElement("small");
     dateLabel.textContent = `${dayIndex === 0 ? "TODAY · " : dayIndex === 1 ? "TOMORROW · " : ""}${weekdays[date.getDay()]} · ${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
     card.append(dateLabel);
-    if (selectedDays.has(dayIndex)) {
-      const kind = sequence[[...selectedDays].indexOf(dayIndex)];
-      const quest = createPlannerQuest(kind, course, target, exam);
-      quest.course = course;
-      quest.unit = target.unit;
+    if (scheduled) {
       const title = document.createElement("h3");
       title.textContent = `${quest.icon} ${quest.title}`;
       const detail = document.createElement("p");
@@ -987,7 +1048,8 @@ function renderPlanner(){
       const action = document.createElement("button");
       action.type = "button";
       action.className = "pixel-btn primary";
-      action.textContent = quest.action;
+      action.textContent = done ? "✓ SESSION COMPLETE" : quest.action;
+      action.disabled = done;
       action.addEventListener("click", () => startPlannerQuest(quest));
       card.append(title, detail, reason, action);
     } else {
@@ -999,6 +1061,46 @@ function renderPlanner(){
     }
     grid.append(card);
   }
+}
+
+function finishPlannerQuest(){
+  const active = state.activePlannerQuest;
+  if (!active) return;
+  state.plannerCompleted[active.date] = true;
+  delete state.activePlannerQuest;
+  state.plannerReturnPending = true;
+  save();
+}
+
+function exportProgress(){
+  const file = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(file);
+  link.download = "ap-arcade-save.json";
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+function importProgress(file){
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      const imported = JSON.parse(String(reader.result));
+      if (!imported || typeof imported !== "object" || Array.isArray(imported)
+          || !imported.profile || typeof imported.profile !== "object"
+          || !Number.isFinite(imported.xp) || !Number.isFinite(imported.questions)
+          || !imported.plannerPrefs || typeof imported.plannerPrefs !== "object") {
+        throw new Error("This file does not look like an AP Arcade save.");
+      }
+      localStorage.setItem("apStemQuestState", JSON.stringify(imported));
+      window.location.reload();
+    } catch (error) {
+      window.alert(`Could not import save: ${error.message}`);
+    }
+  });
+  reader.addEventListener("error", () => window.alert("Could not read the selected save file."));
+  reader.readAsText(file);
 }
 
 function closeModal(){

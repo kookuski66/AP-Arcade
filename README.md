@@ -27,8 +27,8 @@ This is a front-end prototype for the AP Arcade idea.
 - Character sprite that attacks and takes damage in boss battles
 - Review/missed-question system
 - Basic analytics
-- Adaptive weekly study planner that prioritizes saved mistakes, course progress, and upcoming exam dates, with quest buttons that open the matching practice, FRQ, boss battle, or review
-- Local browser save using localStorage
+- Adaptive weekly study planner with selectable courses, units, study days, exam-aware quests, and completion tracking
+- Local browser save using localStorage, with JSON export/import to transfer progress between devices
 
 ## Important
 The original practice items are authored in `academic-content.js`; they are not copied from College Board materials. The course maps follow the published AP unit frameworks. Subject-matter experts should still review the questions, answer keys, scoring guides, and exam alignment against current AP Course and Exam Descriptions before publishing.
