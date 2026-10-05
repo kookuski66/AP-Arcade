@@ -159,3 +159,107 @@
     flex: 1 1 100%;
   }
 }
+
+.planner-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 auto 14px;
+  padding: 18px;
+  border: 1px solid rgba(184, 255, 223, .28);
+  background: rgba(24, 19, 43, .82);
+}
+
+.planner-controls label {
+  display: grid;
+  flex: 1 1 240px;
+  gap: 9px;
+  color: #b8ffdf;
+  font: 9px "Press Start 2P", monospace;
+  line-height: 1.7;
+}
+
+.planner-controls select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(179, 140, 255, .55);
+  background: #100d1d;
+  color: #fff;
+  font: 16px "VT323", monospace;
+}
+
+.planner-controls select:focus {
+  outline: 2px solid #b8ffdf;
+  outline-offset: 2px;
+}
+
+.planner-summary {
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border-left: 3px solid #f1cf72;
+  background: rgba(241, 207, 114, .08);
+  color: #f5e7b5;
+  line-height: 1.5;
+}
+
+#planner .planner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+
+#planner .day-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 245px;
+  padding: 18px;
+  border: 1px solid rgba(179, 140, 255, .4);
+  background: rgba(24, 19, 43, .9);
+}
+
+#planner .day-card.has-quest {
+  border-color: rgba(184, 255, 223, .45);
+  box-shadow: inset 0 3px 0 rgba(184, 255, 223, .55);
+}
+
+#planner .day-card.recovery-day {
+  justify-content: center;
+  border-style: dashed;
+  opacity: .78;
+}
+
+#planner .day-card > small {
+  color: #b8ffdf;
+  font: 8px "Press Start 2P", monospace;
+  line-height: 1.8;
+}
+
+#planner .day-card h3 {
+  margin: 18px 0 8px;
+  color: #fff1c8;
+  font-size: 1.35rem;
+}
+
+#planner .day-card p {
+  margin: 5px 0 12px;
+  line-height: 1.45;
+}
+
+#planner .day-card .planner-reason {
+  margin-top: auto;
+  color: #b8ffdf;
+  font-size: 1.05rem;
+}
+
+#planner .day-card button {
+  width: 100%;
+  margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+  #planner .day-card {
+    min-height: 0;
+  }
+}

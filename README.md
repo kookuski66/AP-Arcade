@@ -27,7 +27,7 @@ This is a front-end prototype for the AP Arcade idea.
 - Character sprite that attacks and takes damage in boss battles
 - Review/missed-question system
 - Basic analytics
-- Weekly study planner
+- Adaptive weekly study planner that prioritizes saved mistakes, course progress, and upcoming exam dates, with quest buttons that open the matching practice, FRQ, boss battle, or review
 - Local browser save using localStorage
 
 ## Important

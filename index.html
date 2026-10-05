@@ -239,16 +239,21 @@
     </section>
 
     <section id="planner" class="page">
-      <div class="page-header"><div><div class="eyebrow">YOUR WEEKLY QUEST</div><h1>STUDY PLANNER</h1></div><button class="pixel-btn" onclick="resetPlanner()">RESET WEEK</button></div>
-      <div class="planner-grid">
-        <div class="day-card"><small>MONDAY</small><h3>⚡ PHYSICS</h3><p>15 multiple-choice questions</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>TUESDAY</small><h3>📖 REVIEW</h3><p>Review your 5 most recent mistakes</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>WEDNESDAY</small><h3>⚔ MINI BOSS</h3><p>10-question timed challenge</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>THURSDAY</small><h3>⚗ CHEMISTRY</h3><p>Unit 2 concept review + 10 questions</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>FRIDAY</small><h3>🎯 MIXED SET</h3><p>20 questions from your weak areas</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>SATURDAY</small><h3>👑 BOSS FIGHT</h3><p>Full unit challenge</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
-        <div class="day-card"><small>SUNDAY</small><h3>💾 RECOVERY</h3><p>Review, plan & prepare for next week</p><button onclick="completeDay(this)">COMPLETE QUEST</button></div>
+      <div class="page-header"><div><div class="eyebrow">BUILT AROUND YOUR PROGRESS</div><h1>STUDY PLANNER</h1></div></div>
+      <div class="planner-controls">
+        <label>FOCUS COURSE
+          <select id="plannerCourse" onchange="updatePlannerPreference('focusCourse', this.value)"></select>
+        </label>
+        <label>SESSIONS THIS WEEK
+          <select id="plannerSessions" onchange="updatePlannerPreference('sessionsPerWeek', this.value)">
+            <option value="3">3 sessions · steady</option>
+            <option value="5">5 sessions · balanced</option>
+            <option value="7">7 sessions · daily</option>
+          </select>
+        </label>
       </div>
+      <p id="plannerSummary" class="planner-summary"></p>
+      <div id="plannerGrid" class="planner-grid"></div>
     </section>
   </main>
 

@@ -165,6 +165,7 @@ let state = {
   bossHealth: 160, mode: "practice", currentReview: false,
   mastery: {}, completedUnits: [], currentRun: [],
   currentFrqIndex: 0, frqDrafts: {}, energy: 100, energyVersion: 0, examDates: {},
+  plannerPrefs: { focusCourse: "AP Physics 1", sessionsPerWeek: 5 },
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
 };
 
@@ -195,6 +196,16 @@ save();
 if (!state.examDates || typeof state.examDates !== "object" || Array.isArray(state.examDates)) {
   state.examDates = {};
 }
+if (!state.plannerPrefs || typeof state.plannerPrefs !== "object" || Array.isArray(state.plannerPrefs)) {
+  state.plannerPrefs = { focusCourse: state.currentCourse, sessionsPerWeek: 5 };
+}
+if (!courseUnits[state.plannerPrefs.focusCourse]) {
+  state.plannerPrefs.focusCourse = state.currentCourse;
+}
+if (![3, 5, 7].includes(Number(state.plannerPrefs.sessionsPerWeek))) {
+  state.plannerPrefs.sessionsPerWeek = 5;
+}
+state.plannerPrefs.sessionsPerWeek = Number(state.plannerPrefs.sessionsPerWeek);
 const previousPhysicsUnitNumbers = { 3: 2, 4: 3, 5: 4, 6: 7 };
 state.completedUnits = [...new Set((Array.isArray(state.completedUnits) ? state.completedUnits : []).map(key => {
   const separator = key.lastIndexOf("::");
@@ -326,6 +337,7 @@ function showPage(id){
   if (id === "practice") renderPracticeQuestion();
   if (id === "boss") renderBossQuestion();
   if (id === "frq") renderFrqPractice();
+  if (id === "planner") renderPlanner();
   updateUI();
   save();
 }
@@ -805,23 +817,188 @@ function renderAnalytics(){
   }).join("") : `<p style="color:#8d83a5">No questions marked yet. Missed questions will automatically appear here.</p>`;
 }
 
-function completeDay(btn){
-  const card = btn.closest(".day-card");
-  if (!card.classList.contains("completed")) {
-    card.classList.add("completed");
-    btn.textContent = "✓ QUEST COMPLETE";
-    state.xp += 25;
-    state.level = Math.floor(state.xp / 200) + 1;
-    save();
-    updateUI();
+function updatePlannerPreference(key, value){
+  if (key === "focusCourse" && courseUnits[value]) {
+    state.plannerPrefs.focusCourse = value;
+  } else if (key === "sessionsPerWeek" && [3, 5, 7].includes(Number(value))) {
+    state.plannerPrefs.sessionsPerWeek = Number(value);
   }
+  save();
+  renderPlanner();
 }
 
-function resetPlanner(){
-  document.querySelectorAll(".day-card").forEach(c => {
-    c.classList.remove("completed");
-    c.querySelector("button").textContent = "COMPLETE QUEST";
+function getPlannerUnitProgress(course){
+  const reviewedIds = new Set(state.reviewed);
+  return (courseUnits[course] || []).map((unit, index) => {
+    const questionIds = new Set(getQuestionPool(course, unit[0]).map(question => question.id));
+    const reviewCount = [...reviewedIds].filter(id => questionIds.has(id)).length;
+    return {
+      unit: unit[0],
+      title: unit[1],
+      index,
+      reviewCount,
+      completed: state.completedUnits.includes(`${course}::${unit[0]}`)
+    };
   });
+}
+
+function plannerTargetUnit(units){
+  const unitsWithMisses = units.filter(unit => unit.reviewCount > 0);
+  if (unitsWithMisses.length) {
+    return unitsWithMisses.sort((a, b) => b.reviewCount - a.reviewCount || a.index - b.index)[0];
+  }
+  return units.find(unit => !unit.completed) || units[0];
+}
+
+function getPlannerExam(course){
+  const date = parseExamDate(state.examDates[course]);
+  if (!date || date.getTime() <= Date.now()) return null;
+  return { date, days: Math.ceil((date.getTime() - Date.now()) / 86400000) };
+}
+
+function createPlannerQuest(kind, course, target, exam){
+  const unitName = `${target.unit} · ${target.title}`;
+  if (kind === "review") {
+    return {
+      kind, icon: "📖", title: "Mistake review", detail: `Revisit ${target.reviewCount} missed ${target.reviewCount === 1 ? "question" : "questions"} in ${unitName}.`,
+      reason: "Your saved review list is shaping this session.", action: "OPEN REVIEW ▶"
+    };
+  }
+  if (kind === "frq") {
+    return {
+      kind, icon: "✍️", title: "Explain it in an FRQ", detail: `Build written-response skill with a prompt from ${unitName}.`,
+      reason: "A change of format helps you practice applying the same ideas.", action: "START FRQ ▶"
+    };
+  }
+  if (kind === "boss") {
+    return {
+      kind, icon: "👑", title: "Unit boss battle", detail: `Take on a full challenge for ${unitName}.`,
+      reason: exam && exam.days <= 21
+        ? `Your ${course} exam is in ${exam.days} days—use this as an exam-readiness check.`
+        : "Use a challenge run to check how well this unit is sticking.",
+      action: "ENTER BATTLE ▶"
+    };
+  }
+  const detail = `Run a 15-question multiple-choice set for ${unitName}.`;
+  return {
+    kind: "practice", icon: "🎯", title: "Targeted practice", detail,
+    reason: target.reviewCount
+      ? `This unit has the most questions saved for review (${target.reviewCount}).`
+      : target.completed ? "Core units are cleared; keep this one sharp." : "This is your next uncleared unit.",
+    action: "START PRACTICE ▶"
+  };
+}
+
+function startPlannerQuest(quest){
+  state.currentCourse = quest.course;
+  state.currentUnit = quest.unit;
+  if (quest.kind === "review") {
+    showPage("analytics");
+    document.getElementById("reviewList").scrollIntoView({ behavior: "smooth", block: "center" });
+    return;
+  }
+  if (quest.kind === "frq") {
+    state.mode = "frq";
+    state.currentFrqIndex = 0;
+    showPage("frq");
+    return;
+  }
+  if (quest.kind === "boss") {
+    startBossBattle();
+    return;
+  }
+  state.mode = "practice";
+  state.currentQuestionIndex = 0;
+  state.runXp = 0;
+  state.currentRun = createQuestionRun();
+  showPage("practice");
+}
+
+function renderPlanner(){
+  const courseSelect = document.getElementById("plannerCourse");
+  const sessionsSelect = document.getElementById("plannerSessions");
+  const grid = document.getElementById("plannerGrid");
+  if (!courseSelect || !sessionsSelect || !grid) return;
+  courseSelect.replaceChildren(...Object.keys(courseUnits).map(course => {
+    const option = document.createElement("option");
+    option.value = course;
+    option.textContent = course;
+    return option;
+  }));
+  courseSelect.value = state.plannerPrefs.focusCourse;
+  sessionsSelect.value = String(state.plannerPrefs.sessionsPerWeek);
+
+  const course = state.plannerPrefs.focusCourse;
+  const units = getPlannerUnitProgress(course);
+  const target = plannerTargetUnit(units);
+  const exam = getPlannerExam(course);
+  const availableReviews = target.reviewCount;
+  const sessions = state.plannerPrefs.sessionsPerWeek;
+  const today = new Date();
+  const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const selectedDays = new Set(Array.from({ length: sessions }, (_, index) =>
+    Math.round(index * 6 / (sessions - 1))
+  ));
+  const sequence = exam && exam.days <= 21
+    ? [
+      "practice",
+      availableReviews ? "review" : "boss",
+      "boss",
+      "frq",
+      "practice",
+      availableReviews ? "review" : "practice",
+      "boss"
+    ]
+    : [
+      "practice",
+      availableReviews ? "review" : "frq",
+      "practice",
+      "boss",
+      "frq",
+      availableReviews ? "review" : "practice",
+      "boss"
+    ];
+  const summary = document.getElementById("plannerSummary");
+  summary.textContent = exam
+    ? `${course} focus · ${sessions} sessions · exam in ${exam.days} days · starting with ${target.unit}: ${target.title}`
+    : `${course} focus · ${sessions} sessions · starting with ${target.unit}: ${target.title}`;
+
+  grid.replaceChildren();
+  for (let dayIndex = 0; dayIndex < 7; dayIndex += 1) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + dayIndex);
+    const card = document.createElement("article");
+    card.className = `day-card${selectedDays.has(dayIndex) ? " has-quest" : " recovery-day"}`;
+    const dateLabel = document.createElement("small");
+    dateLabel.textContent = `${dayIndex === 0 ? "TODAY · " : dayIndex === 1 ? "TOMORROW · " : ""}${weekdays[date.getDay()]} · ${date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+    card.append(dateLabel);
+    if (selectedDays.has(dayIndex)) {
+      const kind = sequence[[...selectedDays].indexOf(dayIndex)];
+      const quest = createPlannerQuest(kind, course, target, exam);
+      quest.course = course;
+      quest.unit = target.unit;
+      const title = document.createElement("h3");
+      title.textContent = `${quest.icon} ${quest.title}`;
+      const detail = document.createElement("p");
+      detail.textContent = quest.detail;
+      const reason = document.createElement("p");
+      reason.className = "planner-reason";
+      reason.textContent = quest.reason;
+      const action = document.createElement("button");
+      action.type = "button";
+      action.className = "pixel-btn primary";
+      action.textContent = quest.action;
+      action.addEventListener("click", () => startPlannerQuest(quest));
+      card.append(title, detail, reason, action);
+    } else {
+      const title = document.createElement("h3");
+      title.textContent = "🌿 Recovery day";
+      const detail = document.createElement("p");
+      detail.textContent = "No quest scheduled. Rest days are part of a sustainable study rhythm.";
+      card.append(title, detail);
+    }
+    grid.append(card);
+  }
 }
 
 function closeModal(){
