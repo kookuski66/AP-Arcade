@@ -8,8 +8,330 @@
   <link rel="shortcut icon" href="favicon.svg?v=2026-10-07" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start=2P&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="academic-practice.css">
 </head>
 <body>
+  <div class="scanlines"></div>
+
+  <header class="topbar">
+    <div class="brand" onclick="showPage('home')">
+      <span class="brand-mark">★</span> AP ARCADE
+    </div>
+    <nav>
+      <button onclick="showPage('courses')">COURSES</button>
+      <button onclick="startPractice()">PRACTICE</button>
+      <button onclick="startBossBattle()">BOSS BATTLE</button>
+      <button onclick="showPage('analytics')">ANALYTICS</button>
+      <button onclick="showPage('planner')">PLANNER</button>
+    </nav>
+    <button class="profile-trigger" onclick="openProfile()" aria-label="Open character profile">
+      <span id="navAvatar" class="mini-avatar" aria-hidden="true"><span class="avatar-head"></span><span class="avatar-body"></span></span>
+      <span id="navProfileName">PLAYER_001</span>
+    </button>
+    <div class="mini-profile">
+      <span id="navLevel">LVL 1</span>
+      <div class="tiny-xp"><div id="navXp" class="xp-fill"></div></div>
+    </div>
+  </header>
+
+  <main>
+    <section id="home" class="page active">
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">WELCOME, <span id="homeWelcomeName">PLAYER_001</span></div>
+          <h1>STUDY.<br><span>LEVEL UP.</span><br>CONQUER AP.</h1>
+          <p class="hero-sub">A free arcade-style study hub built by students, for students chasing their next 5.</p>
+          <div class="hero-buttons">
+            <button class="pixel-btn primary" onclick="showPage('courses')">START QUEST ▶</button>
+            <button class="pixel-btn" onclick="startPractice()">QUICK PRACTICE</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="card-title">NEXT BATTLE</div>
+          <div class="boss-art">⚡</div>
+          <h2 id="homeCourse">AP PHYSICS 1</h2>
+          <p id="homeUnit">UNIT 1 MINI BOSS</p>
+          <div class="energy"><span>ENERGY <strong id="homeEnergyLabel">100%</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:100%"></div></div></div>
+          <button class="pixel-btn danger" onclick="startBossBattle()">ENTER BOSS FIGHT</button>
+        </div>
+      </div>
+
+      <div class="countdown">
+        <div>
+          <div class="eyebrow">YOUR AP EXAM COUNTDOWNS</div>
+          <div class="countdown-number" id="countdown">ADD YOUR EXAM DATES</div>
+          <div class="countdown-note" id="nextExamLabel">Set each exam date and time below.</div>
+        </div>
+      </div>
+      <div id="examCountdowns" class="exam-countdowns"></div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><span>QUESTIONS</span><strong id="homeQuestions">0</strong></div>
+        <div class="stat-card"><span>ACCURACY</span><strong id="homeAccuracy">0%</strong></div>
+        <div class="stat-card"><span>STREAK</span><strong id="homeStreak">1 DAY</strong></div>
+        <div class="stat-card"><span>XP</span><strong id="homeXp">0</strong></div>
+      </div>
+
+      <div class="section-heading"><span>▸</span> CONTINUE YOUR QUEST</div>
+      <div class="course-grid">
+        <div class="course-card physics" onclick="selectCourse('AP Physics 1')">
+          <div class="course-icon">⚡</div><div><small>COURSE 01</small><h3>AP PHYSICS 1</h3><p>Algebra-based physics</p></div>
+        </div>
+        <div class="course-card chemistry" onclick="selectCourse('AP Chemistry')">
+          <div class="course-icon">⚗</div><div><small>COURSE 02</small><h3>AP CHEMISTRY</h3><p>Atoms, reactions & energy</p></div>
+        </div>
+        <div class="course-card calculus" onclick="selectCourse('AP Calculus AB')">
+          <div class="course-icon">∫</div><div><small>COURSE 03</small><h3>AP CALCULUS AB</h3><p>Limits, derivatives & integrals</p></div>
+        </div>
+        <div class="course-card biology" onclick="selectCourse('AP Biology')">
+          <div class="course-icon">♧</div><div><small>COURSE 04</small><h3>AP BIOLOGY</h3><p>Cells, genetics & systems</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="courses" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">SELECT YOUR WORLD</div><h1>COURSES</h1></div>
+        <div class="level-badge">FREE TO PLAY</div>
+      </div>
+      <div class="course-grid large">
+        <div class="course-card physics" onclick="selectCourse('AP Physics 1')"><div class="course-icon">⚡</div><div><small>PHYSICS</small><h2>AP PHYSICS 1</h2><p>Algebra-based mechanics, energy, and forces</p></div></div>
+        <div class="course-card chemistry" onclick="selectCourse('AP Chemistry')"><div class="course-icon">⚗</div><div><small>CHEMISTRY</small><h2>AP CHEMISTRY</h2><p>Atomic structure, reactions, and equilibrium</p></div></div>
+        <div class="course-card calculus" onclick="selectCourse('AP Calculus AB')"><div class="course-icon">∫</div><div><small>MATHEMATICS</small><h2>AP CALCULUS AB</h2><p>Functions, limits, derivatives, integrals</p></div></div>
+        <div class="course-card biology" onclick="selectCourse('AP Biology')"><div class="course-icon">♧</div><div><small>BIOLOGY</small><h2>AP BIOLOGY</h2><p>Cells, energy, genetics, evolution, and ecology</p></div></div>
+      </div>
+
+      <div id="courseDetail" class="course-detail hidden">
+        <div class="section-heading"><span>▸</span> <span id="selectedCourseTitle">AP PHYSICS 1</span> — WORLD MAP</div>
+        <div id="unitGrid" class="unit-grid"></div>
+      </div>
+    </section>
+
+    <section id="practice" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">TRAIN YOUR SKILLS</div><h1>PRACTICE ARENA</h1></div>
+        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">100%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8% PER PRACTICE MISSION</small></div>
+      </div>
+
+      <div id="questionScreen" class="question-layout">
+        <div class="question-card">
+          <div class="question-top"><span id="practiceQuestionTag">UNIT 1 • MULTIPLE CHOICE</span><button id="practiceReviewBtn" class="review-btn" onclick="toggleReview()">☆ MARK FOR REVIEW</button></div>
+          <h2 id="practiceQuestionText">Loading question...</h2>
+          <div id="practiceAnswers" class="answers"></div>
+          <div id="practiceFeedback" class="feedback"></div>
+          <button id="practiceNextBtn" class="pixel-btn primary hidden" onclick="nextQuestion()">NEXT QUESTION ▶</button>
+        </div>
+        <aside class="quest-side">
+          <div class="boss-panel">
+            <div class="boss-label">ACTIVE UNIT</div>
+            <div class="boss-icon" id="practiceIcon">⚡</div>
+            <h3 id="practiceCourseLabel">AP PHYSICS 1 • UNIT 1</h3>
+            <div class="boss-health"><div id="practiceProgress" style="width:100%"></div></div>
+            <small>QUESTIONS COMPLETED: <span id="practiceProgressText">1 / 15</span></small>
+          </div>
+          <div class="side-stat"><span>QUESTION</span><strong id="questionNumber">1 / 15</strong></div>
+          <div class="side-stat"><span>RUN XP</span><strong id="runXp">0</strong></div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="frq" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">FREE-RESPONSE WORKSHOP</div><h1>FRQ PRACTICE</h1></div>
+        <div class="level-badge" id="frqProgress">FRQ 1 / 3</div>
+      </div>
+      <div class="frq-workspace">
+        <div class="frq-heading">
+          <div class="eyebrow" id="frqCourseLabel">AP PHYSICS 1 • UNIT 1</div>
+          <h2 id="frqTitle">Loading prompt...</h2>
+          <p id="frqScenario"></p>
+        </div>
+        <div id="frqParts" class="frq-parts"></div>
+        <div class="frq-navigation">
+          <button id="frqPrevBtn" class="pixel-btn" onclick="moveFrq(-1)">◀ PREVIOUS FRQ</button>
+          <button id="frqNextBtn" class="pixel-btn primary" onclick="moveFrq(1)">NEXT FRQ ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="boss" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">BOSS ENCOUNTER</div><h1>BOSS BATTLE</h1></div>
+        <div class="level-badge">ENEMY HP <span id="bossFightLabel">160/160</span></div>
+      </div>
+
+      <div class="battle-layout">
+        <div class="battle-scene">
+          <div class="battle-avatar" id="bossAvatar" role="img" aria-label="A giant pixel boss looming over the battle arena">
+            <div class="boss-title" id="bossTitle">KINEMATICS KEEPER</div>
+            <svg class="boss-sprite" id="bossSprite" viewBox="0 0 320 300" aria-hidden="true" shape-rendering="crispEdges">
+              <path class="boss-outline" d="M104 18h112v16h30v24h27v30h22v42h-19v35h-15v36h-20v31h-32v18h-43v-18h-30v18H93v-20H63v-30H43v-37H27v-39H10v-39h22V98h21V70h24V48h27z"/>
+              <path class="boss-main" d="M108 34h104v16h27v25h21v31h18v39h-19v30h-16v33h-22v29h-40v18h-29v-18h-40v-27H84v-29H65v-34H48v-38H34v-27h21V94h22V67h25z"/>
+              <path class="boss-shading" d="M74 91h30V72h32V56h48v17h27v18h22v31h-18v25h-17v25h-27v15h-58v-17H99v-25H82v-24H65v-25h9z"/>
+              <path class="boss-face" d="M102 93h28V78h60v16h27v22h17v43h-18v25h-26v17h-57v-17h-27v-25H90v-42h12z"/>
+              <path class="boss-light" d="M119 111h29v13h-29zm55 0h29v13h-29z"/>
+              <path class="boss-eye" d="M127 115h13v23h-13zm55 0h13v23h-13z"/>
+              <path class="boss-pupil" d="M132 120h6v13h-6zm55 0h6v13h-6z"/>
+              <path class="boss-nose" d="M148 145h24v12h-8v12h-9v-12h-7z"/>
+              <path class="boss-mouth" d="M130 174h60v14h-12v9h-37v-9h-11z"/>
+              <path class="boss-teeth" d="M140 174h12v10h-12zm28 0h12v10h-12z"/>
+              <path class="boss-armor" d="M81 205h36v16h20v18H94v-15H77zm121 0h36v19h-16v15h-42v-18h22z"/>
+              <path class="boss-band" d="M121 84h78v11h-78zm-6 12h12v11h-12zm66 0h12v11h-12z"/>
+              <path class="boss-fist" d="M33 121h18v-12h17v14h12v31H64v14H48v-13H34zm218 0h18v-12h17v14h12v31h-16v14h-16v-13h-15z"/>
+            </svg>
+            <div class="boss-shadow"></div>
+          </div>
+          <svg class="battle-player" id="battlePlayer" viewBox="0 0 96 128" role="img" aria-label="Your 16-bit adventurer" shape-rendering="crispEdges">
+            <path class="player-outline" d="M26 5h44v8h9v10h8v25H76v9h11v12h-7v20h-7v8h8v18H58v-8H39v8H15v-18h8v-8h-7V69H9V57h11v-9H8V25h8V13h10z"/>
+            <path class="player-hair" d="M25 8h46v8h8v15H63v-7H37v8H18V18h7z"/>
+            <path class="player-skin" d="M27 26h42v24H58v8H38v-8H27z"/>
+            <path class="player-eye" d="M34 34h6v7h-6zm23 0h6v7h-6z"/>
+            <path class="player-outfit" d="M31 59h34v8h9v25H61v9H35v-9H22V67h9z"/>
+            <path class="player-trim" d="M31 62h9v20h-9zm25 0h9v20h-9zM39 85h18v7H39z"/>
+            <path class="player-boot" d="M26 99h19v17H18v-8h8zm26 0h19v9h8v8H52z"/>
+            <g id="battleWeapon">
+              <g class="weapon-sword"><path class="weapon-blade" d="M82 53h7V20h7v38h-7v12h-7z"/><path class="weapon-hilt" d="M76 64h20v6H76zm7 6h7v12h-7z"/></g>
+              <g class="weapon-wand"><path class="weapon-hilt" d="M83 42h8v39h-8z"/><path class="weapon-orb" d="M79 25h16v16H79zm-4 4h24v8H75z"/></g>
+              <g class="weapon-spear"><path class="weapon-hilt" d="M83 44h7v38h-7z"/><path class="weapon-blade" d="M86 10 99 35 86 43 73 35z"/></g>
+              <g class="weapon-staff"><path class="weapon-hilt" d="M83 31h8v51h-8z"/><path class="weapon-orb" d="M77 14h20v17H77zm4-6h12v29H81z"/></g>
+            </g>
+          </svg>
+
+          <div class="battle-bars">
+            <div class="bar-row">
+              <span>PLAYER ENERGY / HP <strong id="playerHpValue">100/100</strong></span>
+              <div class="hp-bar player" id="playerHpMeter" role="meter" aria-label="Player energy and health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="playerHpBar" style="width:100%"></div></div>
+            </div>
+            <div class="bar-row">
+              <span>ENEMY HP <strong id="bossHpValue">160/160</strong></span>
+              <div class="hp-bar enemy" id="bossHpMeter" role="meter" aria-label="Boss health" aria-valuemin="0" aria-valuemax="160" aria-valuenow="160"><div id="bossHpBar" style="width:100%"></div></div>
+            </div>
+          </div>
+
+          <div class="boss-question-card">
+            <div class="question-top"><span id="bossQuestionTag">UNIT 1 • BOSS CHALLENGE</span><button id="bossReviewBtn" class="review-btn" onclick="toggleReview()">☆ MARK FOR REVIEW</button></div>
+            <h2 id="bossQuestionText">Loading boss challenge...</h2>
+            <div id="bossAnswers" class="answers"></div>
+            <div id="bossFeedback" class="feedback"></div>
+            <button id="bossNextBtn" class="pixel-btn primary hidden" onclick="nextBossQuestion()">NEXT ATTACK ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="analytics" class="page">
+      <div class="page-header"><div><div class="eyebrow">PLAYER DATA</div><h1>ANALYTICS</h1></div></div>
+      <div class="analytics-grid">
+        <div class="analytics-card"><span>TOTAL QUESTIONS</span><strong id="aQuestions">0</strong></div>
+        <div class="analytics-card"><span>CORRECT</span><strong id="aCorrect">0</strong></div>
+        <div class="analytics-card"><span>ACCURACY</span><strong id="aAccuracy">0%</strong></div>
+        <div class="analytics-card"><span>STUDY STREAK</span><strong id="aStreak">1</strong></div>
+      </div>
+      <div class="analytics-panel">
+        <div class="section-heading"><span>▸</span> UNIT MASTERY</div>
+        <div id="mastery"></div>
+      </div>
+      <div class="analytics-panel">
+        <div class="section-heading"><span>▸</span> QUESTIONS TO REVIEW</div>
+        <div id="reviewList" class="review-list"></div>
+      </div>
+    </section>
+
+    <section id="planner" class="page">
+      <div class="page-header"><div><div class="eyebrow">BUILT AROUND YOUR PROGRESS</div><h1>STUDY PLANNER</h1></div></div>
+      <div class="planner-controls">
+        <label>FOCUS COURSE
+          <select id="plannerCourse" onchange="updatePlannerPreference('focusCourse', this.value)"></select>
+        </label>
+        <label>UNIT FOCUS
+          <select id="plannerUnit" onchange="updatePlannerPreference('targetUnit', this.value)"></select>
+        </label>
+        <fieldset class="planner-days"><legend>STUDY DAYS</legend><div id="plannerDayChoices"></div></fieldset>
+      </div>
+      <p id="plannerSummary" class="planner-summary"></p>
+      <div id="plannerGrid" class="planner-grid"></div>
+      <div class="planner-transfer">
+        <div><strong>TAKE YOUR PLAN WITH YOU</strong><p>Export your local progress and import it on another device.</p></div>
+        <button class="pixel-btn" type="button" onclick="exportProgress()">EXPORT SAVE</button>
+        <label class="pixel-btn import-save">IMPORT SAVE<input type="file" accept="application/json,.json" onchange="importProgress(this.files[0]); this.value='' "></label>
+      </div>
+    </section>
+  </main>
+
+  <div id="profileModal" class="profile-modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="profile-window">
+      <div class="profile-window-header">
+        <div><div class="eyebrow">HERO GUILD</div><h2 id="profileTitle">CHARACTER PROFILE</h2></div>
+        <button class="profile-close" onclick="closeProfile()" aria-label="Close profile">×</button>
+      </div>
+      <div class="profile-overview">
+        <div class="profile-avatar-stage" id="profileAvatarStage">
+          <svg class="hero-sprite profile-hero-sprite" id="profileHeroSprite" viewBox="0 0 96 128" role="img" aria-label="Your customized 16-bit adventurer" shape-rendering="crispEdges">
+            <path class="player-outline" d="M26 5h44v8h9v10h8v25H76v9h11v12h-7v20h-7v8h8v18H58v-8H39v8H15v-18h8v-8h-7V69H9V57h11v-9H8V25h8V13h10z"/>
+            <path class="player-hair" d="M25 8h46v8h8v15H63v-7H37v8H18V18h7z"/>
+            <path class="player-skin" d="M27 26h42v24H58v8H38v-8H27z"/>
+            <path class="player-eye" d="M34 34h6v7h-6zm23 0h6v7h-6z"/>
+            <path class="player-outfit" d="M31 59h34v8h9v25H61v9H35v-9H22V67h9z"/>
+            <path class="player-trim" d="M31 62h9v20h-9zm25 0h9v20h-9zM39 85h18v7H39z"/>
+            <path class="player-boot" d="M26 99h19v17H18v-8h8zm26 0h19v9h8v8H52z"/>
+            <g class="hero-weapon">
+              <g class="weapon-sword"><path class="weapon-blade" d="M82 53h7V20h7v38h-7v12h-7z"/><path class="weapon-hilt" d="M76 64h20v6H76zm7 6h7v12h-7z"/></g>
+              <g class="weapon-wand"><path class="weapon-hilt" d="M83 42h8v39h-8z"/><path class="weapon-orb" d="M79 25h16v16H79zm-4 4h24v8H75z"/></g>
+              <g class="weapon-spear"><path class="weapon-hilt" d="M83 44h7v38h-7z"/><path class="weapon-blade" d="M86 10 99 35 86 43 73 35z"/></g>
+              <g class="weapon-staff"><path class="weapon-hilt" d="M83 31h8v51h-8z"/><path class="weapon-orb" d="M77 14h20v17H77zm4-6h12v29H81z"/></g>
+            </g>
+          </svg>
+        </div>
+        <div class="profile-summary">
+          <label class="profile-name-label" for="profileNameInput">HERO NAME</label>
+          <input id="profileNameInput" maxlength="18" value="PLAYER_001" oninput="setProfileName(this.value)">
+          <div class="profile-level-line"><span id="profileClassLabel">SCHOLAR</span><strong>LV <span id="profileLevel">1</span></strong></div>
+          <div class="profile-xp-track"><div id="profileXpBar"></div></div>
+          <small id="profileXpLabel">0 XP • NEXT LEVEL: COMPLETE A UNIT</small>
+          <small id="completedUnitCount">0 UNITS CLEARED</small>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-heading"><span>▸</span> CHOOSE YOUR CLASS</div>
+        <div class="class-picker" id="classPicker">
+          <button class="choice-tile" data-class="Scholar" onclick="chooseClass('Scholar')"><strong>✦ SCHOLAR</strong><small>Balanced adventurer</small></button>
+          <button class="choice-tile" data-class="Alchemist" onclick="chooseClass('Alchemist')"><strong>⚗ ALCHEMIST</strong><small>Curious experimenter</small></button>
+          <button class="choice-tile" data-class="Ranger" onclick="chooseClass('Ranger')"><strong>➶ RANGER</strong><small>Precision specialist</small></button>
+        </div>
+      </div>
+
+      <div class="profile-section">
+        <div class="section-heading"><span>▸</span> WARDROBE <small>UNLOCKS AS YOU LEVEL</small></div>
+        <div class="cosmetic-picker">
+          <label>OUTFIT<select id="outfitSelect" onchange="equipCosmetic('outfit', this.value)"></select></label>
+          <label>WEAPON<select id="weaponSelect" onchange="equipCosmetic('weapon', this.value)"></select></label>
+        </div>
+        <div class="profile-footnote" id="cosmeticHint">Complete units to earn levels and unlock new looks.</div>
+      </div>
+      <button class="pixel-btn primary profile-done" onclick="closeProfile()">BACK TO QUEST ▶</button>
+    </div>
+  </div>
+
+  <div id="levelUp" class="modal hidden">
+    <div class="modal-box">
+      <div class="eyebrow">★ LEVEL UP ★</div>
+      <div class="level-number" id="newLevel">2</div>
+      <h2>NEW LEVEL REACHED!</h2>
+      <p>You earned enough XP to advance your character.</p>
+      <button class="pixel-btn primary" onclick="closeModal()">CONTINUE ▶</button>
+    </div>
+  </div>
+
+  <footer>
+    <span>AP ARCADE • FREE STUDY TOOLS FOR STUDENTS</span>
+    <span>BUILT BY STUDENTS, FOR STUDENTS</span>
+  </footer>
+
+  <script src="academic-content.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
