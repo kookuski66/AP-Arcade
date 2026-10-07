@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="AP Arcade player icon">
+  <defs>
+    <style>
+      .bg { fill: #0d0d1a; }
+      .frame { fill: #1a1630; stroke: #8ae8c8; stroke-width: 4; }
+      .hair { fill: #16111d; }
+      .skin { fill: #f3d7bf; }
+      .eye { fill: #0d0d1a; }
+      .shirt { fill: #72e4ff; }
+      .trim { fill: #ffe07a; }
+      .boot { fill: #ff6b6b; }
+      .sword { fill: #dfe8ff; }
+      .sword-hilt { fill: #ffd166; }
+      .shield { fill: #6c5ce7; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="128" height="128" rx="16"/>
+  <rect class="frame" x="10" y="10" width="108" height="108" rx="14"/>
+
+  <g transform="translate(10 8)">
+    <path class="hair" d="M28 15h41v9h10v17H74v-8H41v8H22V34h6z"/>
+    <path class="skin" d="M29 32h42v24H58v8H39v-8H29z"/>
+    <path class="eye" d="M37 39h6v7h-6zm22 0h6v7h-6z"/>
+    <path class="shirt" d="M35 65h27v9h10v17H60v10H38v-10H25V74h10z"/>
+    <path class="trim" d="M33 68h10v18H33zm29 0h10v18H62zm-9 28h16v8H53z"/>
+    <path class="boot" d="M30 93h18v17H24v-8h6zm21 0h18v9h9v8H51z"/>
+    <path class="shield" d="M79 58h13v19H79z"/>
+    <path class="sword" d="M80 44h8V18h9v26h-9v9h-9z"/>
+    <path class="sword-hilt" d="M76 53h18v8H76zm8 8h8v12h-8z"/>
+  </g>
+</svg>
