@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AP Arcade</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -96,10 +97,10 @@
         <div class="level-badge">FREE TO PLAY</div>
       </div>
       <div class="course-grid large">
-        <div class="course-card physics" onclick="selectCourse('AP Physics 1')"><div class="course-icon">⚡</div><div><small>PHYSICS</small><h2>AP PHYSICS 1</h2><p>Algebra-based mechanics, energy, circuits & more.</p></div></div>
-        <div class="course-card chemistry" onclick="selectCourse('AP Chemistry')"><div class="course-icon">⚗</div><div><small>CHEMISTRY</small><h2>AP CHEMISTRY</h2><p>Atomic structure, reactions, thermodynamics & equilibrium.</p></div></div>
-        <div class="course-card calculus" onclick="selectCourse('AP Calculus AB')"><div class="course-icon">∫</div><div><small>MATHEMATICS</small><h2>AP CALCULUS AB</h2><p>Functions, limits, derivatives, integrals & applications.</p></div></div>
-        <div class="course-card biology" onclick="selectCourse('AP Biology')"><div class="course-icon">♧</div><div><small>BIOLOGY</small><h2>AP BIOLOGY</h2><p>Cells, energy, genetics, evolution & biological systems.</p></div></div>
+        <div class="course-card physics" onclick="selectCourse('AP Physics 1')"><div class="course-icon">⚡</div><div><small>PHYSICS</small><h2>AP PHYSICS 1</h2><p>Algebra-based mechanics, energy</p></div></div>
+        <div class="course-card chemistry" onclick="selectCourse('AP Chemistry')"><div class="course-icon">⚗</div><div><small>CHEMISTRY</small><h2>AP CHEMISTRY</h2><p>Atomic structure, reactions & energy</p></div></div>
+        <div class="course-card calculus" onclick="selectCourse('AP Calculus AB')"><div class="course-icon">∫</div><div><small>MATHEMATICS</small><h2>AP CALCULUS AB</h2><p>Functions, limits, derivatives & integrals</p></div></div>
+        <div class="course-card biology" onclick="selectCourse('AP Biology')"><div class="course-icon">♧</div><div><small>BIOLOGY</small><h2>AP BIOLOGY</h2><p>Cells, energy, genetics, evolution</p></div></div>
       </div>
 
       <div id="courseDetail" class="course-detail hidden">
@@ -111,7 +112,7 @@
     <section id="practice" class="page">
       <div class="page-header">
         <div><div class="eyebrow">TRAIN YOUR SKILLS</div><h1>PRACTICE ARENA</h1></div>
-        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">100%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8% PER PRACTICE MCQ • -8% PER WRONG BOSS ANSWER • PERSISTS</small></div>
+        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">100%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8% PER PRACTICE MATCH</small></div>
       </div>
 
       <div id="questionScreen" class="question-layout">
