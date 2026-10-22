@@ -1,6 +1,37 @@
 const QUESTIONS_PER_RUN = 15;
+const MAX_QUESTIONS_PER_RUN = 30;
 const FRQS_PER_UNIT = 3;
+const XP_PER_LEVEL = 200;
+const MAX_PLAYER_HP = 200;
+const BOSS_EXAM_TIERS = [
+  { mcqPerUnit: 2, frqCount: { "AP Physics 1": 4, "AP Chemistry": 7, "AP Calculus AB": 6, "AP Biology": 6 }, minutes: 180, title: "" },
+  { mcqPerUnit: 4, frqCount: { "AP Physics 1": 6, "AP Chemistry": 9, "AP Calculus AB": 8, "AP Biology": 8 }, minutes: 240, title: "THE ASCENDANT TRIAL" },
+  { mcqPerUnit: 6, frqCount: { "AP Physics 1": 8, "AP Chemistry": 11, "AP Calculus AB": 10, "AP Biology": 10 }, minutes: 300, title: "THE OMEGA GAUNTLET" }
+];
 const ENERGY_PER_QUESTION = 8;
+const academicSubscripts = {
+  Fnet: "F<sub>net</sub>",
+  Fspring: "F<sub>spring</sub>",
+  Fpull: "F<sub>pull</sub>",
+  Favg: "F<sub>avg</sub>",
+  Fout: "F<sub>out</sub>",
+  FB: "F<sub>B</sub>",
+  Krot: "K<sub>rot</sub>",
+  Ktrans: "K<sub>trans</sub>",
+  Ktotal: "K<sub>total</sub>",
+  Kc: "K<sub>c</sub>",
+  Ka: "K<sub>a</sub>",
+  Kp: "K<sub>p</sub>",
+  Qc: "Q<sub>c</sub>",
+  pKa: "pK<sub>a</sub>",
+  Patm: "P<sub>atm</sub>",
+  Pwide: "P<sub>wide</sub>",
+  Pnarrow: "P<sub>narrow</sub>",
+  Vsub: "V<sub>sub</sub>",
+  dout: "d<sub>out</sub>",
+  Wnet: "W<sub>net</sub>",
+  Ecell: "E<sub>cell</sub>"
+};
 const outfitOptions = [
   { id: "rookie", name: "Rookie Tunic", unlockLevel: 1, color: "#5ce1b6" },
   { id: "ember", name: "Ember Jacket", unlockLevel: 2, color: "#ff754f" },
@@ -13,6 +44,54 @@ const weaponOptions = [
   { id: "spear", name: "Comet Spear", unlockLevel: 3, icon: "➶" },
   { id: "staff", name: "Nova Staff", unlockLevel: 5, icon: "ϟ" }
 ];
+
+function formatAcademicNotation(value){
+  const escaped = String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+  const symbols = Object.keys(academicSubscripts).sort((a, b) => b.length - a.length);
+  const symbolPattern = new RegExp(`\\b(${symbols.join("|")})\\b`, "g");
+  const formulaPattern = /(?<![A-Za-z])(?:[A-Z][a-z]?\d*)+(?![A-Za-z0-9])/g;
+  const subscripted = escaped
+    .replace(symbolPattern, symbol => academicSubscripts[symbol])
+    .replace(/μs\b/g, "μ<sub>s</sub>")
+    .replace(/ρ(object|fluid)/g, "ρ<sub>$1</sub>")
+    .replace(/ρVsubg/g, "ρV<sub>sub</sub>g")
+    .replace(/\b([A-Za-zΑ-ωρτΔ]+)_([A-Za-z0-9]+)\b/g, "$1<sub>$2</sub>")
+    .replace(/\^([+-]?\d+|\{[^}]+\})/g, (_, exponent) => `<sup>${exponent.replace(/[{}]/g, "")}</sup>`)
+    .replace(
+      /([A-Z][a-z]?)(\d*)([+−-])(?=(?:\s|[.,;:!?)]|\/|$))/g,
+      (_, element, count, charge) =>
+        `${element}${count ? `<sub>${count}</sub>` : ""}<sup>${charge}</sup>`
+    )
+    .replace(formulaPattern, formula => {
+      if (!/\d/.test(formula)) return formula;
+      return formula.replace(/([A-Z][a-z]?)(\d*)/g, (_, element, count) =>
+        `${element}${count ? `<sub>${count}</sub>` : ""}`
+      );
+    });
+  return subscripted;
+}
+
+function setAcademicText(element, value){
+  element.innerHTML = formatAcademicNotation(value);
+}
+
+function renderAnswerButtons(container, answers, mode){
+  container.replaceChildren();
+  answers.forEach((answer, index) => {
+    const button = document.createElement("button");
+    button.className = "answer";
+    button.type = "button";
+    setAcademicText(button, `${String.fromCharCode(65 + index)}. ${answer}`);
+    button.addEventListener("click", () => answerQuestion(index, mode));
+    container.append(button);
+  });
+}
+
 const bossArtwork = {
   newton: `<path class="art-outline" d="M83 42h154v19h35v33h20v82h-20v37h-35v26H63v-26H28v-37H10V94h20V61h35z"/><path class="art-primary" d="M94 53h132v20h34v31h20v59h-20v35h-34v22H74v-22H40v-35H23v-59h17V73h34z"/><path class="art-secondary" d="M71 92h34V73h111v20h24v28h-22v24h-25v22H99v-22H75v-24H52v-14h19z"/><path class="art-face" d="M100 101h28V88h68v14h25v35h-17v23h-31v15h-44v-15h-28v-24H83v-23h17z"/><path class="art-hair" d="M90 100h22V84h19V71h20v13h17V71h20v13h20v16h17v17h-20v-8H99v8H79v-17h11z"/><path class="art-feature" d="M120 119h12v20h-12zm60 0h12v20h-12zm-30 20h24v11h-8v11h-9v-11h-7z"/><path class="art-coat" d="M78 196h45v18h26v34H74v-18H54v-18h24zm119 0h45v16h23v18h-20v18h-76v-34h28z"/><path class="art-detail" d="M146 190h27v11h-27zm-43 17h18v17h-18zm79 0h18v17h-18z"/>`,
   force: `<path class="art-outline" d="M104 20h112v24h35v36h28v51h-20v36h-24v47h-36v24h-96v-24H67v-47H43v-36H23V80h28V44h37z"/><path class="art-primary" d="M111 34h98v23h32v33h24v39h-21v32h-26v43h-34v22H91v-22H64v-43H39v-32H28V91h27V57h28z"/><path class="art-secondary" d="M56 105h35v34H73v29H47v-23H33v-25h23zm174 0h35v15h23v25h-15v23h-26v-29h-17z"/><path class="art-face" d="M103 83h31v15h52V83h31v39h-16v23h-26v14h-40v-14h-25v-23h-17z"/><path class="art-feature" d="M126 107h14v19h-14zm51 0h14v19h-14zm-36 28h37v10h-37z"/><path class="art-detail" d="M93 189h44v20h-19v24H85v-20h8zm92 0h44v24h10v20h-34v-24h-20z"/>`,
@@ -160,17 +239,31 @@ const courseUnits = {
 
 let state = {
   questions: 0, correct: 0, xp: 0, level: 1, streak: 1,
-  reviewed: [], answeredIds: [], currentCourse: "AP Physics 1",
+  reviewed: [], answeredIds: [], wrongAnswers: [], currentCourse: "AP Physics 1",
   currentUnit: "Unit 1", currentQuestionIndex: 0, runXp: 0,
   bossHealth: 160, mode: "practice", currentReview: false,
   mastery: {}, completedUnits: [], currentRun: [],
-  currentFrqIndex: 0, frqDrafts: {}, energy: 100, energyVersion: 0, examDates: {},
+  currentFrqIndex: 0, currentFrqPartIndex: 0, frqDrafts: {}, completedFrqs: [], frqGrades: {}, energy: MAX_PLAYER_HP, energyVersion: 0, examDates: {},
+  bossHistory: {}, bossCycles: {}, bossTheme: null, bossTier: 0, bossCourseRun: [], bossFrqRun: [],
+  bossAnswers: [], bossGrades: [], bossPhase: "mcq", bossDeadline: 0, bossMcqAnswered: 0,
+  bossFrqIndex: 0, bossMaxHealth: 160,
+  bossFrqDrafts: {}, bossSubmitted: false, bossTimedOut: false, bossDefeated: false, bossCorrect: 0, reviewQuestionId: null,
   plannerPrefs: { focusCourse: "AP Physics 1", targetUnit: "auto", studyDays: [1, 2, 3, 4, 5] },
   plannerCompleted: {},
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
 };
 
-function save(){ localStorage.setItem("apStemQuestState", JSON.stringify(state)); }
+function save({ sync = true } = {}){
+  if (sync) state.lastSavedAt = Date.now();
+  const savedState = {
+    ...state,
+    currentRun: (Array.isArray(state.currentRun) ? state.currentRun : [])
+      .map(question => typeof question === "string" ? question : question?.id)
+      .filter(Boolean)
+  };
+  localStorage.setItem("apStemQuestState", JSON.stringify(savedState));
+  if (sync) window.scheduleAccountProgressSync?.();
+}
 function load(){
   const saved = localStorage.getItem("apStemQuestState");
   if (saved) {
@@ -183,17 +276,56 @@ function load(){
   }
 }
 load();
+if (!Number.isInteger(state.currentFrqPartIndex) || state.currentFrqPartIndex < 0) {
+  state.currentFrqPartIndex = 0;
+}
 if (!state.frqDrafts || typeof state.frqDrafts !== "object" || Array.isArray(state.frqDrafts)) {
   state.frqDrafts = {};
 }
-if (state.energyVersion < 1) {
-  state.energy = 100;
-  state.energyVersion = 1;
-} else if (!Number.isFinite(state.energy)) {
-  state.energy = 100;
+if (!Array.isArray(state.completedFrqs)) state.completedFrqs = [];
+if (!state.frqGrades || typeof state.frqGrades !== "object" || Array.isArray(state.frqGrades)) {
+  state.frqGrades = {};
 }
-state.energy = Math.max(0, Math.min(100, state.energy));
-save();
+if (!state.bossHistory || typeof state.bossHistory !== "object" || Array.isArray(state.bossHistory)) {
+  state.bossHistory = {};
+}
+if (!state.bossCycles || typeof state.bossCycles !== "object" || Array.isArray(state.bossCycles)) {
+  state.bossCycles = {};
+}
+if (!state.bossFrqDrafts || typeof state.bossFrqDrafts !== "object" || Array.isArray(state.bossFrqDrafts)) {
+  state.bossFrqDrafts = {};
+}
+state.bossFrqDrafts = Object.fromEntries(Object.entries(state.bossFrqDrafts)
+  .filter(([, response]) => typeof response === "string"));
+if (!Number.isInteger(state.bossTier) || state.bossTier < 0 || state.bossTier >= BOSS_EXAM_TIERS.length) {
+  state.bossTier = 0;
+}
+if (!Array.isArray(state.bossCourseRun)) state.bossCourseRun = [];
+if (!Array.isArray(state.bossFrqRun)) state.bossFrqRun = [];
+if (!Array.isArray(state.bossAnswers)) state.bossAnswers = [];
+if (!Array.isArray(state.bossGrades)) state.bossGrades = [];
+if (!Array.isArray(state.wrongAnswers)) state.wrongAnswers = [];
+state.wrongAnswers = state.wrongAnswers.filter(answer =>
+  answer && typeof answer === "object" && answer.id !== undefined
+    && typeof answer.course === "string" && Number.isInteger(answer.choice)
+);
+if (!Number.isFinite(state.xp) || !Number.isFinite(state.level)) {
+  console.error("Saved player progression was invalid; resetting XP and level.");
+  state.xp = 0;
+  state.level = 1;
+}
+state.xp = Math.max(state.xp, Math.max(0, state.level - 1) * XP_PER_LEVEL);
+state.level = Math.floor(state.xp / XP_PER_LEVEL) + 1;
+if (state.energyVersion < 2) {
+  state.energy = state.energyVersion < 1
+    ? MAX_PLAYER_HP
+    : Math.round((Number.isFinite(state.energy) ? Math.max(0, Math.min(100, state.energy)) : 100) * MAX_PLAYER_HP / 100);
+  state.energyVersion = 2;
+} else if (!Number.isFinite(state.energy)) {
+  state.energy = MAX_PLAYER_HP;
+}
+state.energy = Math.max(0, Math.min(MAX_PLAYER_HP, state.energy));
+save({ sync: false });
 if (!state.examDates || typeof state.examDates !== "object" || Array.isArray(state.examDates)) {
   state.examDates = {};
 }
@@ -267,6 +399,20 @@ function getQuestionPool(course = state.currentCourse, unit = state.currentUnit)
   return pool.map(question => ({ ...question, unit: canonicalUnit }));
 }
 
+function getCourseQuestionPool(course = state.currentCourse){
+  return (courseUnits[course] || []).flatMap(([unit]) => getQuestionPool(course, unit)
+    .map(question => ({ ...question, course, unitId: unit })));
+}
+
+function shuffle(items){
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+  }
+  return shuffled;
+}
+
 function allQuestions(){
   const bankQuestions = Object.entries(unitQuestionBank).flatMap(([course, courseBank]) =>
     Object.entries(courseBank).flatMap(([contentKey, pool]) => {
@@ -275,6 +421,7 @@ function allQuestions(){
       );
       return pool.map(question => ({
         ...question,
+        course,
         unit: activeUnit ? `${activeUnit[0]} ${activeUnit[1]}` : question.unit
       }));
     })
@@ -288,37 +435,66 @@ function allQuestions(){
 
 function createQuestionRun(){
   const pool = getQuestionPool();
+  const runLength = Math.min(pool.length, MAX_QUESTIONS_PER_RUN);
   const deck = [...pool];
   for (let index = deck.length - 1; index > 0; index -= 1) {
     const swapIndex = Math.floor(Math.random() * (index + 1));
     [deck[index], deck[swapIndex]] = [deck[swapIndex], deck[index]];
   }
-  return deck.slice(0, QUESTIONS_PER_RUN).map((question, index) => ({
+  return deck.slice(0, runLength).map((question, index) => ({
     ...question,
     runId: `${question.id}-${Date.now()}-${index}`
   }));
 }
 
 function activeQuestion(){
-  const poolIds = new Set(getQuestionPool().map(question => question.id));
-  const runIds = Array.isArray(state.currentRun)
-    ? state.currentRun.map(question => question?.id)
-    : [];
-  const validRun = runIds.length === QUESTIONS_PER_RUN
-    && new Set(runIds).size === QUESTIONS_PER_RUN
-    && runIds.every(id => poolIds.has(id));
+  if (state.mode === "review" && state.reviewQuestionId !== null) {
+    const reviewedQuestion = allQuestions().find(question => String(question.id) === String(state.reviewQuestionId));
+    if (!reviewedQuestion) throw new Error(`The reviewed question ${state.reviewQuestionId} is no longer available.`);
+    return reviewedQuestion;
+  }
+  if (state.mode === "boss") {
+    const run = Array.isArray(state.currentRun) ? state.currentRun : [];
+    if (!Number.isInteger(state.currentQuestionIndex) || state.currentQuestionIndex < 0
+        || state.currentQuestionIndex >= run.length) {
+      throw new Error("The active boss exam question is unavailable.");
+    }
+    const current = run[state.currentQuestionIndex];
+    if (current && typeof current === "object") return current;
+    const savedExamQuestion = (state.bossCourseRun || []).find(question =>
+      String(question.id) === String(current)
+    );
+    if (savedExamQuestion) return savedExamQuestion;
+    const question = allQuestions().find(item => String(item.id) === String(current));
+    if (!question) throw new Error(`Boss exam question ${current} is no longer available.`);
+    return question;
+  }
+  const pool = getQuestionPool();
+  const questionsById = new Map(pool.map(question => [question.id, question]));
+  const runLength = Math.min(pool.length, MAX_QUESTIONS_PER_RUN);
+  const storedRun = Array.isArray(state.currentRun) ? state.currentRun : [];
+  const runIds = storedRun.map(question => typeof question === "string" ? question : question?.id);
+  const validRun = runIds.length >= QUESTIONS_PER_RUN
+    && runIds.length <= runLength
+    && new Set(runIds).size === runIds.length
+    && runIds.every(id => questionsById.has(id));
   const validIndex = Number.isInteger(state.currentQuestionIndex)
     && state.currentQuestionIndex >= 0
-    && state.currentQuestionIndex < QUESTIONS_PER_RUN;
+    && state.currentQuestionIndex < runIds.length;
   if (!validRun || !validIndex) {
     state.currentRun = createQuestionRun();
     state.currentQuestionIndex = 0;
+  } else {
+    state.currentRun = runIds.map((id, index) => ({
+      ...questionsById.get(id),
+      runId: typeof storedRun[index] === "object" ? storedRun[index].runId : undefined
+    }));
   }
   return state.currentRun[state.currentQuestionIndex];
 }
 
 function rechargeEnergy(){
-  state.energy = Math.min(100, state.energy + ENERGY_PER_QUESTION);
+  state.energy = Math.min(MAX_PLAYER_HP, state.energy + ENERGY_PER_QUESTION);
   updateEnergyUI();
   save();
 }
@@ -329,18 +505,50 @@ function drainEnergy(){
 }
 
 function updateEnergyUI(){
-  document.getElementById("homeEnergy").style.width = `${state.energy}%`;
-  document.getElementById("homeEnergyLabel").textContent = `${state.energy}%`;
-  document.getElementById("practiceEnergy").style.width = `${state.energy}%`;
-  document.getElementById("practiceEnergyLabel").textContent = `${state.energy}%`;
+  const percent = Math.round(state.energy / MAX_PLAYER_HP * 100);
+  document.getElementById("homeEnergy").style.width = `${percent}%`;
+  document.getElementById("homeEnergyLabel").textContent = `${state.energy}/${MAX_PLAYER_HP}`;
+  document.getElementById("practiceEnergy").style.width = `${percent}%`;
+  document.getElementById("practiceEnergyLabel").textContent = `${state.energy}/${MAX_PLAYER_HP}`;
+  updateBattleBars();
 }
 
 function currentBossTheme(){
+  if (state.bossTheme) return state.bossTheme;
   const theme = bossThemes[state.currentCourse] || bossThemes["AP Physics 1"];
   const units = courseUnits[state.currentCourse] || [];
   const unitIndex = Math.max(0, units.findIndex(unit => unit[0] === state.currentUnit));
   const [name, artworkKey] = theme[unitIndex % theme.length];
   return { name, artworkKey, artwork: bossArtwork[artworkKey] };
+}
+
+function selectBossTheme(tier){
+  const themes = bossThemes[state.currentCourse] || bossThemes["AP Physics 1"];
+  if (!Number.isInteger(tier) || tier < 0 || tier >= BOSS_EXAM_TIERS.length) {
+    throw new RangeError(`Invalid boss exam difficulty: ${tier}.`);
+  }
+  let historyKey = `${state.currentCourse}::${tier}`;
+  let history = Array.isArray(state.bossHistory[historyKey]) ? state.bossHistory[historyKey] : [];
+  let available = themes.filter(([name]) => !history.includes(name));
+  if (!available.length) {
+    history = [];
+    available = [...themes];
+  }
+  const [baseName, artworkKey] = available[Math.floor(Math.random() * available.length)];
+  const name = tier ? `${baseName}: ${BOSS_EXAM_TIERS[tier].title}` : baseName;
+  history.push(baseName);
+  state.bossHistory[historyKey] = history;
+  state.bossTier = tier;
+  state.bossTheme = { name, artworkKey, artwork: bossArtwork[artworkKey], tier };
+}
+
+function frqItemsForUnit(course, unit){
+  const courseFrqs = frqBank[course] || {};
+  return courseFrqs[unit] || courseFrqs[unitContentKey(course, unit)] || [];
+}
+
+function getFrqResponseKey(course, unit, frqId, partLabel){
+  return `${course}::${unit}::${frqId}::${partLabel}`;
 }
 
 function showPage(id){
@@ -353,6 +561,11 @@ function showPage(id){
   if (id === "boss") renderBossQuestion();
   if (id === "frq") renderFrqPractice();
   if (id === "planner") renderPlanner();
+  if (id === "sandbox") {
+    window.refreshFreeFeatures?.();
+    window.resumeSandbox?.();
+  }
+  else window.stopSandbox?.();
   updateUI();
   save();
 }
@@ -382,8 +595,10 @@ function selectCourse(course){
 
 function startPractice(){
   state.mode = "practice";
+  state.reviewQuestionId = null;
   state.currentQuestionIndex = 0;
   state.runXp = 0;
+  state.bossHealth = 160;
   state.currentRun = createQuestionRun();
   showPage("practice");
 }
@@ -392,80 +607,153 @@ function startUnit(index, practiceType = "mcq"){
   const units = courseUnits[state.currentCourse] || [];
   const selected = units[index] || units[0] || ["Unit 1"];
   state.currentUnit = selected[0];
+  state.reviewQuestionId = null;
   if (practiceType === "frq") {
     state.mode = "frq";
     state.currentFrqIndex = 0;
+    state.currentFrqPartIndex = 0;
     showPage("frq");
     return;
   }
   state.mode = "practice";
   state.currentQuestionIndex = 0;
   state.runXp = 0;
+  state.bossHealth = 160;
   state.currentRun = createQuestionRun();
   showPage("practice");
   renderPracticeQuestion();
 }
 
 function renderFrqPractice(){
-  const courseFrqs = frqBank[state.currentCourse] || {};
-  const items = courseFrqs[state.currentUnit] || courseFrqs[unitContentKey(state.currentCourse, state.currentUnit)];
-  if (!items || items.length !== FRQS_PER_UNIT) {
-    throw new Error(`Expected ${FRQS_PER_UNIT} FRQs for ${state.currentCourse}, ${state.currentUnit}.`);
+  const items = currentFrqItems();
+  if (!items || items.length < FRQS_PER_UNIT) {
+    throw new Error(`Expected at least ${FRQS_PER_UNIT} FRQs for ${state.currentCourse}, ${state.currentUnit}.`);
   }
+  const runLength = items.length;
+  if (state.currentFrqIndex >= runLength) state.currentFrqIndex = 0;
   const frq = items[state.currentFrqIndex];
+  if (state.currentFrqPartIndex >= frq.parts.length) state.currentFrqPartIndex = 0;
+  const part = frq.parts[state.currentFrqPartIndex];
+  const completionKey = getFrqCompletionKey(frq);
+  const completed = state.completedFrqs.includes(completionKey);
+  const savedGrade = state.frqGrades[completionKey];
   document.getElementById("frqCourseLabel").textContent = `${state.currentCourse} • ${state.currentUnit}`;
-  document.getElementById("frqProgress").textContent = `FRQ ${state.currentFrqIndex + 1} / ${FRQS_PER_UNIT}`;
-  document.getElementById("frqTitle").textContent = frq.title;
-  document.getElementById("frqScenario").textContent = frq.scenario;
+  document.getElementById("frqProgress").textContent =
+    `FRQ ${state.currentFrqIndex + 1} / ${runLength} • PART (${part.label})`;
+  setAcademicText(document.getElementById("frqTitle"), frq.title);
+  setAcademicText(document.getElementById("frqScenario"), frq.scenario);
+  document.getElementById("frqCompleteBtn").disabled = completed;
+  document.getElementById("frqCompleteBtn").textContent = completed ? "FRQ COMPLETED ✓" : "COMPLETE FRQ (+50 XP)";
+  document.getElementById("frqCompletionStatus").textContent =
+    completed ? "FRQ complete. The +50 XP reward was already earned." : "";
 
   const parts = document.getElementById("frqParts");
   parts.replaceChildren();
-  frq.parts.forEach(part => {
-    const card = document.createElement("article");
-    card.className = "frq-part";
-    const heading = document.createElement("h3");
-    heading.textContent = `(${part.label})`;
-    const prompt = document.createElement("p");
-    prompt.textContent = part.prompt;
-    const key = `${state.currentCourse}::${state.currentUnit}::${frq.id}::${part.label}`;
-    const response = document.createElement("textarea");
-    response.className = "frq-response";
-    response.rows = 4;
-    response.placeholder = "Write your reasoning here...";
-    response.setAttribute("aria-label", `Your response to part ${part.label}`);
-    response.value = state.frqDrafts[key] || "";
-    response.addEventListener("input", () => {
-      state.frqDrafts[key] = response.value;
-      save();
-    });
-    const guideButton = document.createElement("button");
-    guideButton.className = "pixel-btn frq-guide-button";
-    guideButton.type = "button";
-    guideButton.textContent = "SHOW SCORING GUIDE";
-    const guide = document.createElement("div");
-    guide.className = "frq-guide hidden";
-    const rubric = document.createElement("p");
-    rubric.textContent = `Scoring guide: ${part.rubric}`;
-    const solution = document.createElement("p");
-    solution.textContent = `Expected response: ${part.solution}`;
-    guide.append(rubric, solution);
-    guideButton.addEventListener("click", () => {
-      const showing = guide.classList.toggle("hidden");
-      guideButton.textContent = showing ? "SHOW SCORING GUIDE" : "HIDE SCORING GUIDE";
-    });
-    card.append(heading, prompt, response, guideButton, guide);
-    parts.append(card);
+  const card = document.createElement("article");
+  card.className = "frq-part";
+  const heading = document.createElement("h3");
+  heading.textContent = `(${part.label})`;
+  const prompt = document.createElement("p");
+  setAcademicText(prompt, part.prompt);
+  const key = getFrqResponseKey(state.currentCourse, state.currentUnit, frq.id, part.label);
+  const response = document.createElement("textarea");
+  response.className = "frq-response";
+  response.rows = 4;
+  response.placeholder = "Write your reasoning here...";
+  response.setAttribute("aria-label", `Your response to part ${part.label}`);
+  response.value = state.frqDrafts[key] || "";
+  response.addEventListener("input", () => {
+    state.frqDrafts[key] = response.value;
+    save();
   });
+  const guideButton = document.createElement("button");
+  guideButton.className = "pixel-btn frq-guide-button";
+  guideButton.type = "button";
+  guideButton.textContent = "SHOW SCORING GUIDE";
+  const guide = document.createElement("div");
+  guide.className = "frq-guide hidden";
+  const rubric = document.createElement("p");
+  setAcademicText(rubric, `Scoring guide: ${part.rubric}`);
+  const solution = document.createElement("p");
+  setAcademicText(solution, `Expected response: ${part.solution}`);
+  guide.append(rubric, solution);
+  guideButton.addEventListener("click", () => {
+    const showing = guide.classList.toggle("hidden");
+    guideButton.textContent = showing ? "SHOW SCORING GUIDE" : "HIDE SCORING GUIDE";
+  });
+  card.append(heading, prompt, response, guideButton, guide);
+  const gradedPart = savedGrade?.parts.find(result => result.label === part.label);
+  if (gradedPart) {
+    const feedback = document.createElement("p");
+    feedback.className = gradedPart.earned ? "frq-grade-correct" : "frq-grade-incorrect";
+    setAcademicText(feedback, `${gradedPart.earned ? "RIGHT" : "NEEDS WORK"} — ${gradedPart.matched.length}/${gradedPart.matched.length + gradedPart.missing.length} key terms matched. Sample response: ${gradedPart.solution}`);
+    card.append(feedback);
+  }
+  parts.append(card);
 
-  document.getElementById("frqPrevBtn").disabled = state.currentFrqIndex === 0;
-  document.getElementById("frqNextBtn").textContent =
-    state.currentFrqIndex === FRQS_PER_UNIT - 1 ? "RETURN TO UNIT MAP" : "NEXT FRQ ▶";
+  document.getElementById("frqPrevBtn").disabled =
+    state.currentFrqIndex === 0 && state.currentFrqPartIndex === 0;
+  document.getElementById("frqPrevBtn").textContent =
+    state.currentFrqPartIndex === 0 ? "◀ PREVIOUS FRQ" : `◀ PREVIOUS PART (${frq.parts[state.currentFrqPartIndex - 1].label})`;
+  document.getElementById("frqNextBtn").textContent = state.currentFrqPartIndex < frq.parts.length - 1
+    ? `NEXT PART (${frq.parts[state.currentFrqPartIndex + 1].label}) ▶`
+    : state.currentFrqIndex === runLength - 1 ? "RETURN TO UNIT MAP" : "NEXT FRQ ▶";
+}
+
+function currentFrqItems(){
+  return frqItemsForUnit(state.currentCourse, state.currentUnit);
+}
+
+function getFrqCompletionKey(frq){
+  return getFrqCompletionKeyFor(state.currentCourse, state.currentUnit, frq.id);
+}
+
+function getFrqCompletionKeyFor(course, unit, frqId){
+  return `${course}::${unit}::${frqId}`;
+}
+
+function completeCurrentFrq(){
+  const frq = currentFrqItems()?.[state.currentFrqIndex];
+  if (!frq) throw new Error(`No FRQ is available at index ${state.currentFrqIndex}.`);
+  const completionKey = getFrqCompletionKey(frq);
+  if (state.completedFrqs.includes(completionKey)) return;
+  const incompletePart = frq.parts.find(part => {
+    const key = getFrqResponseKey(state.currentCourse, state.currentUnit, frq.id, part.label);
+    return !(state.frqDrafts[key] || "").trim();
+  });
+  if (incompletePart) {
+    document.getElementById("frqCompletionStatus").textContent =
+      `Answer every part before completing this FRQ. Part (${incompletePart.label}) is still blank.`;
+    return;
+  }
+  const grades = frq.parts.map(part => {
+    const key = getFrqResponseKey(state.currentCourse, state.currentUnit, frq.id, part.label);
+    return { label: part.label, ...gradeFrqResponse(part, state.frqDrafts[key] || ""), solution: part.solution };
+  });
+  state.frqGrades[completionKey] = { parts: grades };
+  state.completedFrqs.push(completionKey);
+  awardXp(50);
+  const points = grades.reduce((sum, part) => sum + part.earned, 0);
+  document.getElementById("frqCompletionStatus").textContent =
+    `FRQ graded: ${points}/${grades.length} estimated points. Keyword-based estimate; see each part for feedback. +50 XP`;
+  save();
+  updateUI();
+  renderFrqPractice();
 }
 
 function moveFrq(direction){
+  const items = currentFrqItems();
+  const runLength = items.length;
+  const current = items[state.currentFrqIndex];
+  const nextPartIndex = state.currentFrqPartIndex + direction;
+  if (nextPartIndex >= 0 && nextPartIndex < current.parts.length) {
+    state.currentFrqPartIndex = nextPartIndex;
+    renderFrqPractice();
+    return;
+  }
   const nextIndex = state.currentFrqIndex + direction;
   if (nextIndex < 0) return;
-  if (nextIndex >= FRQS_PER_UNIT) {
+  if (nextIndex >= runLength) {
     finishPlannerQuest();
     const returnToPlanner = state.plannerReturnPending;
     state.plannerReturnPending = false;
@@ -473,25 +761,110 @@ function moveFrq(direction){
     return;
   }
   state.currentFrqIndex = nextIndex;
+  state.currentFrqPartIndex = direction > 0
+    ? 0
+    : items[nextIndex].parts.length - 1;
   renderFrqPractice();
 }
 
-function startBossBattle(){
+function renderBossDifficultyOptions(){
+  const options = document.getElementById("bossDifficultyOptions");
+  if (!options) return;
+  const course = state.currentCourse;
+  options.replaceChildren(...BOSS_EXAM_TIERS.map((tier, index) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "boss-difficulty-option";
+    button.setAttribute("aria-label", tier.title || "STANDARD");
+    button.innerHTML = `<strong>${tier.title || "STANDARD"}</strong>
+      <span>${tier.mcqPerUnit} MCQs per unit · ${tier.frqCount[course]} FRQs · ${tier.minutes / 60} hours</span>
+      <small>SELECT DIFFICULTY</small>`;
+    button.addEventListener("click", () => startBossBattle(index));
+    return button;
+  }));
+  const status = document.getElementById("bossDifficultyStatus");
+  if (status) status.textContent = "All full-course exam difficulties are free to play.";
+}
+
+window.refreshBossDifficultyOptions = renderBossDifficultyOptions;
+
+function closeBossDifficultyPicker(){
+  document.getElementById("bossDifficultyModal").classList.add("hidden");
+}
+
+function startBossBattle(tierIndex){
+  if (state.energy <= 0) {
+    window.alert("Your HP is depleted. Complete practice questions to restore HP before entering another boss battle.");
+    return;
+  }
+  if (tierIndex === undefined) {
+    renderBossDifficultyOptions();
+    document.getElementById("bossDifficultyModal").classList.remove("hidden");
+    return;
+  }
+  if (!Number.isInteger(tierIndex) || tierIndex < 0 || tierIndex >= BOSS_EXAM_TIERS.length) {
+    throw new RangeError(`Invalid boss exam difficulty: ${tierIndex}.`);
+  }
+  closeBossDifficultyPicker();
+  selectBossTheme(tierIndex);
+  const tier = BOSS_EXAM_TIERS[state.bossTier];
+  const units = courseUnits[state.currentCourse] || [];
+  if (!units.length) throw new Error(`No course units are configured for ${state.currentCourse}.`);
+  const questionsByUnit = units.map(([unit]) => {
+    const pool = getQuestionPool(state.currentCourse, unit);
+    return {
+      unit,
+      questions: shuffle(pool).slice(0, Math.min(tier.mcqPerUnit, pool.length))
+    };
+  });
+  const course = state.currentCourse;
+  const courseFrqs = units.flatMap(([unit]) =>
+    frqItemsForUnit(course, unit).map(frq => ({ course, unit, frq }))
+  );
+  const frqCount = tier.frqCount[course];
+  if (courseFrqs.length < frqCount) {
+    throw new Error(`${course} needs ${frqCount} authored FRQ prompts for this exam; found ${courseFrqs.length}.`);
+  }
+  const selectedFrqs = shuffle(courseFrqs).slice(0, frqCount);
   state.mode = "boss";
+  state.reviewQuestionId = null;
   state.currentQuestionIndex = 0;
   state.runXp = 0;
-  state.bossHealth = 160;
-  state.currentRun = createQuestionRun();
+  state.bossCourseRun = questionsByUnit.flatMap(({unit, questions}) =>
+    questions.map(question => ({ ...question, course, unitId: unit }))
+  );
+  state.currentRun = shuffle(state.bossCourseRun);
+  state.bossFrqRun = selectedFrqs.flatMap(({unit, frq}) =>
+    frq.parts.map((part, partIndex) => ({ course, unit, frqId: frq.id, frq, part, partIndex }))
+  );
+  state.bossPhase = "mcq";
+  state.bossDeadline = Date.now() + tier.minutes * 60 * 1000;
+  state.bossMcqAnswered = 0;
+  state.bossFrqIndex = 0;
+  state.bossFrqDrafts = {};
+  state.bossSubmitted = false;
+  state.bossTimedOut = false;
+  state.bossDefeated = false;
+  state.bossCorrect = 0;
+  state.bossAnswers = [];
+  state.bossGrades = [];
+  document.getElementById("bossExamDescription").textContent =
+    `${course.toUpperCase()} • ${tier.title ? `${tier.title} • ` : ""}FULL COURSE • ${tier.minutes} MINUTES`;
+  state.bossMaxHealth = state.currentRun.length * 20 + state.bossFrqRun.length * 10;
+  state.bossHealth = state.bossMaxHealth;
+  save();
   showPage("boss");
-  renderBossQuestion();
+  startBossTimer();
 }
 
 function renderPracticeQuestion(){
   const q = activeQuestion();
   const questionNumber = state.currentQuestionIndex + 1;
+  const runLength = state.currentRun.length || QUESTIONS_PER_RUN;
+  const answerMode = state.mode === "review" ? "review" : "practice";
   document.getElementById("practiceQuestionTag").textContent = `${q.unit.toUpperCase()} • MULTIPLE CHOICE`;
-  document.getElementById("practiceQuestionText").textContent = q.text;
-  document.getElementById("practiceAnswers").innerHTML = q.answers.map((a, i) => `<button class="answer" onclick="answerQuestion(${i}, 'practice')">${String.fromCharCode(65 + i)}. ${a}</button>`).join("");
+  setAcademicText(document.getElementById("practiceQuestionText"), q.text);
+  renderAnswerButtons(document.getElementById("practiceAnswers"), q.answers, answerMode);
   document.getElementById("practiceFeedback").textContent = "";
   document.getElementById("practiceFeedback").className = "feedback";
   document.getElementById("practiceNextBtn").classList.add("hidden");
@@ -500,41 +873,376 @@ function renderPracticeQuestion(){
   reviewBtn.textContent = state.currentReview ? "★ MARKED FOR REVIEW" : "☆ MARK FOR REVIEW";
   reviewBtn.classList.toggle("marked", state.currentReview);
   document.getElementById("practiceCourseLabel").textContent = `${state.currentCourse} • ${state.currentUnit}`;
-  document.getElementById("questionNumber").textContent = `${questionNumber} / ${QUESTIONS_PER_RUN}`;
-  document.getElementById("practiceProgressText").textContent = `${questionNumber} / ${QUESTIONS_PER_RUN}`;
-  document.getElementById("practiceProgress").style.width = `${(questionNumber / QUESTIONS_PER_RUN) * 100}%`;
+  document.getElementById("questionNumber").textContent = `${questionNumber} / ${runLength}`;
+  document.getElementById("practiceProgressText").textContent = `${questionNumber} / ${runLength}`;
+  document.getElementById("practiceProgress").style.width = `${(questionNumber / runLength) * 100}%`;
   document.getElementById("runXp").textContent = state.runXp;
 }
 
 function renderBossQuestion(){
-  const q = activeQuestion();
   const theme = currentBossTheme();
-  document.getElementById("bossQuestionTag").textContent = `${q.unit.toUpperCase()} • BOSS CHALLENGE`;
   document.getElementById("bossSprite").innerHTML = theme.artwork;
   document.getElementById("bossSprite").dataset.course = state.currentCourse;
   document.getElementById("bossSprite").dataset.art = theme.artworkKey;
+  document.getElementById("bossSprite").style.filter = `hue-rotate(${(theme.tier || 0) * 73}deg)`;
   document.getElementById("bossAvatar").setAttribute("aria-label", `${theme.name}, ${state.currentCourse} boss looming over the arena`);
   document.getElementById("bossTitle").textContent = theme.name;
-  document.getElementById("bossQuestionText").textContent = q.text;
-  document.getElementById("bossAnswers").innerHTML = q.answers.map((a, i) => `<button class="answer" onclick="answerQuestion(${i}, 'boss')">${String.fromCharCode(65 + i)}. ${a}</button>`).join("");
-  document.getElementById("bossFeedback").textContent = "";
-  document.getElementById("bossFeedback").className = "feedback";
-  document.getElementById("bossNextBtn").classList.add("hidden");
+  document.getElementById("bossExamDescription").textContent =
+    `${state.currentCourse.toUpperCase()} • ${BOSS_EXAM_TIERS[state.bossTier].title
+      ? `${BOSS_EXAM_TIERS[state.bossTier].title} • ` : ""}FULL COURSE EXAM`;
+  const mcqStage = document.getElementById("bossMcqStage");
+  const frqStage = document.getElementById("bossFrqStage");
+  const result = document.getElementById("bossExamResult");
+  const returnButton = document.getElementById("bossReturnBtn");
+  mcqStage.classList.toggle("hidden", state.bossPhase !== "mcq");
+  frqStage.classList.toggle("hidden", state.bossPhase !== "frq");
+  result.classList.toggle("hidden", state.bossPhase !== "results");
+  returnButton.classList.toggle("hidden", state.bossPhase !== "results");
+
+  if (state.bossPhase === "mcq") {
+    const q = activeQuestion();
+    document.getElementById("bossQuestionTag").textContent =
+      `${q.unit.toUpperCase()} • QUESTION ${state.currentQuestionIndex + 1} / ${state.currentRun.length}`;
+    setAcademicText(document.getElementById("bossQuestionText"), q.text);
+    renderAnswerButtons(document.getElementById("bossAnswers"), q.answers, "boss");
+    document.getElementById("bossFeedback").textContent = "";
+    document.getElementById("bossFeedback").className = "feedback";
+    document.getElementById("bossNextBtn").textContent =
+      state.currentQuestionIndex === state.currentRun.length - 1 ? "CONTINUE TO FREE RESPONSE ▶" : "NEXT QUESTION ▶";
+    document.getElementById("bossNextBtn").classList.add("hidden");
+    const reviewButton = document.getElementById("bossReviewBtn");
+    reviewButton.classList.remove("hidden");
+    reviewButton.textContent = state.reviewed.includes(q.id) ? "★ MARKED FOR REVIEW" : "☆ MARK FOR REVIEW";
+    reviewButton.classList.toggle("marked", state.reviewed.includes(q.id));
+  } else if (state.bossPhase === "frq") {
+    document.getElementById("bossReviewBtn").classList.add("hidden");
+    renderBossFrqSection();
+  } else {
+    const frqPoints = state.bossGrades.reduce((sum, frq) => sum + frq.earned, 0);
+    const frqPossible = state.bossGrades.reduce((sum, frq) => sum + frq.possible, 0);
+    renderBossExamResults(
+      state.currentRun.length,
+      frqPoints,
+      state.currentRun.length + frqPossible,
+      state.bossTimedOut
+    );
+  }
   updateBattleBars();
   applyAvatarLook();
 }
 
+function renderBossFrqSection(){
+  const index = state.bossFrqIndex;
+  const entry = state.bossFrqRun[index];
+  if (!entry) {
+    submitBossExam();
+    return;
+  }
+  const frq = bossFrqForEntry(entry);
+  const prompt = document.getElementById("bossFrqPrompt");
+  prompt.replaceChildren();
+  const heading = document.createElement("h3");
+  setAcademicText(heading, `${entry.unit} • ${frq.title}`);
+  const scenario = document.createElement("p");
+  setAcademicText(scenario, frq.scenario);
+  const subpart = document.createElement("p");
+  setAcademicText(subpart, `(${entry.part.label}) ${entry.part.prompt}`);
+  prompt.append(heading, scenario, subpart);
+  document.getElementById("bossFrqProgress").textContent =
+    `FREE RESPONSE • PART ${index + 1} / ${state.bossFrqRun.length}`;
+  const response = document.getElementById("bossFrqResponse");
+  const key = getFrqResponseKey(entry.course, entry.unit, frq.id, entry.part.label);
+  response.value = state.bossFrqDrafts[key] || "";
+  response.disabled = Boolean(state.bossGrades[index]);
+  response.oninput = () => {
+    state.bossFrqDrafts[key] = response.value;
+    save();
+  };
+  const feedback = document.getElementById("bossFrqFeedback");
+  const grade = state.bossGrades[index];
+  const feedbackText = grade
+    ? `${grade.earned ? "✓ CORRECT — BOSS DAMAGED!" : "✗ NOT QUITE — THE BOSS STRIKES!"} ${grade.missing.length ? `Key terms not detected: ${grade.missing.join(", ")}.` : "Key terms detected."} ${entry.part.rubric}`
+    : "";
+  setAcademicText(feedback, feedbackText);
+  feedback.className = grade ? `feedback ${grade.earned ? "good" : "bad"}` : "feedback";
+  const button = document.getElementById("bossSubmitBtn");
+  button.disabled = false;
+  button.textContent = grade
+    ? index === state.bossFrqRun.length - 1 ? "FINISH EXAM ▶" : "NEXT PART ▶"
+    : "SUBMIT RESPONSE ▶";
+}
+
+function gradeCurrentBossFrq(){
+  if (state.bossSubmitted || state.bossPhase !== "frq") return;
+  const index = state.bossFrqIndex;
+  const entry = state.bossFrqRun[index];
+  if (!entry) throw new Error(`Boss exam FRQ part ${index + 1} is unavailable.`);
+  if (!state.bossGrades[index]) {
+    const response = document.getElementById("bossFrqResponse").value;
+    const grade = gradeFrqResponse(entry.part, response);
+    state.bossGrades[index] = { ...grade, response };
+    if (grade.earned) {
+      state.bossHealth = Math.max(0, state.bossHealth - 10);
+      animateHeroAttack();
+    } else {
+      state.energy = Math.max(0, state.energy - ENERGY_PER_QUESTION);
+      animateBossAttack();
+    }
+    updateBattleBars();
+    if (state.energy === 0) {
+      submitBossExam(false, true);
+      return;
+    }
+    save();
+    renderBossQuestion();
+    updateUI();
+    return;
+  }
+  if (index === state.bossFrqRun.length - 1) {
+    submitBossExam();
+    return;
+  }
+  state.bossFrqIndex += 1;
+  updateBattleBars();
+  save();
+  renderBossQuestion();
+  updateUI();
+}
+
 function updateBattleBars(){
-  const bossFill = document.getElementById("bossHpBar");
-  const playerFill = document.getElementById("playerHpBar");
+  const bossHealth = Math.max(0, Math.min(state.bossHealth, state.bossMaxHealth));
+  const bossPercent = state.bossMaxHealth ? Math.round(bossHealth / state.bossMaxHealth * 100) : 0;
+  document.getElementById("bossHpBar").style.width = `${bossPercent}%`;
+  document.getElementById("bossHpMeter").setAttribute("aria-valuemax", state.bossMaxHealth);
+  document.getElementById("bossHpMeter").setAttribute("aria-valuenow", bossHealth);
+  document.getElementById("bossHpValue").textContent = `${bossHealth}/${state.bossMaxHealth}`;
   const playerHealth = state.energy;
-  bossFill.style.width = `${Math.max(0, state.bossHealth) / 160 * 100}%`;
-  playerFill.style.width = `${playerHealth}%`;
-  document.getElementById("bossHpMeter").setAttribute("aria-valuenow", state.bossHealth);
+  document.getElementById("playerHpMeter").setAttribute("aria-valuemax", MAX_PLAYER_HP);
   document.getElementById("playerHpMeter").setAttribute("aria-valuenow", playerHealth);
-  document.getElementById("bossHpValue").textContent = `${state.bossHealth}/160`;
-  document.getElementById("playerHpValue").textContent = `${playerHealth}/100`;
-  document.getElementById("bossFightLabel").textContent = `${state.bossHealth}/160`;
+  document.getElementById("playerHpBar").style.width = `${playerHealth / MAX_PLAYER_HP * 100}%`;
+  document.getElementById("playerHpValue").textContent = `${playerHealth}/${MAX_PLAYER_HP}`;
+}
+
+function bossFrqForEntry(entry){
+  if (entry.frq) return entry.frq;
+  const frq = frqItemsForUnit(entry.course, entry.unit).find(item => String(item.id) === String(entry.frqId));
+  if (!frq) throw new Error(`Boss exam FRQ ${entry.frqId} is unavailable for ${entry.course}, ${entry.unit}.`);
+  return frq;
+}
+
+function startBossTimer(){
+  if (window.apArcadeBossTimer) clearInterval(window.apArcadeBossTimer);
+  updateBossTimer();
+  window.apArcadeBossTimer = setInterval(updateBossTimer, 1000);
+}
+
+function updateBossTimer(){
+  const remaining = Math.max(0, state.bossDeadline - Date.now());
+  const seconds = Math.ceil(remaining / 1000);
+  document.getElementById("bossTimer").textContent =
+    `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+  if (remaining === 0 && !state.bossSubmitted) submitBossExam(true);
+}
+
+function gradeFrqResponse(part, response){
+  const toTokens = value => (value.toLowerCase().match(/[a-z0-9]+(?:['’-][a-z0-9]+)*/g) || []);
+  const ignored = new Set(["the", "and", "for", "with", "from", "into", "that", "this", "then",
+    "when", "what", "which", "where", "would", "could", "should", "your", "their", "there",
+    "because", "while", "using", "state", "find", "give", "explain", "determine", "identify",
+    "describe", "compare", "evaluate", "write", "show", "use", "relate", "read", "apply",
+    "value", "values", "function", "response", "expected", "response", "must", "does", "doesn",
+    "have", "has", "are", "was", "were", "its", "they", "them", "then", "than", "into",
+    "one", "both", "each", "also", "only", "equal", "same", "such", "some", "more", "less",
+    "but", "can", "may", "will", "are", "is", "be", "of", "to", "in", "on", "at",
+    "by", "as", "or", "an", "a", "it", "if", "do", "so", "up", "out", "about", "per"]);
+  let expectedTokens = [...new Set(toTokens(part.solution).filter(token =>
+    !ignored.has(token) && (token.length >= 3 || /\d/.test(token))
+  ))];
+  if (!expectedTokens.length) {
+    expectedTokens = [...new Set(toTokens(part.solution).filter(token => token.length > 0))];
+  }
+  const responseTokens = new Set(toTokens(response));
+  const matched = expectedTokens.filter(token => responseTokens.has(token));
+  const ratio = expectedTokens.length ? matched.length / expectedTokens.length : 0;
+  return {
+    matched,
+    missing: expectedTokens.filter(token => !responseTokens.has(token)),
+    earned: ratio >= 0.5 ? 1 : 0,
+    possible: 1
+  };
+}
+
+function gradeBossFreeResponses(){
+  const groups = new Map();
+  state.bossFrqRun.forEach((entry, index) => {
+    const frq = bossFrqForEntry(entry);
+    const key = getFrqCompletionKeyFor(entry.course, entry.unit, frq.id);
+    if (!groups.has(key)) groups.set(key, { ...entry, title: frq.title, parts: [] });
+    const response = state.bossFrqDrafts[
+      getFrqResponseKey(entry.course, entry.unit, frq.id, entry.part.label)
+    ] || "";
+    const grade = state.bossGrades[index] || {
+      ...gradeFrqResponse(entry.part, response), response
+    };
+    groups.get(key).parts.push({
+      label: entry.part.label,
+      prompt: entry.part.prompt,
+      rubric: entry.part.rubric,
+      solution: entry.part.solution,
+      response,
+      ...grade
+    });
+  });
+  return [...groups.values()].map(frq => ({
+    ...frq,
+    earned: frq.parts.reduce((sum, part) => sum + part.earned, 0),
+    possible: frq.parts.length,
+    complete: frq.parts.every(part => part.response.trim())
+  }));
+}
+
+function renderBossExamResults(mcqTotal, frqTotal, possiblePoints, expired){
+  const result = document.getElementById("bossExamResult");
+  result.replaceChildren();
+  const totalEarned = state.bossCorrect + frqTotal;
+  const score = possiblePoints ? Math.round(totalEarned / possiblePoints * 100) : 0;
+  const summary = document.createElement("p");
+  summary.textContent = `${state.bossDefeated ? "DEFEAT — YOUR HP REACHED 0. THE BATTLE IS OVER." : expired ? "TIME EXPIRED" : "EXAM SUBMITTED"} — ${state.bossCorrect}/${mcqTotal} multiple-choice correct; ${frqTotal} free-response points earned. Estimated score: ${score}%.`;
+  result.append(summary);
+  const hpSummary = document.createElement("p");
+  hpSummary.textContent = `Player HP after the exam: ${state.energy}/${MAX_PLAYER_HP}. Practice questions restore ${ENERGY_PER_QUESTION} HP each.`;
+  result.append(hpSummary);
+
+  const caveat = document.createElement("p");
+  caveat.textContent = "Free-response feedback is an automatic keyword-based estimate, not an official AP score. Review the rubric and sample response for each part.";
+  result.append(caveat);
+
+  const mcqHeading = document.createElement("h3");
+  mcqHeading.textContent = "MULTIPLE-CHOICE REVIEW";
+  result.append(mcqHeading);
+  state.bossAnswers.forEach((answer, index) => {
+    const item = document.createElement("details");
+    const heading = document.createElement("summary");
+    setAcademicText(heading, `${answer.correct ? "✓" : "✗"} ${answer.unit} • ${index + 1}. ${answer.text}`);
+    const response = document.createElement("p");
+    const chosenAnswer = answer.choice === null ? "No answer" : answer.answers[answer.choice];
+    setAcademicText(response, `Your answer: ${chosenAnswer}${answer.correct ? " — Correct" : ` — Correct answer: ${answer.answers[answer.correctIndex]}`}`);
+    const explanation = document.createElement("p");
+    setAcademicText(explanation, answer.explain);
+    item.append(heading, response, explanation);
+    result.append(item);
+  });
+
+  const frqHeading = document.createElement("h3");
+  frqHeading.textContent = "FREE-RESPONSE REVIEW";
+  result.append(frqHeading);
+  state.bossGrades.forEach(frq => {
+    const section = document.createElement("section");
+    section.className = "boss-grade-item";
+    const title = document.createElement("h4");
+    setAcademicText(title, `${frq.unit} • ${frq.title} — ${frq.earned}/${frq.possible} points`);
+    section.append(title);
+    frq.parts.forEach(part => {
+      const detail = document.createElement("details");
+      const heading = document.createElement("summary");
+      heading.textContent = `${part.earned ? "✓ RIGHT" : "✗ NEEDS WORK"} • Part (${part.label})`;
+      const prompt = document.createElement("p");
+      setAcademicText(prompt, part.prompt);
+      const response = document.createElement("p");
+      response.textContent = `Your response: ${part.response || "No response submitted."}`;
+      const criteria = document.createElement("p");
+      setAcademicText(criteria, `Scoring focus: ${part.rubric}`);
+      const sample = document.createElement("p");
+      setAcademicText(sample, `Sample response: ${part.solution}`);
+      const keywordFeedback = document.createElement("p");
+      const keywordFeedbackText = part.missing.length
+        ? `Key terms not detected: ${part.missing.join(", ")}.`
+        : "Key terms detected in your response.";
+      setAcademicText(keywordFeedback, keywordFeedbackText);
+      detail.append(heading, prompt, response, criteria, sample, keywordFeedback);
+      section.append(detail);
+    });
+    result.append(section);
+  });
+}
+
+function submitBossExam(expired = false, defeated = false){
+  if (state.bossSubmitted) return;
+  if (!expired && !defeated && state.bossPhase !== "frq") return;
+  const recordedIndexes = new Set(state.bossAnswers.map(answer => answer.index));
+  state.currentRun.forEach((runQuestion, index) => {
+    if (recordedIndexes.has(index)) return;
+    const question = typeof runQuestion === "object"
+      ? runQuestion
+      : (state.bossCourseRun || []).find(item => String(item.id) === String(runQuestion));
+    if (!question) throw new Error(`Boss exam question ${runQuestion} is unavailable for grading.`);
+    state.bossAnswers.push({
+      id: question.id,
+      index,
+      course: question.course || state.currentCourse,
+      unit: question.unit,
+      text: question.text,
+      answers: [...question.answers],
+      choice: null,
+      correctIndex: question.correct,
+      correct: false,
+      explain: question.explain
+    });
+  });
+  state.bossAnswers.sort((a, b) => a.index - b.index);
+  state.bossFrqRun.forEach((entry, index) => {
+    if (state.bossGrades[index]) return;
+    const response = state.bossFrqDrafts[
+      getFrqResponseKey(entry.course, entry.unit, entry.frqId, entry.part.label)
+    ] || "";
+    if (!response.trim()) return;
+    const grade = gradeFrqResponse(entry.part, response);
+    state.bossGrades[index] = { ...grade, response };
+    if (grade.earned) state.bossHealth = Math.max(0, state.bossHealth - 10);
+  });
+  state.bossSubmitted = true;
+  state.bossTimedOut = expired;
+  state.bossDefeated = defeated;
+  if (window.apArcadeBossTimer) clearInterval(window.apArcadeBossTimer);
+  state.correct += state.bossCorrect;
+  state.bossGrades = gradeBossFreeResponses();
+  const frqPoints = state.bossGrades.reduce((sum, frq) => sum + frq.earned, 0);
+  const frqPossible = state.bossGrades.reduce((sum, frq) => sum + frq.possible, 0);
+  const possiblePoints = state.currentRun.length + frqPossible;
+  const score = possiblePoints ? (state.bossCorrect + frqPoints) / possiblePoints : 0;
+  const completedFrqs = state.bossGrades.filter(frq => frq.complete);
+  let frqXp = 0;
+  completedFrqs.forEach(frq => {
+    const completionKey = getFrqCompletionKeyFor(frq.course, frq.unit, frq.frqId);
+    if (state.completedFrqs.includes(completionKey)) return;
+    state.completedFrqs.push(completionKey);
+    frqXp += 50;
+  });
+  if (frqXp) awardXp(frqXp);
+  if (!state.bossDefeated && score >= 0.6 && state.bossGrades.every(frq => frq.complete)) {
+    const originalUnit = state.currentUnit;
+    (courseUnits[state.currentCourse] || []).forEach(([unit]) => {
+      state.currentUnit = unit;
+      completeUnit();
+    });
+    state.currentUnit = originalUnit;
+    finishPlannerQuest();
+  } else if (state.bossDefeated && state.activePlannerQuest) {
+    delete state.activePlannerQuest;
+    state.plannerReturnPending = true;
+  }
+  state.bossPhase = "results";
+  updateBattleBars();
+  save();
+  renderBossQuestion();
+  updateUI();
+}
+
+function returnFromBossExam(){
+  if (window.apArcadeBossTimer) clearInterval(window.apArcadeBossTimer);
+  const returnToPlanner = state.plannerReturnPending;
+  state.plannerReturnPending = false;
+  showPage(returnToPlanner ? "planner" : "courses");
 }
 
 function animateHeroAttack(){
@@ -589,46 +1297,46 @@ function answerQuestion(choice, mode = state.mode){
   if (mode === "practice") rechargeEnergy();
 
   const correct = choice === q.correct;
+  if (!correct && mode !== "review") recordWrongAnswer(q, choice);
 
   if (mode === "boss") {
+    state.bossMcqAnswered += 1;
+    if (correct) state.bossCorrect += 1;
+    state.bossAnswers.push({
+      id: q.id,
+      index: state.currentQuestionIndex,
+      course: q.course || state.currentCourse,
+      unit: q.unit,
+      text: q.text,
+      answers: [...q.answers],
+      choice,
+      correctIndex: q.correct,
+      correct,
+      explain: q.explain
+    });
     if (correct) {
-      state.correct += 1;
-      state.xp += 25;
-      state.runXp += 25;
       state.bossHealth = Math.max(0, state.bossHealth - 20);
+      awardXp(25);
       animateHeroAttack();
-      document.getElementById("bossFeedback").textContent = `✓ CRITICAL HIT! ${q.explain}`;
-      document.getElementById("bossFeedback").className = "feedback good";
       buttons[choice].classList.add("correct");
-      updateBattleBars();
-
-      if (state.bossHealth <= 0) {
-        state.xp += 100;
-        state.runXp += 100;
-        document.getElementById("bossFeedback").textContent = "★ BOSS DEFEATED! +100 BONUS XP ★";
-        completeUnit();
-        finishPlannerQuest();
-      }
+      setAcademicText(document.getElementById("bossFeedback"), `✓ CORRECT! ${q.explain}`);
+      document.getElementById("bossFeedback").className = "feedback good";
     } else {
-      drainEnergy();
+      state.energy = Math.max(0, state.energy - ENERGY_PER_QUESTION);
       if (!state.reviewed.includes(q.id)) state.reviewed.push(q.id);
       animateBossAttack();
-      document.getElementById("bossFeedback").textContent = `✗ THE BOSS STRIKES! ${q.explain}`;
-      document.getElementById("bossFeedback").className = "feedback bad";
       buttons[choice].classList.add("wrong");
       buttons[q.correct].classList.add("correct");
-      updateBattleBars();
-
-      if (state.energy <= 0) {
-        document.getElementById("bossFeedback").textContent = "☠ YOU WERE DEFEATED. THE BOSS WINS THIS ROUND.";
-      }
+      setAcademicText(document.getElementById("bossFeedback"), `✗ NOT QUITE. ${q.explain}`);
+      document.getElementById("bossFeedback").className = "feedback bad";
     }
-
-    const lastBossQuestion = state.currentQuestionIndex === QUESTIONS_PER_RUN - 1;
-    if (lastBossQuestion && state.bossHealth > 0 && state.energy > 0) {
-      document.getElementById("bossFeedback").textContent = "THE BOSS ESCAPED THIS ROUND. Clear the unit in the Practice Arena to earn its level.";
+    updateBattleBars();
+    if (state.energy === 0) {
+      submitBossExam(false, true);
+      return;
     }
-    document.getElementById("bossNextBtn").textContent = state.energy <= 0 ? "RETREAT" : state.bossHealth <= 0 ? "CLAIM VICTORY" : lastBossQuestion ? "END BATTLE" : "NEXT ATTACK ▶";
+    document.getElementById("bossNextBtn").textContent =
+      state.currentQuestionIndex === state.currentRun.length - 1 ? "CONTINUE TO FREE RESPONSE ▶" : "NEXT QUESTION ▶";
     document.getElementById("bossNextBtn").classList.remove("hidden");
     save();
     updateUI();
@@ -637,32 +1345,36 @@ function answerQuestion(choice, mode = state.mode){
 
   if (correct) {
     state.correct += 1;
-    state.xp += 20;
-    state.runXp += 20;
+    if (mode !== "review") {
+      awardXp(20);
+      state.runXp += 20;
+    }
     state.bossHealth = Math.max(0, state.bossHealth - 20);
-    document.getElementById("practiceFeedback").textContent = "✓ CORRECT! " + q.explain;
+    setAcademicText(document.getElementById("practiceFeedback"), "✓ CORRECT! " + q.explain);
     document.getElementById("practiceFeedback").className = "feedback good";
     buttons[choice].classList.add("correct");
-    if (state.bossHealth === 0) {
-      state.xp += 100;
+    if (state.bossHealth === 0 && mode !== "review") {
+      awardXp(100);
       state.runXp += 100;
       document.getElementById("practiceFeedback").textContent = "★ BOSS DEFEATED! +100 BONUS XP ★";
     }
   } else {
     if (!state.reviewed.includes(q.id)) state.reviewed.push(q.id);
-    document.getElementById("practiceFeedback").textContent = "✗ NOT QUITE. " + q.explain;
+    setAcademicText(document.getElementById("practiceFeedback"), "✗ NOT QUITE. " + q.explain);
     document.getElementById("practiceFeedback").className = "feedback bad";
     buttons[choice].classList.add("wrong");
     buttons[q.correct].classList.add("correct");
   }
 
-  const lastPracticeQuestion = state.currentQuestionIndex === QUESTIONS_PER_RUN - 1;
-  document.getElementById("practiceNextBtn").textContent = lastPracticeQuestion ? "RETURN TO WORLDS ▶" : "NEXT QUESTION ▶";
+  const lastPracticeQuestion = state.currentQuestionIndex === state.currentRun.length - 1;
+  document.getElementById("practiceNextBtn").textContent = state.mode === "review"
+    ? "RETURN TO REVIEW LIST ▶"
+    : lastPracticeQuestion ? "RETURN TO WORLDS ▶" : "NEXT QUESTION ▶";
   document.getElementById("practiceNextBtn").classList.remove("hidden");
-  document.getElementById("practiceProgressText").textContent = `${state.currentQuestionIndex + 1} / ${QUESTIONS_PER_RUN}`;
-  document.getElementById("practiceProgress").style.width = `${((state.currentQuestionIndex + 1) / QUESTIONS_PER_RUN) * 100}%`;
+  document.getElementById("practiceProgressText").textContent = `${state.currentQuestionIndex + 1} / ${state.currentRun.length}`;
+  document.getElementById("practiceProgress").style.width = `${((state.currentQuestionIndex + 1) / state.currentRun.length) * 100}%`;
   document.getElementById("runXp").textContent = state.runXp;
-  if (lastPracticeQuestion) {
+  if (lastPracticeQuestion && mode === "practice") {
     completeUnit();
     finishPlannerQuest();
   }
@@ -670,8 +1382,28 @@ function answerQuestion(choice, mode = state.mode){
   updateUI();
 }
 
+function recordWrongAnswer(question, choice){
+  const answer = {
+    id: question.id,
+    course: question.course || state.currentCourse,
+    unit: question.unitId || /^Unit \d+/.exec(question.unit || "")?.[0] || state.currentUnit,
+    choice,
+    answeredAt: Date.now()
+  };
+  state.wrongAnswers = (state.wrongAnswers || [])
+    .filter(previous => String(previous.id) !== String(answer.id));
+  state.wrongAnswers.push(answer);
+  state.wrongAnswers = state.wrongAnswers.slice(-100);
+  window.refreshCoachStatus?.();
+}
+
 function nextQuestion(){
-  if (state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
+  if (state.mode === "review") {
+    state.reviewQuestionId = null;
+    showPage("analytics");
+    return;
+  }
+  if (state.currentQuestionIndex >= state.currentRun.length - 1) {
     const returnToPlanner = state.plannerReturnPending;
     state.plannerReturnPending = false;
     showPage(returnToPlanner ? "planner" : "courses");
@@ -682,14 +1414,17 @@ function nextQuestion(){
 }
 
 function nextBossQuestion(){
-  if (state.energy <= 0 || state.bossHealth <= 0 || state.currentQuestionIndex >= QUESTIONS_PER_RUN - 1) {
-    const returnToPlanner = state.plannerReturnPending;
-    state.plannerReturnPending = false;
-    showPage(returnToPlanner ? "planner" : "courses");
+  if (state.bossPhase !== "mcq") return;
+  if (state.currentQuestionIndex >= state.currentRun.length - 1) {
+    state.bossPhase = "frq";
+    renderBossQuestion();
+    startBossTimer();
+    save();
     return;
   }
   state.currentQuestionIndex += 1;
   renderBossQuestion();
+  save();
 }
 
 function toggleReview(){
@@ -712,6 +1447,34 @@ function toggleReview(){
   renderAnalytics();
 }
 
+function openReviewedQuestion(id){
+  const question = allQuestions().find(item => String(item.id) === String(id));
+  if (!question) throw new Error(`The reviewed question ${id} is no longer available.`);
+  if (courseUnits[question.course]) state.currentCourse = question.course;
+  const unitId = /^Unit \d+/.exec(question.unit || "")?.[0];
+  if (unitId && (courseUnits[state.currentCourse] || []).some(unit => unit[0] === unitId)) {
+    state.currentUnit = unitId;
+  }
+  state.mode = "review";
+  state.reviewQuestionId = question.id;
+  state.currentQuestionIndex = 0;
+  state.currentRun = [question];
+  showPage("practice");
+}
+
+function awardXp(amount){
+  const previousLevel = state.level;
+  state.xp += amount;
+  state.level = Math.floor(state.xp / XP_PER_LEVEL) + 1;
+  if (state.level > previousLevel) {
+    document.getElementById("newLevel").textContent = state.level;
+    document.getElementById("levelUp").classList.remove("hidden");
+    document.querySelector("#levelUp .eyebrow").textContent = "★ LEVEL UP ★";
+    document.querySelector("#levelUp h2").textContent = "LEVEL UP!";
+    document.querySelector("#levelUp p").textContent = `You reached level ${state.level}. Keep earning XP to unlock new gear!`;
+  }
+}
+
 function updateUI(){
   const accuracy = state.questions ? Math.round((state.correct / state.questions) * 100) : 0;
   document.getElementById("homeQuestions").textContent = state.questions;
@@ -722,7 +1485,7 @@ function updateUI(){
   document.getElementById("homeCourse").textContent = state.currentCourse;
   document.getElementById("homeUnit").textContent = `${state.currentUnit.toUpperCase()} MINI BOSS`;
   document.getElementById("navLevel").textContent = `LVL ${state.level}`;
-  document.getElementById("navXp").style.width = `${(state.xp % 200) / 2}%`;
+  document.getElementById("navXp").style.width = `${(state.xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100}%`;
   document.getElementById("navProfileName").textContent = state.profile.name || "PLAYER_001";
   document.getElementById("homeWelcomeName").textContent = state.profile.name || "PLAYER_001";
   renderProfile();
@@ -736,13 +1499,13 @@ function completeUnit(){
   const key = unitKey();
   if (state.completedUnits.includes(key)) return;
   state.completedUnits.push(key);
-  state.level += 1;
-  state.xp += 100;
+  awardXp(100);
   document.getElementById("newLevel").textContent = state.level;
   document.getElementById("levelUp").classList.remove("hidden");
   document.querySelector("#levelUp .eyebrow").textContent = "★ UNIT CLEARED ★";
-  document.querySelector("#levelUp h2").textContent = "LEVEL UP!";
-  document.querySelector("#levelUp p").textContent = `${state.currentCourse} ${state.currentUnit} cleared. +100 XP and new gear may be available!`;
+  document.querySelector("#levelUp h2").textContent = "UNIT CLEARED!";
+  document.querySelector("#levelUp p").textContent =
+    `${state.currentCourse} ${state.currentUnit} cleared. +100 XP awarded. Current level: ${state.level}.`;
   save();
 }
 
@@ -793,9 +1556,9 @@ function renderProfile(){
   document.getElementById("profileClassLabel").textContent = className.toUpperCase();
   document.getElementById("profileNameInput").value = state.profile.name || "PLAYER_001";
   document.getElementById("profileLevel").textContent = state.level;
-  document.getElementById("profileXpLabel").textContent = `${state.xp} XP • NEXT LEVEL: COMPLETE A UNIT`;
+  document.getElementById("profileXpLabel").textContent = `${state.xp} XP • ${XP_PER_LEVEL - (state.xp % XP_PER_LEVEL)} XP TO NEXT LEVEL`;
   document.getElementById("completedUnitCount").textContent = `${state.completedUnits.length} UNIT${state.completedUnits.length === 1 ? "" : "S"} CLEARED`;
-  document.getElementById("profileXpBar").style.width = `${Math.min(100, state.completedUnits.length * 10)}%`;
+  document.getElementById("profileXpBar").style.width = `${(state.xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100}%`;
   document.getElementById("profileAvatarStage").style.setProperty("--outfit-color", outfit.color);
   document.getElementById("profileAvatarStage").dataset.class = className.toLowerCase();
   document.getElementById("navAvatar").style.setProperty("--outfit-color", outfit.color);
@@ -825,6 +1588,7 @@ function applyAvatarLook(){
     avatar.dataset.weapon = weapon.id;
     avatar.style.setProperty("--outfit-color", outfit.color);
   });
+  window.refreshSandboxPlayerSprite?.();
 }
 
 function renderAnalytics(){
@@ -834,13 +1598,58 @@ function renderAnalytics(){
   document.getElementById("aAccuracy").textContent = `${accuracy}%`;
   document.getElementById("aStreak").textContent = state.streak;
   const units = courseUnits[state.currentCourse] || [];
-  document.getElementById("mastery").innerHTML = units.map(u => `
-    <div class="mastery-row"><label>${u[0]}</label><div class="mastery-bar"><div style="width:${u[4]}%"></div></div><span>${u[4]}%</span></div>`).join("");
+  document.getElementById("mastery").innerHTML = units.map(([unit]) => {
+    const progress = getUnitPracticeProgress(state.currentCourse, unit);
+    return `
+      <div class="mastery-row">
+        <label>${unit}</label>
+        <div class="mastery-bar" role="meter" aria-label="${unit} practice completion" aria-valuemin="0" aria-valuemax="${progress.total}" aria-valuenow="${progress.completed}" aria-valuetext="${progress.completed} of ${progress.total} problems completed (${progress.percent}%)">
+          <div style="width:${progress.percent}%"></div>
+        </div>
+        <span>${progress.percent}% (${progress.completed}/${progress.total})</span>
+      </div>`;
+  }).join("");
   const list = document.getElementById("reviewList");
-  list.innerHTML = state.reviewed.length ? state.reviewed.map(id => {
-    const q = allQuestions().find(x => x.id === id);
-    return q ? `<div class="review-item"><span>${q.unit}: ${q.text}</span><span class="wrong-text">REVIEW</span></div>` : "";
-  }).join("") : `<p style="color:#8d83a5">No questions marked yet. Missed questions will automatically appear here.</p>`;
+  list.replaceChildren();
+  if (!state.reviewed.length) {
+    const empty = document.createElement("p");
+    empty.textContent = "No questions marked yet. Missed questions will automatically appear here.";
+    list.append(empty);
+    return;
+  }
+  state.reviewed.forEach(id => {
+    const question = allQuestions().find(item => String(item.id) === String(id));
+    if (!question) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "review-item";
+    const prompt = document.createElement("span");
+    setAcademicText(prompt, `${question.unit}: ${question.text}`);
+    const action = document.createElement("span");
+    action.className = "wrong-text";
+    action.textContent = "REVIEW ▶";
+    button.append(prompt, action);
+    button.addEventListener("click", () => openReviewedQuestion(question.id));
+    list.append(button);
+  });
+}
+
+function getUnitPracticeProgress(course, unit){
+  const questions = getQuestionPool(course, unit);
+  const answeredIds = new Set((state.answeredIds || []).map(id => String(id)));
+  const completedMcqs = questions.filter(question => answeredIds.has(String(question.id))).length;
+  const completedFrqs = new Set(state.completedFrqs || []);
+  const frqs = frqItemsForUnit(course, unit);
+  const completedFrqCount = frqs.filter(frq =>
+    completedFrqs.has(getFrqCompletionKeyFor(course, unit, frq.id))
+  ).length;
+  const total = questions.length + frqs.length;
+  const completed = completedMcqs + completedFrqCount;
+  return {
+    completed,
+    total,
+    percent: total ? Math.round(completed / total * 100) : 0
+  };
 }
 
 function updatePlannerPreference(key, value){
@@ -922,7 +1731,7 @@ function createPlannerQuest(kind, course, target, exam){
       action: "ENTER BATTLE ▶"
     };
   }
-  const detail = `Run a 15-question multiple-choice set for ${unitName}.`;
+  const detail = `Run up to 30 multiple-choice questions for ${unitName}.`;
   return {
     kind: "practice", icon: "🎯", title: "Targeted practice", detail,
     reason: target.reviewCount
@@ -933,6 +1742,10 @@ function createPlannerQuest(kind, course, target, exam){
 }
 
 function startPlannerQuest(quest){
+  if (quest.kind === "boss" && state.energy <= 0) {
+    window.alert("Your HP is depleted. Complete practice questions to restore HP before entering another boss battle.");
+    return;
+  }
   state.currentCourse = quest.course;
   state.currentUnit = quest.unit;
   state.activePlannerQuest = { date: quest.date, kind: quest.kind };
@@ -944,7 +1757,9 @@ function startPlannerQuest(quest){
   }
   if (quest.kind === "frq") {
     state.mode = "frq";
+    state.reviewQuestionId = null;
     state.currentFrqIndex = 0;
+    state.currentFrqPartIndex = 0;
     showPage("frq");
     return;
   }
@@ -953,8 +1768,10 @@ function startPlannerQuest(quest){
     return;
   }
   state.mode = "practice";
+  state.reviewQuestionId = null;
   state.currentQuestionIndex = 0;
   state.runXp = 0;
+  state.bossHealth = 160;
   state.currentRun = createQuestionRun();
   showPage("practice");
 }
@@ -973,6 +1790,11 @@ function renderPlanner(){
   }));
   courseSelect.value = state.plannerPrefs.focusCourse;
   const course = state.plannerPrefs.focusCourse;
+  const coachCourse = document.getElementById("coachCourse");
+  if (coachCourse && [...coachCourse.options].some(option => option.value === course)) {
+    coachCourse.value = course;
+    window.refreshCoachStatus?.();
+  }
   unitSelect.replaceChildren();
   const autoOption = document.createElement("option");
   autoOption.value = "auto";
@@ -1072,37 +1894,6 @@ function finishPlannerQuest(){
   save();
 }
 
-function exportProgress(){
-  const file = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(file);
-  link.download = "ap-arcade-save.json";
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
-}
-
-function importProgress(file){
-  if (!file) return;
-  const reader = new FileReader();
-  reader.addEventListener("load", () => {
-    try {
-      const imported = JSON.parse(String(reader.result));
-      if (!imported || typeof imported !== "object" || Array.isArray(imported)
-          || !imported.profile || typeof imported.profile !== "object"
-          || !Number.isFinite(imported.xp) || !Number.isFinite(imported.questions)
-          || !imported.plannerPrefs || typeof imported.plannerPrefs !== "object") {
-        throw new Error("This file does not look like an AP Arcade save.");
-      }
-      localStorage.setItem("apStemQuestState", JSON.stringify(imported));
-      window.location.reload();
-    } catch (error) {
-      window.alert(`Could not import save: ${error.message}`);
-    }
-  });
-  reader.addEventListener("error", () => window.alert("Could not read the selected save file."));
-  reader.readAsText(file);
-}
-
 function closeModal(){
   document.getElementById("levelUp").classList.add("hidden");
 }
@@ -1188,6 +1979,56 @@ function updateCountdown(){
     document.getElementById("nextExamLabel").textContent = "Update any date below to start a new countdown.";
   }
 }
+
+window.APArcadeStudyData = {
+  courses: () => Object.keys(courseUnits),
+  wrongQuestionCount(course){
+    return (state.wrongAnswers || []).filter(answer => answer.course === course).length;
+  },
+  getCoachMistakes(course, limit = 8){
+    const questionsById = new Map(allQuestions().map(question => [String(question.id), question]));
+    return (state.wrongAnswers || [])
+      .filter(answer => answer.course === course)
+      .slice(-Math.max(1, Math.min(8, limit)))
+      .reverse()
+      .flatMap(answer => {
+        const question = questionsById.get(String(answer.id));
+        if (!question) return [];
+        return [{
+          course,
+          unit: question.unit || answer.unit,
+          question: question.text,
+          choices: [...question.answers],
+          chosenAnswer: question.answers[answer.choice] || "No answer recorded",
+          correctAnswer: question.answers[question.correct],
+          explanation: question.explain
+        }];
+      });
+  },
+  getPracticeQuestion(course){
+    const pool = getCourseQuestionPool(course);
+    return pool[Math.floor(Math.random() * pool.length)];
+  },
+  recordPracticeAnswer(question, choice){
+    state.questions += 1;
+    state.answeredIds.push(question.id);
+    const correct = choice === question.correct;
+    if (correct) {
+      state.correct += 1;
+      awardXp(8);
+    } else {
+      recordWrongAnswer(question, choice);
+      if (!state.reviewed.includes(question.id)) state.reviewed.push(question.id);
+    }
+    save();
+    updateUI();
+    return {
+      correct,
+      correctAnswer: question.answers[question.correct],
+      explanation: question.explain
+    };
+  }
+};
 
 renderExamCountdowns();
 updateUI();

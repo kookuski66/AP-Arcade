@@ -1,42 +1,39 @@
 # AP Arcade — Prototype
 
-This is a front-end prototype for the AP Arcade idea.
+AP Arcade is a free, retro-style study hub for AP Physics 1, AP Chemistry, AP Calculus AB, and AP Biology.
 
 ## Run it
+
 1. Keep `index.html`, `style.css`, and `script.js` in the same folder.
-2. Double-click `index.html` to open it in Chrome.
-3. No server or installation is required for this prototype.
+2. Open `index.html` directly for the offline prototype, or serve the folder over HTTP (for example with VS Code Live Server) to use accounts and the public question bank.
+3. No package installation is required.
 
 ## What is included
-- Retro 8-bit / arcade visual theme
-- Home page
-- Editable per-course AP exam countdowns
-- Course selection
-- Course unit maps (8 AP Physics 1, 9 AP Chemistry, 8 AP Calculus AB, 8 AP Biology units)
-- Per-course AP exam date settings and countdowns
-- Multiple-choice practice
-- Separate FRQ practice with three five-part prompts per unit
-- Boss fight system
-- Energy bar
-- XP and levels
-- Character profile with class selection and level-unlocked outfits and weapons
-- 15-question MCQ runs with no repeated item in a run
-- Saved FRQ response drafts with revealable scoring guides
-- Energy meter starts full and persists between sessions; it is also the player's HP in boss battles. Practice MCQs recharge it, and wrong boss answers drain it.
-- One-time level and XP rewards for completing a course unit
-- Character sprite that attacks and takes damage in boss battles
-- Review/missed-question system
-- Basic analytics
-- Adaptive weekly study planner with selectable courses, units, study days, exam-aware quests, and completion tracking
-- Local browser save using localStorage, with JSON export/import to transfer progress between devices
 
-## Important
-The original practice items are authored in `academic-content.js`; they are not copied from College Board materials. The course maps follow the published AP unit frameworks. Subject-matter experts should still review the questions, answer keys, scoring guides, and exam alignment against current AP Course and Exam Descriptions before publishing.
+- Retro 8-bit / arcade visual theme, course selection, and editable AP exam countdowns.
+- Course maps for AP Physics 1, AP Chemistry, AP Calculus AB, and AP Biology.
+- Multiple-choice and free-response practice, review tools, and answer explanations.
+- Practice runs with up to 30 unique MCQs per unit and all authored FRQs.
+- Standard, Ascendant Trial, and Omega Gauntlet boss exams, all available to everyone.
+- XP, levels, character customization, analytics, and an adaptive weekly study planner.
+- Personal Study Coach inside the planner, built from saved missed questions and authored explanations without an external AI service.
+- Scholar's Wilds as its own free sandbox, with exploration, crafting, combat, and AP practice at the Study Shrine.
+- Browser-local saves for everyone and optional account sign-in to sync study progress and the Wilds save across devices.
+
+The original practice items are authored in `academic-content.js`; they are not copied from College Board materials. The course maps follow the published AP unit frameworks. Subject-matter experts should still review questions, answer keys, scoring guides, and exam alignment against current AP Course and Exam Descriptions before publishing.
 
 Framework references: [AP Physics 1](https://apcentral.collegeboard.org/courses/ap-physics-1), [AP Chemistry](https://apcentral.collegeboard.org/courses/ap-chemistry), [AP Calculus AB](https://apcentral.collegeboard.org/courses/ap-calculus-ab), and [AP Biology](https://apcentral.collegeboard.org/courses/ap-biology).
 
-## First things to customize
-- Set exam dates for each course on the home page
-- Add or revise MCQs and FRQs in `academic-content.js`
-- Add/edit courses and units in `courseUnits` and author matching banks in `academic-content.js`
-- Change colors/fonts in `style.css`
+## Supabase accounts and free question sets
+
+Accounts are optional. Without signing in, study progress and the Scholar's Wilds save stay in the current browser. When someone signs in, the current browser save is associated with that account and synced through the `player_progress` table. Account progress is private to its owner through row-level security.
+
+1. Apply all SQL files in `supabase/migrations/` in filename order. The earlier membership migrations are retained as history; the final migration removes the legacy subscription/grant tables, makes `premium_content` readable to all visitors, and creates the account progress table.
+2. Set the Supabase project URL and public anon key in `account-config.js`. These values are safe for browser use; never put a service-role key or other secret in a browser file.
+3. In Supabase Auth, allow the website URL and configure email confirmation as desired.
+4. To load the authored extra questions, run `supabase/premium/seed_questions.sql` in the Supabase SQL Editor after applying the migrations. It inserts 33 grouped sets with 15 additional MCQs each (495 total), leaves existing free banks untouched, and skips sets already inserted by this seed.
+5. To add more questions later, insert rows into `premium_content` with `course`, `content_key`, `content_type` (`mcq` or `frq`), and `content`. Despite the legacy table name, its content is free and readable by anonymous and signed-in visitors after the final migration. MCQ sets use a `questions` array of `[prompt, answerChoices, correctAnswerIndex, explanation]` tuples. `content_key` must match the existing bank key; some AP Physics units use legacy keys such as `Unit 4 Energy` and `Unit 5 Momentum`. FRQ rows use the existing FRQ object shape (`title`, `scenario`, and `parts`).
+
+The Personal Study Coach builds a focused guide in the browser from up to eight recent missed questions, their authored answer explanations, and the units needing review. It uses no external AI service, API key, or Edge Function. Study progress and the Wilds save are stored locally and synced to `player_progress` while signed in. Do not store personal or sensitive information in question answers.
+
+Opening `index.html` directly with `file://` still works for the offline prototype, but browser authentication and Supabase question loading require an HTTP origin. There is no Stripe setup or subscription service.

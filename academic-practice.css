@@ -98,6 +98,159 @@
   gap: 12px;
 }
 
+.frq-completion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.frq-completion p {
+  margin: 0;
+  color: #b8ffdf;
+}
+
+.boss-exam-timer {
+  font-variant-numeric: tabular-nums;
+}
+
+.boss-exam-result {
+  padding: 20px 0;
+  line-height: 1.7;
+}
+
+.boss-difficulty-modal .modal-box {
+  position: relative;
+  width: min(720px, calc(100% - 32px));
+}
+
+.boss-difficulty-modal > .modal-box > p {
+  color: #c8bfd8;
+  line-height: 1.5;
+}
+
+.boss-difficulty-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.boss-difficulty-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.boss-difficulty-option {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 124px;
+  padding: 16px;
+  border: 2px solid #8effd2;
+  background: #171126;
+  color: #f5f0ff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.boss-difficulty-option strong,
+.boss-difficulty-option small {
+  font-family: "Press Start 2P", monospace;
+  font-size: 9px;
+  line-height: 1.6;
+}
+
+.boss-difficulty-option span {
+  color: #c8bfd8;
+}
+
+.boss-difficulty-option small {
+  color: #8effd2;
+}
+
+.boss-difficulty-option:hover:not(:disabled),
+.boss-difficulty-option:focus-visible {
+  outline: 2px solid #f1cf72;
+  outline-offset: 2px;
+}
+
+.boss-difficulty-option.locked {
+  border-color: #62596f;
+  color: #a69cb5;
+  cursor: not-allowed;
+  opacity: .7;
+}
+
+.boss-difficulty-option.locked small {
+  color: #f1cf72;
+}
+
+.boss-exam-result > details,
+.boss-grade-item {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid rgba(184, 255, 223, .22);
+  background: rgba(255, 255, 255, .035);
+}
+
+.boss-exam-result summary {
+  cursor: pointer;
+  color: #b8ffdf;
+}
+
+.boss-grade-item h4 {
+  margin-top: 0;
+}
+
+.boss-grade-item details {
+  margin: 10px 0;
+  padding: 10px;
+  border-left: 2px solid rgba(179, 140, 255, .55);
+}
+
+.frq-grade-correct,
+.frq-grade-incorrect {
+  padding: 10px;
+  line-height: 1.5;
+}
+
+.frq-grade-correct {
+  color: #b8ffdf;
+}
+
+.frq-grade-incorrect {
+  color: #ffb8b8;
+}
+
+.review-item {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, .13);
+  background: rgba(255, 255, 255, .035);
+  text-align: left;
+}
+
+.review-item:hover,
+.review-item:focus-visible {
+  border-color: #b8ffdf;
+}
+
+.review-item span:first-child {
+  flex: 1;
+}
+
 .frq-navigation button:disabled {
   cursor: not-allowed;
   opacity: .45;
@@ -291,58 +444,8 @@
   margin-top: 12px;
 }
 
-.planner-transfer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  margin: 24px 0;
-  padding: 18px;
-  border: 1px solid rgba(179, 140, 255, .4);
-  background: rgba(24, 19, 43, .82);
-}
-
-.planner-transfer > div {
-  flex: 1 1 250px;
-}
-
-.planner-transfer strong {
-  color: #b8ffdf;
-  font: 9px "Press Start 2P", monospace;
-  line-height: 1.7;
-}
-
-.planner-transfer p {
-  margin: 8px 0 0;
-}
-
-.planner-transfer .pixel-btn {
-  margin: 0;
-}
-
-.import-save {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 42px;
-  cursor: pointer;
-}
-
-.import-save input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  opacity: 0;
-}
-
 @media (max-width: 600px) {
   #planner .day-card {
     min-height: 0;
-  }
-
-  .planner-transfer > .pixel-btn {
-    flex: 1 1 100%;
-    justify-content: center;
   }
 }

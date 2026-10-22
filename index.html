@@ -11,6 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="academic-practice.css">
+  <link rel="stylesheet" href="account.css">
+  <link rel="stylesheet" href="study-features.css">
 </head>
 <body>
   <div class="scanlines"></div>
@@ -25,6 +27,8 @@
       <button onclick="startBossBattle()">BOSS BATTLE</button>
       <button onclick="showPage('analytics')">ANALYTICS</button>
       <button onclick="showPage('planner')">PLANNER</button>
+      <button onclick="showPage('sandbox')">SCHOLAR'S WILDS</button>
+      <button onclick="showPage('account')">ACCOUNT</button>
     </nav>
     <button class="profile-trigger" onclick="openProfile()" aria-label="Open character profile">
       <span id="navAvatar" class="mini-avatar" aria-hidden="true"><span class="avatar-head"></span><span class="avatar-body"></span></span>
@@ -54,7 +58,7 @@
           <div class="boss-art">⚡</div>
           <h2 id="homeCourse">AP PHYSICS 1</h2>
           <p id="homeUnit">UNIT 1 MINI BOSS</p>
-          <div class="energy"><span>ENERGY <strong id="homeEnergyLabel">100%</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:100%"></div></div></div>
+          <div class="energy"><span>PLAYER HP <strong id="homeEnergyLabel">200/200</strong></span><div class="energy-bar"><div id="homeEnergy" style="width:100%"></div></div></div>
           <button class="pixel-btn danger" onclick="startBossBattle()">ENTER BOSS FIGHT</button>
         </div>
       </div>
@@ -92,6 +96,122 @@
       </div>
     </section>
 
+    <section id="account" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">PLAYER ACCOUNT</div><h1>ACCOUNT</h1></div>
+        <div class="level-badge">ALL FEATURES FREE</div>
+      </div>
+      <div class="account-layout">
+        <section class="account-panel" aria-labelledby="accountHeading">
+          <div class="section-heading"><span>▸</span> <span id="accountHeading">SIGN IN OR JOIN</span></div>
+          <p id="accountStatus" class="account-status" role="status" aria-live="polite">Checking account setup...</p>
+          <form class="account-form" onsubmit="event.preventDefault(); signInAccount();">
+            <label for="accountEmail">EMAIL</label>
+            <input id="accountEmail" type="email" autocomplete="email" required>
+            <label for="accountPassword">PASSWORD</label>
+            <input id="accountPassword" type="password" autocomplete="current-password" minlength="8" required>
+            <div class="account-actions">
+              <button class="pixel-btn primary" type="submit">SIGN IN</button>
+              <button class="pixel-btn" type="button" onclick="createAccount()">CREATE ACCOUNT</button>
+            </div>
+          </form>
+          <div id="accountActions" class="account-actions hidden">
+            <button class="pixel-btn" type="button" onclick="signOutAccount()">SIGN OUT</button>
+          </div>
+        </section>
+        <section class="account-panel account-summary" aria-labelledby="freeContentHeading">
+          <div class="section-heading"><span>▸</span> <span id="freeContentHeading">FREE CONTENT + SAVED PROGRESS</span></div>
+          <p>Every question set, boss difficulty, study guide, and the Scholar's Wilds are free. Sign in to sync your study progress and world between devices.</p>
+          <p id="publicContentStatus" class="content-status" aria-live="polite">Loading the full question banks...</p>
+        </section>
+      </div>
+    </section>
+
+    <section id="sandbox" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">EXPLORE, BUILD, AND PRACTICE</div><h1>THE SCHOLAR'S WILDS</h1></div>
+        <div class="level-badge">FREE TO PLAY</div>
+      </div>
+      <p id="sandboxAccessStatus" class="content-status" role="status" aria-live="polite"></p>
+      <div class="feature-layout">
+        <section class="feature-panel" aria-labelledby="sandboxHeading">
+          <div class="section-heading"><span>✦</span> <span id="sandboxHeading">THE SCHOLAR'S WILDS</span></div>
+          <p>Explore a new pixel wilderness, gather materials, craft gear, build a home, meet a field guide, and turn AP practice into world loot.</p>
+          <label class="sandbox-course-picker" for="sandboxCourse">AP STUDY COURSE <select id="sandboxCourse"></select></label>
+          <button id="sandboxStartButton" class="pixel-btn primary" type="button" onclick="startSandbox()">ENTER THE WILDS ▶</button>
+          <div id="sandboxShell" class="sandbox-shell hidden">
+            <div class="sandbox-hud">
+              <span>HP <strong id="sandboxHpValue">100/100</strong></span>
+              <div class="sandbox-hp"><div id="sandboxHpBar"></div></div>
+              <span id="sandboxBiome">MEADOW</span>
+              <span id="sandboxCoords">X 0 · Y 0</span>
+            </div>
+            <details class="sandbox-tutorial">
+              <summary>FIELD GUIDE: HOW TO PLAY &amp; SPRITES</summary>
+              <div class="sandbox-guide-content">
+                <section>
+                  <h3>CONTROLS &amp; ACTIONS</h3>
+                  <ul>
+                    <li><strong>Move:</strong> WASD, arrow keys, or the direction buttons. Face a tree, rock, or ore vein, then press <kbd>Space</kbd> to mine it. It takes three strikes; trees give wood, rocks give stone, and glowing ore gives stone and a crystal.</li>
+                    <li><strong>Interact:</strong> Press <kbd>E</kbd> near a person or object. Interact with the Study Shrine to answer an AP question, the Field Guide for a hint, the workbench to open crafting, the campfire to restore 15 HP, or a rabbit to get a berry.</li>
+                    <li><strong>Practice:</strong> Choose your course above the game. A correct shrine answer earns a knowledge crystal, a berry, and 8 XP. The shrine needs 10 seconds to prepare another question.</li>
+                    <li><strong>Craft:</strong> Stand within 5 tiles of the workbench, open <strong>CRAFT</strong>, and choose a recipe. Recipes show their material cost. Two berries can be crafted into a meal that restores 25 HP.</li>
+                    <li><strong>Build:</strong> Select planks, walls, torches, or a campfire in the hotbar, face an open tile, and press <kbd>B</kbd>. Planks make floor tiles; the other items place objects.</li>
+                    <li><strong>Survive:</strong> Select berries and press <kbd>H</kbd> to eat one and restore 12 HP. Slimes chase and damage you; press <kbd>K</kbd> or <strong>ATTACK</strong> when one is close. Two hits defeat a slime for gel, with a chance of an extra berry. At 0 HP, respawn at camp.</li>
+                    <li><strong>Hotbar:</strong> Press <kbd>1</kbd>–<kbd>8</kbd> or tap a slot to select an item. Your world and inventory save in this browser.</li>
+                  </ul>
+                </section>
+                <section>
+                  <h3>SPRITE &amp; WORLD LEGEND</h3>
+                  <ul class="sandbox-sprite-legend">
+                    <li><span class="sandbox-sprite-swatch adventurer" aria-hidden="true"></span><span><strong>Adventurer:</strong> Your profile character. Its outfit and class appear in the wilds; it turns to face the direction you last moved.</span></li>
+                    <li><span class="sandbox-sprite-swatch rabbit" aria-hidden="true"></span><span><strong>Rabbit:</strong> Friendly wildlife. Interact nearby to collect a berry; it hops around the meadow.</span></li>
+                    <li><span class="sandbox-sprite-swatch slime" aria-hidden="true"></span><span><strong>Slime:</strong> Hostile green creature. It follows nearby players and takes two hits to defeat.</span></li>
+                    <li><span class="sandbox-sprite-swatch tree" aria-hidden="true"></span><span><strong>Tree:</strong> Mine for wood. <strong>Gray rock:</strong> Mine for stone. <strong>Glowing teal ore:</strong> Mine for stone and a crystal.</span></li>
+                    <li><span class="sandbox-sprite-swatch shrine" aria-hidden="true"></span><span><strong>Study Shrine:</strong> Glowing teal-and-gold monument for AP practice. Correct answers reward crystals and berries.</span></li>
+                    <li><span class="sandbox-sprite-swatch guide" aria-hidden="true"></span><span><strong>Field Guide:</strong> Purple-robed helper with a gold marker; interact for a gameplay hint.</span></li>
+                    <li><span class="sandbox-sprite-swatch workbench" aria-hidden="true"></span><span><strong>Workbench:</strong> Wooden table near camp; use it to craft. <strong>Cabin:</strong> Your home base. <strong>Campfire:</strong> Interact to recover HP.</span></li>
+                    <li><span class="sandbox-sprite-swatch terrain" aria-hidden="true"></span><span><strong>Terrain:</strong> Green is meadow, brown is dirt, blue is water (blocked), golden sand is shore, and a tiled brown floor is player-built.</span></li>
+                  </ul>
+                </section>
+              </div>
+            </details>
+            <canvas id="sandboxCanvas" width="768" height="480" aria-label="Top-down pixel wilderness game"></canvas>
+            <div id="sandboxQuiz" class="sandbox-quiz hidden">
+              <h3 id="sandboxQuizQuestion"></h3>
+              <div id="sandboxQuizAnswers" class="answers"></div>
+              <p id="sandboxQuizFeedback" role="status"></p>
+              <button id="sandboxQuizContinue" class="pixel-btn hidden" type="button" onclick="closeSandboxQuiz()">RETURN TO WORLD ▶</button>
+            </div>
+            <div class="sandbox-toolbar">
+              <div id="sandboxHotbar" class="sandbox-hotbar" aria-label="Inventory hotbar"></div>
+              <div class="sandbox-inventory">
+                <span id="sandboxInventory">WOOD 0 · STONE 0 · BERRIES 0 · CRYSTALS 0</span>
+                <button class="pixel-btn" type="button" onclick="toggleSandboxCrafting()">CRAFT</button>
+                <button class="pixel-btn danger" type="button" onclick="attackSandboxEntity()">ATTACK</button>
+              </div>
+              <div id="sandboxCrafting" class="sandbox-crafting hidden"></div>
+            </div>
+            <div class="sandbox-controls">
+            <span>MOVE WASD/ARROWS</span><span>E INTERACT / SHRINE</span><span>SPACE MINE</span><span>B BUILD</span><span>K ATTACK</span><span>H EAT BERRY</span><span>1–8 HOTBAR</span>
+            </div>
+            <div class="sandbox-mobile-controls">
+              <button type="button" onclick="moveSandboxPlayer(0,-1)">▲</button>
+              <button type="button" onclick="moveSandboxPlayer(-1,0)">◀</button>
+              <button type="button" onclick="moveSandboxPlayer(0,1)">▼</button>
+              <button type="button" onclick="moveSandboxPlayer(1,0)">▶</button>
+              <button type="button" onclick="interactSandbox()">INTERACT</button>
+              <button type="button" onclick="mineSandbox()">MINE</button>
+              <button type="button" onclick="buildSandbox()">BUILD</button>
+              <button type="button" onclick="useSelectedSandboxItem()">USE ITEM</button>
+            </div>
+            <p id="sandboxMessage" class="sandbox-message" role="status" aria-live="polite">Your first world is ready. Walk to the Study Shrine to find AP practice.</p>
+            <button id="sandboxRespawn" class="pixel-btn primary hidden" type="button" onclick="respawnSandboxPlayer()">RESPAWN AT CAMP</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
     <section id="courses" class="page">
       <div class="page-header">
         <div><div class="eyebrow">SELECT YOUR WORLD</div><h1>COURSES</h1></div>
@@ -113,7 +233,7 @@
     <section id="practice" class="page">
       <div class="page-header">
         <div><div class="eyebrow">TRAIN YOUR SKILLS</div><h1>PRACTICE ARENA</h1></div>
-        <div class="energy-wrap">ENERGY <strong id="practiceEnergyLabel">100%</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8% PER PRACTICE MISSION</small></div>
+        <div class="energy-wrap">PLAYER HP <strong id="practiceEnergyLabel">200/200</strong><div class="energy-bar big"><div id="practiceEnergy" style="width:100%"></div></div><small>+8 HP PER PRACTICE MISSION</small></div>
       </div>
 
       <div id="questionScreen" class="question-layout">
@@ -150,6 +270,10 @@
           <p id="frqScenario"></p>
         </div>
         <div id="frqParts" class="frq-parts"></div>
+        <div class="frq-completion">
+          <button id="frqCompleteBtn" class="pixel-btn primary" onclick="completeCurrentFrq()">COMPLETE FRQ (+50 XP)</button>
+          <p id="frqCompletionStatus" role="status"></p>
+        </div>
         <div class="frq-navigation">
           <button id="frqPrevBtn" class="pixel-btn" onclick="moveFrq(-1)">◀ PREVIOUS FRQ</button>
           <button id="frqNextBtn" class="pixel-btn primary" onclick="moveFrq(1)">NEXT FRQ ▶</button>
@@ -159,8 +283,8 @@
 
     <section id="boss" class="page">
       <div class="page-header">
-        <div><div class="eyebrow">BOSS ENCOUNTER</div><h1>BOSS BATTLE</h1></div>
-        <div class="level-badge">ENEMY HP <span id="bossFightLabel">160/160</span></div>
+        <div><div class="eyebrow" id="bossExamDescription">FULL COURSE EXAM • MULTIPLE CHOICE + FREE RESPONSE</div><h1>BOSS BATTLE</h1></div>
+        <div class="level-badge">TIME REMAINING <span id="bossTimer" class="boss-exam-timer">180:00</span></div>
       </div>
 
       <div class="battle-layout">
@@ -202,21 +326,32 @@
 
           <div class="battle-bars">
             <div class="bar-row">
-              <span>PLAYER ENERGY / HP <strong id="playerHpValue">100/100</strong></span>
-              <div class="hp-bar player" id="playerHpMeter" role="meter" aria-label="Player energy and health" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><div id="playerHpBar" style="width:100%"></div></div>
+              <span>PLAYER HP <strong id="playerHpValue">200/200</strong></span>
+              <div class="hp-bar player" id="playerHpMeter" role="meter" aria-label="Player health" aria-valuemin="0" aria-valuemax="200" aria-valuenow="200"><div id="playerHpBar" style="width:100%"></div></div>
             </div>
             <div class="bar-row">
-              <span>ENEMY HP <strong id="bossHpValue">160/160</strong></span>
-              <div class="hp-bar enemy" id="bossHpMeter" role="meter" aria-label="Boss health" aria-valuemin="0" aria-valuemax="160" aria-valuenow="160"><div id="bossHpBar" style="width:100%"></div></div>
+              <span>BOSS HP <strong id="bossHpValue">0/0</strong></span>
+              <div class="hp-bar enemy" id="bossHpMeter" role="meter" aria-label="Boss health" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0"><div id="bossHpBar" style="width:100%"></div></div>
             </div>
           </div>
 
           <div class="boss-question-card">
-            <div class="question-top"><span id="bossQuestionTag">UNIT 1 • BOSS CHALLENGE</span><button id="bossReviewBtn" class="review-btn" onclick="toggleReview()">☆ MARK FOR REVIEW</button></div>
-            <h2 id="bossQuestionText">Loading boss challenge...</h2>
-            <div id="bossAnswers" class="answers"></div>
-            <div id="bossFeedback" class="feedback"></div>
-            <button id="bossNextBtn" class="pixel-btn primary hidden" onclick="nextBossQuestion()">NEXT ATTACK ▶</button>
+            <div id="bossMcqStage">
+              <div class="question-top"><span id="bossQuestionTag">UNIT 1 • EXAM • MULTIPLE CHOICE</span><button id="bossReviewBtn" class="review-btn" onclick="toggleReview()">☆ MARK FOR REVIEW</button></div>
+              <h2 id="bossQuestionText">Loading exam question...</h2>
+              <div id="bossAnswers" class="answers"></div>
+              <div id="bossFeedback" class="feedback"></div>
+              <button id="bossNextBtn" class="pixel-btn primary hidden" onclick="nextBossQuestion()">NEXT QUESTION ▶</button>
+            </div>
+            <div id="bossFrqStage" class="hidden">
+              <div class="question-top"><span id="bossFrqProgress">FREE RESPONSE SECTION</span></div>
+              <div id="bossFrqPrompt"></div>
+              <textarea id="bossFrqResponse" class="frq-response" rows="6" placeholder="Write your reasoning here..." aria-label="Your free-response answer"></textarea>
+              <div id="bossFrqFeedback" class="feedback" role="status"></div>
+              <button id="bossSubmitBtn" class="pixel-btn primary" onclick="gradeCurrentBossFrq()">SUBMIT RESPONSE ▶</button>
+            </div>
+            <div id="bossExamResult" class="hidden" role="status"></div>
+            <button id="bossReturnBtn" class="pixel-btn primary hidden" onclick="returnFromBossExam()">RETURN TO WORLDS ▶</button>
           </div>
         </div>
       </div>
@@ -232,6 +367,7 @@
       </div>
       <div class="analytics-panel">
         <div class="section-heading"><span>▸</span> UNIT MASTERY</div>
+        <p class="mastery-description">Completion rate across unique MCQs answered and FRQ prompts completed (all parts answered). Correctness does not affect this percentage.</p>
         <div id="mastery"></div>
       </div>
       <div class="analytics-panel">
@@ -253,13 +389,31 @@
       </div>
       <p id="plannerSummary" class="planner-summary"></p>
       <div id="plannerGrid" class="planner-grid"></div>
-      <div class="planner-transfer">
-        <div><strong>TAKE YOUR PLAN WITH YOU</strong><p>Export your local progress and import it on another device.</p></div>
-        <button class="pixel-btn" type="button" onclick="exportProgress()">EXPORT SAVE</button>
-        <label class="pixel-btn import-save">IMPORT SAVE<input type="file" accept="application/json,.json" onchange="importProgress(this.files[0]); this.value='' "></label>
-      </div>
+      <section class="feature-panel" aria-labelledby="coachHeading">
+        <div class="section-heading"><span>✦</span> <span id="coachHeading">PERSONAL STUDY COACH</span></div>
+        <p>Build a focused guide from your recent missed questions, answer explanations, and topics to review. This browser-based coach uses no external AI service.</p>
+        <div class="coach-controls">
+          <label for="coachCourse">COURSE</label>
+          <select id="coachCourse"></select>
+          <button id="coachStartButton" class="pixel-btn primary" type="button" onclick="runStudyCoach()">BUILD MY STUDY GUIDE ▶</button>
+        </div>
+        <p id="coachMistakeCount" class="coach-note"></p>
+        <p id="coachStatus" role="status" aria-live="polite"></p>
+        <pre id="coachOutput" class="coach-output hidden" aria-live="polite"></pre>
+      </section>
     </section>
   </main>
+
+  <div id="bossDifficultyModal" class="modal hidden boss-difficulty-modal" role="dialog" aria-modal="true" aria-labelledby="bossDifficultyTitle">
+    <div class="modal-box">
+      <button class="boss-difficulty-close" type="button" onclick="closeBossDifficultyPicker()" aria-label="Close difficulty selection">×</button>
+      <div class="eyebrow">CHOOSE YOUR CHALLENGE</div>
+      <h2 id="bossDifficultyTitle">BOSS BATTLE DIFFICULTY</h2>
+      <p id="bossDifficultyStatus" role="status"></p>
+      <div id="bossDifficultyOptions" class="boss-difficulty-options"></div>
+      <button class="pixel-btn" type="button" onclick="closeBossDifficultyPicker()">CANCEL</button>
+    </div>
+  </div>
 
   <div id="profileModal" class="profile-modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
     <div class="profile-window">
@@ -327,11 +481,15 @@
   </div>
 
   <footer>
-    <span>AP ARCADE • FREE STUDY TOOLS FOR STUDENTS</span>
+    <span>AP ARCADE • ALL STUDY TOOLS FREE</span>
     <span>BUILT BY STUDENTS, FOR STUDENTS</span>
   </footer>
 
   <script src="academic-content.js"></script>
   <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="account-config.js"></script>
+  <script src="account.js"></script>
+  <script src="study-features.js"></script>
 </body>
 </html>

@@ -1,0 +1,464 @@
+.feature-panel {
+  border: 2px solid #3b3053;
+  background: #100c20;
+  padding: 22px;
+  margin: 18px 0;
+}
+
+.feature-panel > p,
+.mastery-description {
+  color: #c8bfd8;
+  line-height: 1.5;
+}
+
+.feature-layout {
+  max-width: 1120px;
+  margin: 0 auto 42px;
+}
+
+.coach-controls {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.coach-controls label,
+.sandbox-course-picker {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: #8effd2;
+}
+
+.coach-controls select,
+.sandbox-course-picker select {
+  display: block;
+  margin-top: 8px;
+  min-width: 220px;
+  padding: 10px;
+  border: 1px solid #8effd2;
+  background: #171126;
+  color: #f5f0ff;
+  font: inherit;
+}
+
+.coach-note,
+#coachStatus {
+  color: #bfb4d0;
+}
+
+.coach-output {
+  box-sizing: border-box;
+  max-height: 620px;
+  overflow: auto;
+  padding: 18px;
+  border: 1px solid rgba(142, 255, 210, .5);
+  background: #090714;
+  color: #eae3f6;
+  font: 17px/1.55 'VT323', monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.sandbox-shell {
+  position: relative;
+  margin-top: 20px;
+  padding: 12px;
+  border: 3px solid #8b6947;
+  background: #171324;
+  box-shadow: 0 0 0 3px #342a3b, 6px 6px 0 rgba(0, 0, 0, .4);
+}
+
+.sandbox-course-picker {
+  display: block;
+  margin: 14px 0;
+}
+
+.sandbox-hud {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 8px;
+  font: 9px 'Press Start 2P', monospace;
+  color: #eee0ba;
+}
+
+.sandbox-hud > span:first-child {
+  white-space: nowrap;
+}
+
+.sandbox-hp {
+  flex: 1;
+  height: 13px;
+  border: 2px solid #eee0ba;
+  background: #3a2833;
+}
+
+.sandbox-hp div {
+  width: 100%;
+  height: 100%;
+  background: #63cc78;
+  transition: width .15s steps(4, end);
+}
+
+#sandboxCanvas {
+  display: block;
+  width: 100%;
+  max-width: 768px;
+  height: auto;
+  margin: 0 auto;
+  border: 3px solid #ddd0a1;
+  background: #3d8d51;
+  image-rendering: pixelated;
+}
+
+.sandbox-tutorial {
+  margin: 0 0 10px;
+  border: 1px solid #8b6947;
+  background: #211a2c;
+  color: #dfd2eb;
+}
+
+.sandbox-tutorial summary {
+  padding: 12px;
+  color: #ffe08a;
+  cursor: pointer;
+  font: 9px 'Press Start 2P', monospace;
+  line-height: 1.7;
+}
+
+.sandbox-guide-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 0 14px 14px;
+}
+
+.sandbox-guide-content section {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(142, 255, 210, .25);
+  background: rgba(9, 7, 20, .55);
+}
+
+.sandbox-guide-content h3 {
+  margin: 0 0 10px;
+  color: #8effd2;
+  font: 8px 'Press Start 2P', monospace;
+  line-height: 1.7;
+}
+
+.sandbox-guide-content ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.45;
+}
+
+.sandbox-guide-content li::marker {
+  color: #ffe08a;
+}
+
+.sandbox-guide-content strong {
+  color: #fff0c7;
+}
+
+.sandbox-guide-content kbd {
+  padding: 2px 5px;
+  border: 1px solid #8b6947;
+  background: #332840;
+  color: #ffe08a;
+  font: inherit;
+}
+
+.sandbox-sprite-legend {
+  list-style: none;
+  padding-left: 0 !important;
+}
+
+.sandbox-sprite-legend li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+}
+
+.sandbox-sprite-swatch {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: #4c9b55;
+  image-rendering: pixelated;
+}
+
+.sandbox-sprite-swatch::before,
+.sandbox-sprite-swatch::after {
+  position: absolute;
+  display: block;
+  content: "";
+}
+
+.sandbox-sprite-swatch.adventurer::before {
+  top: 3px;
+  left: 7px;
+  width: 9px;
+  height: 7px;
+  background: #f1d1a7;
+  box-shadow: 0 -2px #4a352f, -1px 8px #8effd2, 0 15px #56447c;
+}
+
+.sandbox-sprite-swatch.rabbit::before {
+  top: 9px;
+  left: 5px;
+  width: 13px;
+  height: 9px;
+  background: #e4d9ae;
+  box-shadow: 2px -7px #e4d9ae, 9px -7px #e4d9ae, 9px 3px #33283d;
+}
+
+.sandbox-sprite-swatch.slime::before {
+  right: 2px;
+  bottom: 3px;
+  left: 2px;
+  height: 12px;
+  background: #71d46a;
+  box-shadow: inset 4px -3px #276249;
+}
+
+.sandbox-sprite-swatch.tree::before {
+  top: 2px;
+  left: 4px;
+  width: 15px;
+  height: 13px;
+  background: #52a24e;
+  box-shadow: inset 3px 2px #8ac05b;
+}
+
+.sandbox-sprite-swatch.tree::after {
+  bottom: 1px;
+  left: 9px;
+  width: 6px;
+  height: 9px;
+  background: #65412f;
+}
+
+.sandbox-sprite-swatch.shrine::before {
+  inset: 3px;
+  background: #9f80c7;
+  box-shadow: inset 5px 4px #7de1d3;
+}
+
+.sandbox-sprite-swatch.guide::before {
+  top: 3px;
+  left: 7px;
+  width: 10px;
+  height: 8px;
+  background: #f1d1a7;
+  box-shadow: -2px 8px 0 1px #d0a2e8, 5px 1px 0 -2px #fff0a4;
+}
+
+.sandbox-sprite-swatch.workbench::before {
+  top: 6px;
+  left: 2px;
+  width: 18px;
+  height: 6px;
+  background: #ba8050;
+  box-shadow: 2px 7px #6c422c, 13px 7px #6c422c;
+}
+
+.sandbox-sprite-swatch.terrain {
+  background: linear-gradient(90deg, #4c9b55 50%, #376d9a 50%);
+}
+
+.sandbox-quiz {
+  position: absolute;
+  z-index: 2;
+  top: 58px;
+  left: 50%;
+  width: min(680px, calc(100% - 30px));
+  max-height: min(390px, 75%);
+  overflow: auto;
+  transform: translateX(-50%);
+  padding: 18px;
+  border: 3px solid #f1d27c;
+  background: rgba(15, 11, 28, .98);
+  box-shadow: 5px 5px 0 #332740;
+}
+
+.sandbox-quiz h3 {
+  color: #ffe08a;
+  line-height: 1.4;
+}
+
+.sandbox-quiz .answers {
+  grid-template-columns: 1fr;
+  margin: 14px 0;
+}
+
+.sandbox-quiz #sandboxQuizFeedback {
+  color: #d7cfe4;
+  line-height: 1.45;
+}
+
+.sandbox-toolbar {
+  margin-top: 10px;
+}
+
+.sandbox-hotbar {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 5px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hotbar-slot {
+  position: relative;
+  min-width: 0;
+  height: 55px;
+  border: 2px solid #695873;
+  background: #252036;
+  color: #eee5c8;
+}
+
+.hotbar-slot.selected {
+  border-color: #ffe08a;
+  background: #4a3a48;
+  box-shadow: inset 0 0 0 2px #b78c55;
+}
+
+.hotbar-slot small {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  color: #c3b2d5;
+}
+
+.hotbar-slot strong {
+  display: block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #8effd2;
+}
+
+.hotbar-slot span {
+  position: absolute;
+  right: 4px;
+  bottom: 2px;
+  font-size: 14px;
+}
+
+.sandbox-inventory {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+  color: #dfd2eb;
+}
+
+.sandbox-inventory > span {
+  margin-right: 8px;
+}
+
+.sandbox-inventory .pixel-btn,
+.sandbox-crafting .pixel-btn {
+  margin: 0;
+  padding: 9px 12px;
+  font-size: 8px;
+}
+
+.sandbox-crafting {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid #8b6947;
+  background: #211a2c;
+}
+
+.sandbox-crafting button {
+  border: 1px solid #937e9e;
+  padding: 8px;
+  background: #332840;
+  color: #fff0c7;
+}
+
+.sandbox-controls,
+.sandbox-mobile-controls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 14px;
+  color: #b9abc9;
+  font: 8px 'Press Start 2P', monospace;
+}
+
+.sandbox-mobile-controls {
+  display: none;
+  margin-top: 12px;
+}
+
+.sandbox-mobile-controls button {
+  min-width: 44px;
+  min-height: 40px;
+  border: 1px solid #8b6947;
+  background: #292238;
+  color: #fff0c7;
+}
+
+.sandbox-mobile-controls button:last-child {
+  min-width: 90px;
+}
+
+.sandbox-message {
+  min-height: 24px;
+  margin: 10px 0 0;
+  color: #ffe08a;
+  line-height: 1.4;
+}
+
+.mastery-description {
+  margin: 8px 0 18px;
+}
+
+.mastery-row {
+  grid-template-columns: 170px minmax(80px, 1fr) minmax(110px, auto) !important;
+}
+
+@media (max-width: 760px) {
+  .sandbox-hud {
+    flex-wrap: wrap;
+    font-size: 7px;
+  }
+
+  .sandbox-hp {
+    min-width: 100px;
+  }
+
+  .sandbox-controls {
+    display: none;
+  }
+
+  .sandbox-mobile-controls {
+    display: flex;
+  }
+
+  .sandbox-guide-content {
+    grid-template-columns: 1fr;
+  }
+
+  .mastery-row {
+    grid-template-columns: minmax(75px, 1fr) minmax(65px, 2fr) auto !important;
+    gap: 8px;
+  }
+
+  .mastery-row label {
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+}

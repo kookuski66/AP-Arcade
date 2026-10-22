@@ -1,0 +1,11 @@
+.account-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+.account-panel{padding:22px 0;border-top:2px solid #8effd2}
+.account-panel .section-heading{margin:0 0 18px}
+.account-form{display:grid;gap:9px;max-width:520px}
+.account-form label{font:9px 'Press Start 2P',monospace;color:#ffd65a;margin-top:8px}
+.account-form input{width:100%;min-height:46px;padding:10px 12px;border:2px solid #564e7b;background:#100d20;color:#f5f0ff;font:20px 'VT323',monospace}
+.account-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.account-status,.content-status{min-height:28px;color:#8effd2;line-height:1.4}
+.account-summary p{max-width:620px;line-height:1.5;color:#c7bedc}
+.account-layout .hidden{display:none}
+@media(max-width:760px){.account-layout{grid-template-columns:1fr;gap:8px}.account-panel{padding:18px 0}.account-actions .pixel-btn{font-size:8px;padding:12px}}
