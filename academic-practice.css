@@ -15,6 +15,93 @@
   color: #dfc9ff;
 }
 
+.unit-practice-actions .essay-choice {
+  border-color: #8effd2;
+  color: #b8ffdf;
+}
+
+.essay-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 14px;
+  color: #8effd2;
+  font-family: "Press Start 2P", monospace;
+  font-size: 8px;
+  line-height: 1.7;
+}
+
+.essay-materials {
+  display: grid;
+  gap: 14px;
+  margin: 24px 0;
+}
+
+.essay-material {
+  padding: 18px;
+  border-left: 4px solid #6dcdfb;
+  background: rgba(109, 205, 251, .07);
+}
+
+.essay-material h3 {
+  margin: 0 0 10px;
+  color: #8fdcff;
+}
+
+.essay-material p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.essay-editor-label {
+  display: block;
+  margin-bottom: 8px;
+  color: #b8ffdf;
+}
+
+.essay-response {
+  min-height: 360px;
+  font-family: "VT323", monospace;
+  font-size: 22px;
+}
+
+.essay-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.essay-grade-result {
+  margin-top: 18px;
+  padding: 18px;
+  border: 2px solid #8effd2;
+  background: rgba(184, 255, 223, .07);
+  line-height: 1.55;
+}
+
+.essay-grade-result.hidden {
+  display: none;
+}
+
+.essay-grade-score {
+  margin-bottom: 16px;
+  color: #ffe65c;
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+}
+
+.essay-grade-result h3 {
+  margin: 16px 0 6px;
+  color: #8effd2;
+}
+
+.essay-grade-result ul {
+  margin-top: 6px;
+  padding-left: 22px;
+}
+
 .frq-workspace {
   max-width: 980px;
   margin: 0 auto 48px;

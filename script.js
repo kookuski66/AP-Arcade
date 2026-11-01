@@ -4,9 +4,9 @@ const FRQS_PER_UNIT = 3;
 const XP_PER_LEVEL = 200;
 const MAX_PLAYER_HP = 200;
 const BOSS_EXAM_TIERS = [
-  { mcqPerUnit: 2, frqCount: { "AP Physics 1": 4, "AP Chemistry": 7, "AP Calculus AB": 6, "AP Biology": 6 }, minutes: 180, title: "" },
-  { mcqPerUnit: 4, frqCount: { "AP Physics 1": 6, "AP Chemistry": 9, "AP Calculus AB": 8, "AP Biology": 8 }, minutes: 240, title: "THE ASCENDANT TRIAL" },
-  { mcqPerUnit: 6, frqCount: { "AP Physics 1": 8, "AP Chemistry": 11, "AP Calculus AB": 10, "AP Biology": 10 }, minutes: 300, title: "THE OMEGA GAUNTLET" }
+  { mcqPerUnit: 2, frqCount: { "AP Physics 1": 4, "AP Chemistry": 7, "AP Calculus AB": 6, "AP Biology": 6, "AP English Language": 6, "AP English Literature": 6, "AP United States History": 6, "AP Psychology": 6 }, minutes: 180, title: "" },
+  { mcqPerUnit: 4, frqCount: { "AP Physics 1": 6, "AP Chemistry": 9, "AP Calculus AB": 8, "AP Biology": 8, "AP English Language": 8, "AP English Literature": 8, "AP United States History": 8, "AP Psychology": 8 }, minutes: 240, title: "THE ASCENDANT TRIAL" },
+  { mcqPerUnit: 6, frqCount: { "AP Physics 1": 8, "AP Chemistry": 11, "AP Calculus AB": 10, "AP Biology": 10, "AP English Language": 10, "AP English Literature": 10, "AP United States History": 10, "AP Psychology": 10 }, minutes: 300, title: "THE OMEGA GAUNTLET" }
 ];
 const ENERGY_PER_QUESTION = 8;
 const academicSubscripts = {
@@ -136,6 +136,129 @@ const bossThemes = {
   "AP Biology": [
     ["THE CELLULAR ORACLE", "cell"], ["MEMBRANE GATEKEEPER", "membrane"], ["MITOCHONDRIAL BEHEMOTH", "mitochondria"],
     ["THE SIGNALING NEURON", "neuron"], ["CHROMOSOME COLOSSUS", "chromosome"], ["THE DNA HELIX WARDEN", "dna"]
+  ],
+  "AP English Language": [
+    ["THE RHETORICAL ORATOR", "newton"], ["CLAIMS AND EVIDENCE", "limit"], ["THE STYLE SMITH", "graph"]
+  ],
+  "AP English Literature": [
+    ["THE CLOSE READER", "cell"], ["THE LITERARY LANTERN", "graph"], ["THE POETIC WARDEN", "dna"]
+  ],
+  "AP United States History": [
+    ["THE CHRONICLE COLUMBUS", "orbit"], ["THE CONSTITUTIONAL GUARDIAN", "crystal"], ["THE ARCHIVE EMPEROR", "atom"]
+  ],
+  "AP Psychology": [
+    ["THE NEURAL NAVIGATOR", "neuron"], ["THE BEHAVIORAL BEHEMOTH", "momentum"], ["THE MEMORY WARDEN", "chromosome"]
+  ]
+};
+
+const courseIcons = {
+  "AP Physics 1": "⚡",
+  "AP Chemistry": "⚗",
+  "AP Calculus AB": "∫",
+  "AP Biology": "♧",
+  "AP English Language": "✒",
+  "AP English Literature": "📖",
+  "AP United States History": "⌛",
+  "AP Psychology": "Ψ"
+};
+
+const essayCourses = new Set([
+  "AP English Language",
+  "AP English Literature",
+  "AP United States History"
+]);
+
+const essayPrompts = {
+  "AP English Language": [
+    {
+      type: "Synthesis Essay",
+      time: 40,
+      title: "The role of public libraries",
+      directions: "Read the six sources carefully. Write an essay that synthesizes at least three sources and develops a position about whether communities should expand funding and services for public libraries.",
+      materials: [
+        ["Source A — Municipal report", "Libraries across the surveyed region reported 18% more program attendance after adding technology classes, but operating costs increased by 11%."],
+        ["Source B — Library director statement", "Public libraries provide reliable internet access, literacy programs, and quiet spaces to residents who cannot obtain those resources at home."],
+        ["Source C — Budget analysis", "Local governments face competing needs for transportation, public safety, schools, and health services; new library funding requires an explicit trade-off."],
+        ["Source D — Public-domain speech", "Our common institutions belong to every citizen and survive only when citizens use them, question them, and invest in their usefulness."],
+        ["Source E — Census chart", "Residents with library cards borrow books in every age group. Cardholders also attend public programs at twice the rate of non-cardholders."],
+        ["Source F — Community editorial", "A library should prioritize books and research, not become a substitute for cafes, entertainment venues, or government offices."]
+      ]
+    },
+    {
+      type: "Rhetorical Analysis",
+      time: 40,
+      title: "Analyze Roosevelt's first inaugural address",
+      directions: "Read the passage carefully. Write an essay analyzing the rhetorical choices Franklin D. Roosevelt uses to address a fearful nation and encourage collective action.",
+      materials: [
+        ["Public-domain passage", "“The only thing we have to fear is fear itself—nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance. In every dark hour of our national life a leadership of frankness and vigor has met with that understanding and support of the people themselves which is essential to victory.”"]
+      ]
+    },
+    {
+      type: "Argument Essay",
+      time: 40,
+      title: "Judging progress",
+      directions: "Write an argument responding to the question below. Develop a position, support it with evidence from your knowledge, reading, or experience, and explain its implications.",
+      materials: [
+        ["Prompt", "Is progress best measured by material improvements, by human relationships, or by some other standard?"]
+      ]
+    }
+  ],
+  "AP English Literature": [
+    {
+      type: "Poetry Analysis",
+      time: 40,
+      title: "Analyze Emily Dickinson's poem",
+      directions: "Read the poem carefully. Write an essay analyzing how Dickinson uses literary elements and techniques to portray hope.",
+      materials: [["Emily Dickinson, “Hope” is the thing with feathers", "“Hope” is the thing with feathers —\nThat perches in the soul —\nAnd sings the tune without the words —\nAnd never stops — at all —\n\nAnd sweetest — in the Gale — is heard —\nAnd sore must be the storm —\nThat could abash the little Bird\nThat kept so many warm —"]],
+      work: true
+    },
+    {
+      type: "Prose Fiction Analysis",
+      time: 40,
+      title: "Analyze Austen's characterization",
+      directions: "Read the passage carefully. Write an essay analyzing how Austen uses narrative perspective and diction to characterize Elizabeth's first impression of Mr. Darcy.",
+      materials: [["Jane Austen, Pride and Prejudice (public-domain passage)", "Elizabeth turned away with a lively expression of disappointment. She had expected conversation and wit, but found instead reserve and a pride he made no attempt to conceal. In the company of strangers he seemed unwilling to speak, yet she suspected that silence was not the same as indifference."]],
+      work: true
+    },
+    {
+      type: "Literary Argument",
+      time: 40,
+      title: "The power of memory",
+      directions: "Write a well-developed essay in which you analyze the portrayal of memory in a work of fiction you have read. Do not merely summarize the plot. Select an appropriate work that will allow you to examine how memory shapes character, conflict, or theme.",
+      materials: [["Student-selected work", "Choose a work of fiction of literary merit. Identify the work and author in your thesis or introduction."]],
+      work: true
+    }
+  ],
+  "AP United States History": [
+    {
+      type: "Document-Based Question",
+      time: 60,
+      title: "Evaluate federal economic policy, 1865–1900",
+      directions: "Evaluate the extent to which federal policy promoted economic growth in the United States from 1865 to 1900. Use at least six documents and your knowledge of the period to develop an argument.",
+      materials: [
+        ["Document 1 — Homestead Act, 1862", "The act offered eligible citizens surveyed public land after a small fee and several years of residence or cultivation."],
+        ["Document 2 — Railroad rates, table", "Freight rates per mile declined from 2.5 cents in 1865 to 0.8 cents in 1890 while tons moved annually more than quadrupled."],
+        ["Document 3 — Labor union petition, 1886", "Workers asked Congress to limit twelve-hour shifts and protect employees injured or killed in unsafe industrial workplaces."],
+        ["Document 4 — Federal court decision, excerpt", "The Supreme Court upheld the federal government's broad authority to regulate commerce among the states."],
+        ["Document 5 — Native reservation policy, government report", "Federal officials intended to replace communal landholding with individual allotments and reduce tribal sovereignty."],
+        ["Document 6 — Political cartoon, “The Octopus”, 1889", "Caption: railroad lines spread over farms and state capitals as a farmer and legislator struggle under them. Interpretation: concentrated corporate power threatened public control."],
+        ["Document 7 — Treasury monetary policy, 1896", "Deficit spending remained constrained while the government maintained gold-backed currency and a high tariff system."]
+      ]
+    },
+    {
+      type: "Long Essay Question",
+      time: 40,
+      title: "Evaluate continuity and change",
+      directions: "Evaluate the extent to which reform movements changed American political culture in the period 1820–1848. Develop an argument supported by relevant historical evidence.",
+      materials: [["Evidence expectations", "Use specific examples of abolitionism, temperance, education, women's rights, and/or political participation. Explain both continuity and change."]]
+    },
+    {
+      type: "Long Essay Question",
+      time: 40,
+      title: "Analyze causation",
+      directions: "Evaluate the most significant factor that shaped United States foreign policy between 1890 and 1945. Develop an argument supported by relevant historical evidence.",
+      materials: [["Evidence expectations", "Consider economic interests, nationalism, security concerns, ideological conflict, public opinion, or war. Address causation and comparison, not only chronology."]]
+    }
   ]
 };
 
@@ -234,7 +357,56 @@ const courseUnits = {
     ["Unit 6","Gene Expression and Regulation","DNA, RNA, protein synthesis, and regulation.","12–16",0],
     ["Unit 7","Natural Selection","Evolutionary mechanisms and population change.","13–20",0],
     ["Unit 8","Ecology","Population interactions, ecosystems, and energy flow.","10–15",0]
+  ],
+  "AP English Language":[
+    ["Unit 1","Rhetorical Situation","Speaker, audience, purpose, context, and exigence.","Choose",0],
+    ["Unit 2","Claims and Evidence","Claims, evidence selection, and source credibility.","Choose",0],
+    ["Unit 3","Reasoning and Organization","Logical reasoning, commentary, and line of reasoning.","Choose",0],
+    ["Unit 4","Style","Word choice, syntax, tone, and rhetorical effects.","Choose",0],
+    ["Unit 5","Rhetorical Analysis","Analyzing how writers use choices to advance purposes.","Choose",0],
+    ["Unit 6","Argument Writing","Developing a defensible claim with evidence and reasoning.","Choose",0],
+    ["Unit 7","Synthesis Writing","Combining and citing multiple sources to support a line of reasoning.","Choose",0],
+    ["Unit 8","Multiple-Choice Strategies","Reading nonfiction passages and evaluating rhetorical choices.","Choose",0]
+  ],
+  "AP English Literature":[
+    ["Unit 1","Reading Closely","Observing details, patterns, context, and textual meanings.","Choose",0],
+    ["Unit 2","Character","Characterization, motivation, relationships, and development.","Choose",0],
+    ["Unit 3","Setting","How place, time, atmosphere, and setting shape meaning.","Choose",0],
+    ["Unit 4","Structure","Plot organization, chronology, shifts, and narrative framing.","Choose",0],
+    ["Unit 5","Narration","Point of view, narrator reliability, voice, and perspective.","Choose",0],
+    ["Unit 6","Figures of Speech and Symbolism","Imagery, figurative language, symbols, and connotation.","Choose",0],
+    ["Unit 7","Themes and Thematic Development","How literary texts establish and develop central ideas.","Choose",0],
+    ["Unit 8","Literary Argument","Interpreting evidence and composing defensible literary claims.","Choose",0]
+  ],
+  "AP United States History":[
+    ["Period 1","1491–1607: Indigenous Americas to Colonization","Native societies, exploration, contact, and exchange.","4–6",0],
+    ["Period 2","1607–1754: Colonial America","Colonial regions, labor, European rivalry, and identity.","6–8",0],
+    ["Period 3","1754–1800: Revolution and New Nation","Imperial conflict, independence, Constitution, and early republic.","10–17",0],
+    ["Period 4","1800–1848: Expansion and Reform","Republican politics, market revolution, reform, and expansion.","10–17",0],
+    ["Period 5","1844–1877: Civil War and Reconstruction","Sectional conflict, war, emancipation, and Reconstruction.","10–17",0],
+    ["Period 6","1865–1898: Industrialization and Its Effects","Industry, labor, immigration, cities, and the West.","10–17",0],
+    ["Period 7","1890–1945: Modern America","Progressivism, overseas expansion, Depression, and world wars.","10–17",0],
+    ["Period 8","1945–1980: Cold War","Containment, social movements, affluence, and political change.","10–17",0],
+    ["Period 9","1980–Present: Contemporary America","Reagan era, globalization, technology, and domestic politics.","4–6",0]
+  ],
+  "AP Psychology":[
+    ["Unit 1","Scientific Foundations of Psychology","History, perspectives, research methods, and ethics.","10–14",0],
+    ["Unit 2","Biological Bases of Behavior","Brain structures, neurons, genetics, and sensation.","8–10",0],
+    ["Unit 3","Sensation and Perception","Sensory systems and perception of information.","6–8",0],
+    ["Unit 4","Learning","Classical and operant conditioning and social learning.","7–9",0],
+    ["Unit 5","Cognitive Psychology","Memory, thinking, problem solving, and intelligence.","13–17",0],
+    ["Unit 6","Developmental Psychology","Development across the lifespan and influences on growth.","7–9",0],
+    ["Unit 7","Motivation, Emotion, and Personality","Motivation theories, emotion, personality, and assessment.","11–15",0],
+    ["Unit 8","Clinical Psychology","Psychological disorders, diagnosis, and treatment.","12–16",0],
+    ["Unit 9","Social Psychology","Social behavior, attitudes, conformity, and group dynamics.","8–10",0]
   ]
+};
+
+const courseAliases = {
+  "AP Lang": "AP English Language",
+  "AP Lit": "AP English Literature",
+  APUSH: "AP United States History",
+  "AP Psych": "AP Psychology"
 };
 
 let state = {
@@ -251,6 +423,7 @@ let state = {
   plannerPrefs: { focusCourse: "AP Physics 1", targetUnit: "auto", studyDays: [1, 2, 3, 4, 5] },
   plannerCompleted: {},
   profile: { name: "PLAYER_001", class: "Scholar", outfit: "rookie", weapon: "sword" }
+  , essayDrafts: {}, essayStartedAt: null, essaySecondsLeft: null, essayCompleted: []
 };
 
 function save({ sync = true } = {}){
@@ -560,6 +733,7 @@ function showPage(id){
   if (id === "practice") renderPracticeQuestion();
   if (id === "boss") renderBossQuestion();
   if (id === "frq") renderFrqPractice();
+  if (id === "essay") renderEssayPractice();
   if (id === "planner") renderPlanner();
   if (id === "sandbox") {
     window.refreshFreeFeatures?.();
@@ -571,6 +745,7 @@ function showPage(id){
 }
 
 function selectCourse(course){
+  course = courseAliases[course] || course;
   state.currentCourse = course;
   state.currentUnit = (courseUnits[course] || [["Unit 1"]])[0][0];
   document.getElementById("selectedCourseTitle").textContent = course.toUpperCase();
@@ -586,6 +761,9 @@ function selectCourse(course){
       <div class="unit-practice-actions">
         <button class="pixel-btn" onclick="startUnit(${i}, 'mcq')">PRACTICE MCQ ▶</button>
         <button class="pixel-btn frq-choice" onclick="startUnit(${i}, 'frq')">PRACTICE FRQ ▶</button>
+        ${essayCourses.has(course)
+          ? `<button class="pixel-btn essay-choice" onclick="startUnit(${i}, 'essay')">PRACTICE ESSAY ▶</button>`
+          : ""}
       </div>
     </div>`).join("");
   document.getElementById("courseDetail").classList.remove("hidden");
@@ -608,6 +786,12 @@ function startUnit(index, practiceType = "mcq"){
   const selected = units[index] || units[0] || ["Unit 1"];
   state.currentUnit = selected[0];
   state.reviewQuestionId = null;
+  if (practiceType === "essay") {
+    if (!essayCourses.has(state.currentCourse)) return;
+    state.mode = "essay";
+    startEssayPractice(index);
+    return;
+  }
   if (practiceType === "frq") {
     state.mode = "frq";
     state.currentFrqIndex = 0;
@@ -622,6 +806,204 @@ function startUnit(index, practiceType = "mcq"){
   state.currentRun = createQuestionRun();
   showPage("practice");
   renderPracticeQuestion();
+}
+
+let essayTimerHandle = null;
+
+if (!window.APArcadeGradeEssay) {
+  window.APArcadeGradeEssay = async function essayGradingUnavailable() {
+    throw new Error("The essay grading service is still loading. Wait a moment and try again.");
+  };
+}
+
+function essayKey(course = state.currentCourse, unit = state.currentUnit, essayIndex = state.currentEssayIndex || 0){
+  return `${course}::${unit}::${essayIndex}`;
+}
+
+function startEssayPractice(unitIndex = 0){
+  const prompts = essayPrompts[state.currentCourse] || [];
+  if (!prompts.length) return;
+  state.currentEssayIndex = unitIndex % prompts.length;
+  state.essaySecondsLeft = prompts[state.currentEssayIndex].time * 60;
+  state.essayStartedAt = Date.now();
+  renderEssayPractice();
+  showPage("essay");
+}
+
+function renderEssayPractice(){
+  const prompt = (essayPrompts[state.currentCourse] || [])[state.currentEssayIndex || 0];
+  if (!prompt) return;
+  const key = essayKey();
+  document.getElementById("essayCourseLabel").textContent =
+    `${state.currentCourse.toUpperCase()} • ${state.currentUnit}`;
+  document.getElementById("essayTitle").textContent = prompt.title;
+  document.getElementById("essayDirections").textContent = prompt.directions;
+  document.getElementById("essayType").textContent = prompt.type.toUpperCase();
+  document.getElementById("essayTime").textContent = `${prompt.time}:00 RECOMMENDED`;
+
+  const materials = document.getElementById("essayMaterials");
+  materials.replaceChildren();
+  prompt.materials.forEach(([label, text], index) => {
+    const material = document.createElement("article");
+    material.className = "essay-material";
+    const heading = document.createElement("h3");
+    heading.textContent = label;
+    const body = document.createElement("p");
+    setAcademicText(body, text);
+    material.append(heading, body);
+    materials.append(material);
+  });
+
+  const response = document.getElementById("essayResponse");
+  if (response.dataset.key !== key) {
+    response.value = (state.essayDrafts || {})[key] || "";
+    response.dataset.key = key;
+  }
+  response.oninput = () => {
+    state.essayDrafts[key] = response.value;
+    document.getElementById("essaySaveStatus").textContent = "Essay draft saved.";
+    save();
+  };
+  const savedGrade = state.essayGrades?.[key];
+  if (savedGrade) renderEssayGrade(savedGrade);
+  else document.getElementById("essayGradeResult").classList.add("hidden");
+  resetEssayTimer(false);
+  updateEssayTimer();
+}
+
+function resetEssayTimer(resetSeconds = true){
+  const prompt = (essayPrompts[state.currentCourse] || [])[state.currentEssayIndex || 0];
+  if (!prompt) return;
+  if (resetSeconds) state.essaySecondsLeft = prompt.time * 60;
+  state.essayStartedAt = Date.now();
+  if (essayTimerHandle) clearInterval(essayTimerHandle);
+  essayTimerHandle = setInterval(updateEssayTimer, 1000);
+  updateEssayTimer();
+}
+
+function updateEssayTimer(){
+  if (!Number.isFinite(state.essaySecondsLeft)) return;
+  if (state.essaySecondsLeft < 0) state.essaySecondsLeft = 0;
+  const minutes = Math.floor(state.essaySecondsLeft / 60);
+  const seconds = state.essaySecondsLeft % 60;
+  document.getElementById("essayTimer").textContent =
+    `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  if (state.essaySecondsLeft === 0 && essayTimerHandle) {
+    clearInterval(essayTimerHandle);
+    essayTimerHandle = null;
+    document.getElementById("essaySaveStatus").textContent = "Time is up. You can still finish and review your essay.";
+    return;
+  }
+  state.essaySecondsLeft -= 1;
+}
+
+function completeEssayPractice(){
+  const key = essayKey();
+  const editor = document.getElementById("essayResponse");
+  state.essayDrafts = state.essayDrafts || {};
+  state.essayDrafts[key] = editor.value;
+  if ((state.essayCompleted || []).includes(key)) {
+    document.getElementById("essaySaveStatus").textContent = "This essay is already complete; your saved response has been preserved.";
+    return;
+  }
+  state.essayCompleted = [...new Set([...(state.essayCompleted || []), key])];
+  state.xp += 100;
+  state.level = Math.floor(state.xp / XP_PER_LEVEL) + 1;
+  save();
+  if (essayTimerHandle) clearInterval(essayTimerHandle);
+  essayTimerHandle = null;
+  document.getElementById("essaySaveStatus").textContent = "Essay completed. Your full response has been saved.";
+}
+
+async function gradeEssayWithAI(){
+  const editor = document.getElementById("essayResponse");
+  const key = essayKey();
+  let response = editor.value.trim();
+  if (!response) response = String((state.essayDrafts || {})[key] || "").trim();
+  state.essayDrafts = state.essayDrafts || {};
+  state.essayDrafts[key] = response;
+  save();
+  const result = document.getElementById("essayGradeResult");
+  const button = document.getElementById("gradeEssayBtn");
+  if (response.length < 40) {
+    result.classList.remove("hidden");
+    result.textContent = "Write at least a short complete essay before requesting an AI rubric grade.";
+    return;
+  }
+  const prompt = (essayPrompts[state.currentCourse] || [])[state.currentEssayIndex || 0];
+  if (!prompt) return;
+
+  button.disabled = true;
+  button.textContent = "GRADING...";
+  result.classList.remove("hidden");
+  result.textContent = "Analyzing the essay against the official rubric...";
+  try {
+    const grading = await window.APArcadeGradeEssay({
+      course: state.currentCourse,
+      essayType: prompt.type,
+      title: prompt.title,
+      directions: prompt.directions,
+      materials: prompt.materials,
+      response
+    });
+    if (!grading || typeof grading !== "object") {
+      throw new Error("The grading service returned an empty result.");
+    }
+    renderEssayGrade(grading);
+    state.essayGrades = state.essayGrades || {};
+    state.essayGrades[essayKey()] = grading;
+    save();
+  } catch (error) {
+    console.error("Essay grading failed:", error);
+    result.textContent = error instanceof Error
+      ? `AI grading could not be completed: ${error.message}`
+      : "AI grading could not be completed. Please try again.";
+  } finally {
+    button.disabled = false;
+    button.textContent = "FREE RUBRIC GRADE";
+  }
+}
+
+function renderEssayGrade(grading){
+  if (!grading || !grading.criteria || !Array.isArray(grading.strengths) || !Array.isArray(grading.improvements)) {
+    throw new Error("The grading service returned an invalid rubric score.");
+  }
+  const result = document.getElementById("essayGradeResult");
+  result.replaceChildren();
+
+  const score = document.createElement("div");
+  score.className = "essay-grade-score";
+  score.textContent = `AP RUBRIC SCORE: ${grading.total}/${grading.maxTotal}`;
+  result.append(score);
+
+  const appendList = (headingText, items) => {
+    const heading = document.createElement("h3");
+    heading.textContent = headingText;
+    const list = document.createElement("ul");
+    items.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      list.append(li);
+    });
+    result.append(heading, list);
+  };
+
+  Object.entries(grading.criteria).forEach(([criterion, value]) => {
+    const heading = document.createElement("h3");
+    heading.textContent = `${criterion.replaceAll("_", " ").toUpperCase()} — ${value.score}/${value.max}`;
+    const reason = document.createElement("p");
+    reason.textContent = value.reason;
+    result.append(heading, reason);
+  });
+  appendList("Strengths", grading.strengths);
+  appendList("Next revisions", grading.improvements);
+  if (grading.summary) {
+    const heading = document.createElement("h3");
+    heading.textContent = "Overall feedback";
+    const summary = document.createElement("p");
+    summary.textContent = grading.summary;
+    result.append(heading, summary);
+  }
 }
 
 function renderFrqPractice(){
@@ -873,6 +1255,7 @@ function renderPracticeQuestion(){
   reviewBtn.textContent = state.currentReview ? "★ MARKED FOR REVIEW" : "☆ MARK FOR REVIEW";
   reviewBtn.classList.toggle("marked", state.currentReview);
   document.getElementById("practiceCourseLabel").textContent = `${state.currentCourse} • ${state.currentUnit}`;
+  document.getElementById("practiceIcon").textContent = courseIcons[state.currentCourse] || "★";
   document.getElementById("questionNumber").textContent = `${questionNumber} / ${runLength}`;
   document.getElementById("practiceProgressText").textContent = `${questionNumber} / ${runLength}`;
   document.getElementById("practiceProgress").style.width = `${(questionNumber / runLength) * 100}%`;

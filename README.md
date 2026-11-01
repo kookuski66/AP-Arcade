@@ -1,6 +1,6 @@
 # AP Arcade — Prototype
 
-AP Arcade is a free, retro-style study hub for AP Physics 1, AP Chemistry, AP Calculus AB, and AP Biology.
+AP Arcade is a free, retro-style study hub for AP Physics 1, AP Chemistry, AP Calculus AB, AP Biology, AP English Language, AP English Literature, AP United States History, and AP Psychology.
 
 ## Run it
 
@@ -11,7 +11,7 @@ AP Arcade is a free, retro-style study hub for AP Physics 1, AP Chemistry, AP Ca
 ## What is included
 
 - Retro 8-bit / arcade visual theme, course selection, and editable AP exam countdowns.
-- Course maps for AP Physics 1, AP Chemistry, AP Calculus AB, and AP Biology.
+- Course maps for AP Physics 1, AP Chemistry, AP Calculus AB, AP Biology, AP English Language, AP English Literature, AP United States History, and AP Psychology.
 - Multiple-choice and free-response practice, review tools, and answer explanations.
 - Practice runs with up to 30 unique MCQs per unit and all authored FRQs.
 - Standard, Ascendant Trial, and Omega Gauntlet boss exams, all available to everyone.
@@ -37,3 +37,16 @@ Accounts are optional. Without signing in, study progress and the Scholar's Wild
 The Personal Study Coach builds a focused guide in the browser from up to eight recent missed questions, their authored answer explanations, and the units needing review. It uses no external AI service, API key, or Edge Function. Study progress and the Wilds save are stored locally and synced to `player_progress` while signed in. Do not store personal or sensitive information in question answers.
 
 Opening `index.html` directly with `file://` still works for the offline prototype, but browser authentication and Supabase question loading require an HTTP origin. There is no Stripe setup or subscription service.
+
+## AI essay grading
+
+The full-length essay workspace sends the prompt, source materials, and student response to the private Supabase `grade-essay` Edge Function. The API key is stored only as a Supabase secret; it must never be added to browser configuration.
+
+Deploy the function from the repository:
+
+```bash
+supabase functions deploy grade-essay
+supabase secrets set OPENAI_API_KEY=your-server-side-key
+```
+
+The function returns separate rubric criterion scores, strengths, revision priorities, and overall feedback. AI scores are study estimates and should be reviewed against the official AP rubric.

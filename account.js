@@ -4,6 +4,7 @@ let accountSyncVersion = 0;
 let currentAccountUserId = null;
 let currentAccountEmail = "";
 let accountSyncTimer = 0;
+let accountInitializationPromise = null;
 
 function accountMessage(message){
   const element = document.getElementById("accountStatus");
@@ -329,4 +330,187 @@ window.signInAccount = signInAccount;
 window.createAccount = createAccount;
 window.signOutAccount = signOutAccount;
 
-initializeAccount();
+function hasAny(text, patterns) {
+  return patterns.some(pattern => pattern.test(text));
+}
+
+function localEnglishGrade(payload) {
+  const text = payload.response.toLowerCase().trim();
+  const words = text.match(/\b[\w'-]+\b/g) || [];
+  const sentences = text.split(/[.!?]+/).map(sentence => sentence.trim()).filter(Boolean);
+  const opening = sentences.slice(0, Math.min(4, sentences.length)).join(" ");
+  const closing = sentences.slice(-Math.min(3, sentences.length)).join(" ");
+  const hasThesis = hasAny(opening, [
+    /\b(because|since|thus|therefore|ultimately|overall|essentially)\b/,
+    /\b(demonstrates|reveals|shows|argues?|asserts?|suggests?|supports?)\b/,
+    /\b(despite|although|through)\b/,
+    /\b(therefore|thus|so)\b/,
+    /\b(in order to|in the end|as a result)\b/
+  ]) || hasAny(text, [
+    /\b(thesis|central claim|main claim|controlling idea)\b/,
+    /\b(demonstrates|reveals|shows)\s+(that|how)\b/
+  ]);
+  const evidenceCount = (text.match(/\b(evidence|source|excerpt|passage|text|document|example)\b/g) || []).length;
+  const hasSpecificEvidence = evidenceCount >= 2 || hasAny(text, [/\b(paragraph|line|quote|author says|according to)\b/]);
+  const hasCommentary = hasAny(text, [/\b(because|therefore|demonstrates|reveals|shows|means|suggests)\b/]);
+  const hasQualification = hasAny(text, [/\b(however|although|despite|nevertheless|on the other hand|yet)\b/]);
+  const substantive = words.length >= 250 && sentences.length >= 8;
+
+  const openingHasPosition = opening.length > 80 && /\b(is|are|can|should|must|will|may)\b/.test(opening);
+  const hasDefensibleOpening = sentences[0]?.split(/\s+/).length >= 12 && openingHasPosition;
+  const hasConclusion = sentences.length >= 4 && hasAny(closing, [/ \b(overall|ultimately|therefore|thus|in conclusion)\b/, /\b(proves|demonstrates|shows)\b/]);
+  const thesisScore = hasThesis || hasDefensibleOpening || (hasConclusion && words.length >= 300) ? 1 : 0;
+  let evidenceScore = 0;
+  if (hasSpecificEvidence || evidenceCount > 0) evidenceScore += 1;
+  if (hasCommentary || words.length >= 500) evidenceScore += 1;
+  if (substantive && evidenceScore >= 2) evidenceScore += 1;
+  if (words.length >= 700 && evidenceScore >= 3 && hasCommentary) evidenceScore += 1;
+  evidenceScore = Math.min(evidenceScore, 4);
+  const sophisticationScore = substantive && (hasQualification || evidenceScore === 4 || words.length >= 900) ? 1 : 0;
+
+  const strengths = [];
+  const improvements = [];
+  if (thesisScore) strengths.push("The response contains a defensible central claim.");
+  else improvements.push("State a clear thesis that directly answers the prompt.");
+  if (hasSpecificEvidence) strengths.push("The essay makes specific references to evidence.");
+  else improvements.push("Use precise quotations or details from the passage and explain their relevance.");
+  if (hasCommentary) strengths.push("The response uses reasoning to explain evidence.");
+  else improvements.push("Add commentary explaining how each piece of evidence supports the thesis.");
+  if (hasQualification) strengths.push("The argument recognizes a qualification or counterconsideration.");
+  else improvements.push("Add nuance or qualify the argument where appropriate.");
+  if (words.length < 350) improvements.push(`Develop the response further; it currently contains about ${words.length} words.`);
+
+  return {
+    total: thesisScore + evidenceScore + sophisticationScore,
+    maxTotal: 6,
+    criteria: {
+      Thesis: {
+        score: thesisScore,
+        max: 1,
+        reason: thesisScore ? "A defensible thesis was detected." : "A clear line of reasoning in direct response to the prompt was not detected."
+      },
+      Evidence_and_Commentary: {
+        score: evidenceScore,
+        max: 4,
+        reason: `The response contains about ${words.length} words and evidence/commentary markers were ${evidenceScore ? "partially present" : "limited"}.`
+      },
+      Sophistication: {
+        score: sophisticationScore,
+        max: 1,
+        reason: sophisticationScore ? "The response appears nuanced, qualified, and developed." : "Add consistent qualification and nuanced reasoning to strengthen sophistication."
+      }
+    },
+    strengths,
+    improvements,
+    summary: "Free local estimate based on structure, evidence, commentary, development, and nuance. This is not an official AP score."
+  };
+}
+
+function localAPUSHGrade(payload) {
+  const text = payload.response.toLowerCase();
+  const words = (text.match(/\b[\w'-]+\b/g) || []).length;
+  const isDBQ = /DBQ|document-based/i.test(payload.essayType || "");
+  const sentences = text.split(/[.!?]+/).map(sentence => sentence.trim()).filter(Boolean);
+  const opening = sentences.slice(0, Math.min(4, sentences.length)).join(" ");
+  const hasContext = /\b(context|era|period|preceded|followed|prior|after|time period)\b/.test(text);
+  const hasThesis = /\b(thesis|argue|claim|controlling idea|therefore|thus|ultimately|despite|although)\b/.test(opening)
+    || /\b(because|through)\b/.test(opening);
+  const documentMentions = (text.match(/\bdocument(s)?\s+[a-z0-9]/g) || []).length;
+  const hasSourcing = /\b(author|audience|purpose|context|point of view|perspective|source)\b/.test(text);
+  const hasOutsideEvidence = /\b(beyond|historical example|also|further evidence|another example)\b/.test(text)
+    || words >= 500;
+  const hasAnalysis = /\b(because|therefore|demonstrates|resulted|caused|impact|significance|comparison|continuity|change)\b/.test(text);
+
+  let total = 0;
+  const criteria = {};
+  const add = (name, score, max, reason) => {
+    score = Math.min(score, max);
+    criteria[name] = { score, max, reason };
+    total += score;
+  };
+  add("Contextualization", hasContext ? 1 : 0, 1, hasContext ? "Historical context was detected." : "Add broader historical context before making the claim.");
+  add("Thesis_or_Claim", hasThesis ? 1 : 0, 1, hasThesis ? "A thesis-like claim was detected." : "State a defensible thesis with a line of reasoning.");
+  if (isDBQ) {
+    add("Evidence_from_Documents", Math.min(documentMentions ? 3 : 0, words >= 300 ? 3 : 2), 3, documentMentions ? "Document references were detected." : "Support the argument with multiple documents.");
+    add("Evidence_Beyond_Documents", hasOutsideEvidence ? (words >= 500 ? 2 : 1) : 0, 2, hasOutsideEvidence ? "Outside evidence appears to be present or extended historical evidence was detected." : "Add specific historical evidence beyond the documents.");
+    add("Analysis_and_Reasoning", hasAnalysis && hasSourcing ? 2 : hasAnalysis ? 1 : 0, 2, "Use sourcing and explain how evidence supports reasoning.");
+  } else {
+    add("Evidence", words >= 450 && hasAnalysis ? 2 : hasAnalysis || words >= 300 ? 1 : 0, 2, "Use specific historical evidence and explain its significance.");
+    add("Analysis_and_Reasoning", hasAnalysis && words >= 350 ? 2 : hasAnalysis ? 1 : 0, 2, "Explain historical relationships, causation, comparison, or change over time.");
+  }
+  const improvements = [];
+  if (!hasContext) improvements.push("Add accurate historical context before the thesis.");
+  if (!hasThesis) improvements.push("Write a clear, defensible thesis.");
+  if (isDBQ && !documentMentions) improvements.push("Reference multiple documents by letter and group them into evidence categories.");
+  if (isDBQ && !hasSourcing) improvements.push("Use sourcing categories such as author, audience, purpose, context, or point of view.");
+  if (!hasAnalysis) improvements.push("Explain how and why the evidence supports the argument.");
+
+  return {
+    total: Math.min(total, isDBQ ? 7 : 6),
+    maxTotal: isDBQ ? 7 : 6,
+    criteria,
+    strengths: total >= 3 ? ["The response contains several recognizable rubric elements."] : ["The response has a starting framework that can be developed."],
+    improvements: improvements.length ? improvements : ["Continue to refine the precision of evidence and analysis."],
+    summary: "Free local estimate based on detectable historical-writing features. This is not an official AP score."
+  };
+}
+
+window.APArcadeGradeEssay = async function gradeEssay(payload){
+  if (!accountInitializationPromise) {
+    throw new Error("Essay grading service is not initialized. Refresh the page and try again.");
+  }
+  await accountInitializationPromise;
+  if (!accountClient) {
+    throw new Error("Essay grading is unavailable until the Supabase connection is configured.");
+  }
+  let data;
+  let error;
+  try {
+    const response = await accountClient.functions.invoke("grade-essay", { body: payload });
+    data = response.data;
+    error = response.error;
+  } catch (requestError) {
+    try {
+      const endpoint = `${accountConfig.supabaseUrl}/functions/v1/grade-essay`;
+      const directResponse = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: accountConfig.supabaseAnonKey,
+          Authorization: `Bearer ${accountConfig.supabaseAnonKey}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (directResponse.status === 404) {
+        throw new Error("The AI grader has not been deployed to the Supabase project.");
+      }
+      const directData = await directResponse.json().catch(() => null);
+      if (!directResponse.ok) {
+        throw new Error(directData?.error || directData?.message || `Supabase returned HTTP ${directResponse.status}.`);
+      }
+      return directData;
+    } catch (diagnosticError) {
+      if (payload.course === "AP United States History") return localAPUSHGrade(payload);
+      return localEnglishGrade(payload);
+    }
+  }
+  if (error) {
+    const status = error.context?.status;
+    if (payload.course === "AP United States History") return localAPUSHGrade(payload);
+    if (payload.course === "AP English Language" || payload.course === "AP English Literature") {
+      return localEnglishGrade(payload);
+    }
+    if (status === 404 || error.message?.includes("NOT_FOUND")) {
+      throw new Error("The AI grader has not been deployed to Supabase yet.");
+    }
+    if (status === 503 || error.message?.includes("not configured")) {
+      throw new Error("The AI grader needs its server-side API key configured.");
+    }
+    const responseMessage = data?.error;
+    throw new Error(responseMessage || error.message || "The grading service returned an error.");
+  }
+  if (!data) throw new Error("The grading service returned no result.");
+  return data;
+};
+
+accountInitializationPromise = initializeAccount();

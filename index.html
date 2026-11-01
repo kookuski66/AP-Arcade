@@ -93,6 +93,18 @@
         <div class="course-card biology" onclick="selectCourse('AP Biology')">
           <div class="course-icon">♧</div><div><small>COURSE 04</small><h3>AP BIOLOGY</h3><p>Cells, genetics & systems</p></div>
         </div>
+        <div class="course-card language" onclick="selectCourse('AP English Language')">
+          <div class="course-icon" aria-hidden="true">✒</div><div><small>COURSE 05</small><h3>AP LANGUAGE</h3><p>Rhetoric, evidence & argument</p></div>
+        </div>
+        <div class="course-card literature" onclick="selectCourse('AP English Literature')">
+          <div class="course-icon" aria-hidden="true">📖</div><div><small>COURSE 06</small><h3>AP LITERATURE</h3><p>Texts, interpretation & themes</p></div>
+        </div>
+        <div class="course-card history" onclick="selectCourse('AP United States History')">
+          <div class="course-icon" aria-hidden="true">⌛</div><div><small>COURSE 07</small><h3>AP U.S. HISTORY</h3><p>Periods, evidence & historical thinking</p></div>
+        </div>
+        <div class="course-card psychology" onclick="selectCourse('AP Psychology')">
+          <div class="course-icon" aria-hidden="true">Ψ</div><div><small>COURSE 08</small><h3>AP PSYCHOLOGY</h3><p>Mind, behavior & research</p></div>
+        </div>
       </div>
     </section>
 
@@ -222,6 +234,10 @@
         <div class="course-card chemistry" onclick="selectCourse('AP Chemistry')"><div class="course-icon">⚗</div><div><small>CHEMISTRY</small><h2>AP CHEMISTRY</h2><p>Atomic structure, reactions, and equilibrium</p></div></div>
         <div class="course-card calculus" onclick="selectCourse('AP Calculus AB')"><div class="course-icon">∫</div><div><small>MATHEMATICS</small><h2>AP CALCULUS AB</h2><p>Functions, limits, derivatives, integrals</p></div></div>
         <div class="course-card biology" onclick="selectCourse('AP Biology')"><div class="course-icon">♧</div><div><small>BIOLOGY</small><h2>AP BIOLOGY</h2><p>Cells, energy, genetics, evolution, and ecology</p></div></div>
+        <div class="course-card language" onclick="selectCourse('AP English Language')"><div class="course-icon" aria-hidden="true">✒</div><div><small>ENGLISH</small><h2>AP ENGLISH LANGUAGE</h2><p>Rhetorical situation, evidence, reasoning, and style</p></div></div>
+        <div class="course-card literature" onclick="selectCourse('AP English Literature')"><div class="course-icon" aria-hidden="true">📖</div><div><small>ENGLISH</small><h2>AP ENGLISH LITERATURE</h2><p>Close reading, characterization, structure, and argument</p></div></div>
+        <div class="course-card history" onclick="selectCourse('AP United States History')"><div class="course-icon" aria-hidden="true">⌛</div><div><small>HISTORY</small><h2>AP UNITED STATES HISTORY</h2><p>Historical periods, sources, causation, and continuity</p></div></div>
+        <div class="course-card psychology" onclick="selectCourse('AP Psychology')"><div class="course-icon" aria-hidden="true">Ψ</div><div><small>SOCIAL SCIENCE</small><h2>AP PSYCHOLOGY</h2><p>Research methods, behavior, cognition, and development</p></div></div>
       </div>
 
       <div id="courseDetail" class="course-detail hidden">
@@ -278,6 +294,34 @@
           <button id="frqPrevBtn" class="pixel-btn" onclick="moveFrq(-1)">◀ PREVIOUS FRQ</button>
           <button id="frqNextBtn" class="pixel-btn primary" onclick="moveFrq(1)">NEXT FRQ ▶</button>
         </div>
+      </div>
+    </section>
+
+    <section id="essay" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">FULL-LENGTH WRITING LAB</div><h1>ESSAY PRACTICE</h1></div>
+        <div class="level-badge boss-exam-timer" id="essayTimer">40:00</div>
+      </div>
+      <div class="frq-workspace essay-workspace">
+        <div class="frq-heading">
+          <div class="eyebrow" id="essayCourseLabel">AP ENGLISH LANGUAGE AND COMPOSITION • UNIT 1</div>
+          <h2 id="essayTitle">Loading essay prompt...</h2>
+          <p id="essayDirections"></p>
+          <div class="essay-meta">
+            <span id="essayType"></span>
+            <span id="essayTime"></span>
+          </div>
+        </div>
+        <div id="essayMaterials" class="essay-materials"></div>
+        <label class="essay-editor-label" for="essayResponse">YOUR ESSAY</label>
+        <textarea id="essayResponse" class="frq-response essay-response" aria-label="Essay response"></textarea>
+        <div class="essay-actions">
+          <button class="pixel-btn" type="button" onclick="resetEssayTimer()">RESET TIMER</button>
+          <button class="pixel-btn" id="gradeEssayBtn" type="button" onclick="gradeEssayWithAI()">FREE RUBRIC GRADE</button>
+          <button class="pixel-btn primary" type="button" onclick="completeEssayPractice()">COMPLETE ESSAY (+100 XP)</button>
+        </div>
+        <p id="essaySaveStatus" class="content-status" role="status"></p>
+        <section id="essayGradeResult" class="essay-grade-result hidden" aria-live="polite"></section>
       </div>
     </section>
 
@@ -485,11 +529,11 @@
     <span>BUILT BY STUDENTS, FOR STUDENTS</span>
   </footer>
 
-  <script src="academic-content.js"></script>
-  <script src="script.js"></script>
+  <script src="academic-content.js?v=20261101"></script>
+  <script src="script.js?v=20261101"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="account-config.js"></script>
-  <script src="account.js"></script>
+  <script src="account.js?v=20261101"></script>
   <script src="study-features.js"></script>
 </body>
 </html>

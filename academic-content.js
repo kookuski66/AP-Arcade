@@ -1463,3 +1463,451 @@ Object.assign(frqBank["AP Biology"], {
     ]]
   ])
 });
+
+Object.assign(unitQuestionBank, {
+  "AP English Language": {
+    "Unit 1 Rhetorical Situation": _makeQuestions("AP English Language", "Unit 1 Rhetorical Situation", "LANG-RS1", [
+      ["Which element most directly describes the writer of a rhetorical text?", ["The speaker", "The rubric", "The evidence", "The conclusion"], 0, "The speaker is the person or persona communicating the message."],
+      ["A writer's intended readers are called the", ["audience", "exigence", "genre", "citation"], 0, "Audience identifies the people for whom a text is composed."],
+      ["The occasion that prompts a text's creation is its", ["exigence", "thesis", "tone", "diction"], 0, "Exigence is the immediate need or problem prompting the communication."],
+      ["Which question best identifies a writer's purpose?", ["What does the writer want the audience to think or do?", "How many paragraphs appear?", "What sources are cited?", "Which font is used?"], 0, "Purpose describes the effect the writer intends to produce."],
+      ["Context is best understood as", ["the circumstances surrounding the communication", "the final sentence", "the number of sources", "the author's name only"], 0, "Context includes relevant historical, social, political, and cultural circumstances."]
+    ]),
+    "Unit 2 Claims and Evidence": _makeQuestions("AP English Language", "Unit 2 Claims and Evidence", "LANG-CE2", [
+      ["A defensible claim about a rhetorical issue should be", ["specific and capable of proof", "the same as a topic", "always emotional", "unrelated to evidence"], 0, "A claim makes an arguable position that evidence can support."],
+      ["Which source is strongest for supporting a claim about a current policy?", ["Recent primary data from the relevant agency", "An unsupported opinion post", "A fictional scene", "A dictionary definition"], 0, "Recent relevant primary data provides direct support."],
+      ["A writer using anecdotal evidence should also consider whether it is", ["representative and relevant", "the longest available example", "written in figurative language", "anonymous"], 0, "An anecdote is useful only when relevant and sufficiently representative."],
+      ["Evidence has credibility when it is", ["accurate, relevant, and sourced reliably", "agreement with the writer's claim", "emotionally intense", "very long"], 0, "Credible evidence comes from reliable sources and supports the exact claim."],
+      ["Qualifying a claim makes it", ["more precise and fair", "less defensible", "unprovable", "unsupported"], 0, "Qualification acknowledges limits while preserving a strong claim."]
+    ]),
+    "Unit 3 Reasoning and Organization": _makeQuestions("AP English Language", "Unit 3 Reasoning and Organization", "LANG-RO3", [
+      ["Commentary should do what with evidence?", ["Explain its significance to the claim", "Repeat it word for word", "Replace the claim", "Avoid analysis"], 0, "Commentary connects evidence to reasoning and to the thesis."],
+      ["A line of reasoning is", ["the sequence connecting claims and evidence", "a quotation only", "a counterexample", "a paragraph's final transition"], 0, "A line of reasoning shows how ideas logically lead to the conclusion."],
+      ["A concession followed by a rebuttal can make an argument", ["more nuanced and persuasive", "self-contradictory automatically", "less logical", "unsupported"], 0, "Addressing opposition fairly strengthens credibility and reasoning."],
+      ["Which ordering best demonstrates chronological development?", ["Earliest event to latest event", "Least evidence to most evidence", "Conclusion to claim", "Random source order"], 0, "Chronological organization follows time order."],
+      ["A logical transition should connect", ["ideas and reveal their relationship", "every sentence to the thesis mechanically", "only the introduction and conclusion", "sources without explanation"], 0, "Effective transitions clarify relationships among ideas."]
+    ]),
+    "Unit 4 Style": _makeQuestions("AP English Language", "Unit 4 Style", "LANG-ST4", [
+      ["Diction most directly concerns a writer's", ["word choices", "paragraph count", "source dates", "punctuation only"], 0, "Diction means the selection and connotation of words."],
+      ["Syntax refers to", ["sentence structure and arrangement", "essay formatting", "word origins", "visual layout"], 0, "Syntax includes sentence patterns, length, and arrangement."],
+      ["Parallel structure primarily creates", ["balance and emphasis", "semantic ambiguity", "source citation", "random variation"], 0, "Parallel grammatical forms reinforce rhythm and clarity."],
+      ["A shift from long sentences to a short fragment can signal", ["emphasis or urgency", "an error in citation", "lack of evidence", "weak reasoning"], 0, "Sentence-length shifts can draw attention and alter pace."],
+      ["Tone can be inferred from", ["diction, syntax, and details", "only title length", "paper color", "number of paragraphs"], 0, "Together those choices communicate the speaker's attitude."]
+    ]),
+    "Unit 5 Rhetorical Analysis": _makeQuestions("AP English Language", "Unit 5 Rhetorical Analysis", "LANG-RA5", [
+      ["A strong rhetorical analysis thesis identifies", ["purpose, choices, and relationship", "only whether a text is good", "author biography", "personal agreement"], 0, "Analysis explains what choices accomplish for a rhetorical purpose."],
+      ["In rhetorical analysis, a specific strategy should be explained as", ["a choice that produces an effect", "an unsupported label", "proof of author intent alone", "a summary"], 0, "The response should connect method, context, and effect."],
+      ["Analyzing irony requires attention to", ["the gap between stated and implied meaning", "paragraph length alone", "every source", "author pronunciation"], 0, "Irony depends on contrast between surface and intended meaning."],
+      ["Why analyze organization in a speech?", ["Its sequence shapes audience understanding and response", "Organization never affects meaning", "It substitutes for evidence", "It determines word count"], 0, "Ordering can build credibility, emotion, urgency, or resolution."],
+      ["A rhetorical choice should not be described as effective without", ["evidence about audience and purpose", "personal praise", "a long quotation", "a summary"], 0, "Explanation of effect requires analysis of how and why it works."]
+    ]),
+    "Unit 6 Argument Writing": _makeQuestions("AP English Language", "Unit 6 Argument Writing", "LANG-AR6", [
+      ["An argument prompt asks a writer to develop a", ["defensible, evidence-based position", "summary of every view", "plot diagram", "biographical profile"], 0, "Argument writing takes and supports a position."],
+      ["The strongest rebuttal", ["addresses and fairly distinguishes opposition", "merely repeats insults", "ignores counterclaims", "adds unrelated evidence"], 0, "A fair rebuttal engages an opposing position with relevant reasoning."],
+      ["Reasoning should explain", ["how evidence proves the claim", "why evidence is long", "who copied the source", "only source authorship"], 0, "Reasoning supplies the inferential bridge between evidence and claim."],
+      ["A strong conclusion in argument writing", ["extends implications of the defended line of reasoning", "introduces new evidence abruptly", "restates no insight", "apologizes for the position"], 0, "Conclusion should resolve and broaden the argument's significance."],
+      ["Narrowing a broad claim generally makes it", ["more precise and demonstrable", "less arguable", "unsupported", "emotionally weaker"], 0, "A focused claim can be supported with relevant evidence."]
+    ]),
+    "Unit 7 Synthesis Writing": _makeQuestions("AP English Language", "Unit 7 Synthesis Writing", "LANG-SY7", [
+      ["Synthesis writing should combine", ["multiple sources into an original line of reasoning", "summaries of each source", "only one source", "unrelated facts"], 0, "Synthesis uses sources together rather than treating them separately."],
+      ["Source citations should identify", ["the material used and its source", "only the longest quotation", "the writer's opinion", "every word consulted"], 0, "Citation lets readers distinguish author evidence from writer analysis."],
+      ["A source can be qualified by noting", ["its limitations or perspective", "its number of pages only", "the writer's preference", "its font"], 0, "Qualification helps evaluate reliability and scope."],
+      ["Sources should be incorporated through", ["focused quotation or accurate paraphrase", "copying entire passages", "dropping titles alone", "unsupported summaries"], 0, "Focused incorporation preserves clarity and source accuracy."],
+      ["In a synthesis essay, sources are evidence for", ["the writer's own defensible thesis", "eight unrelated topics", "the prompt's wording only", "biographical study"], 0, "The writer controls the thesis and uses sources to support it."]
+    ]),
+    "Unit 8 Multiple-Choice Strategies": _makeQuestions("AP English Language", "Unit 8 Multiple-Choice Strategies", "LANG-MC8", [
+      ["When evaluating a figurative phrase, focus first on", ["its context and intended effect", "how long it is", "the number of commas", "the author's identity only"], 0, "Context determines a figure's local meaning and rhetorical effect."],
+      ["The best answer to a nuanced evidence question is supported by", ["specific textual language and reasoning", "a general impression", "personal experience only", "information outside the passage"], 0, "AP questions require textual support."],
+      ["A distractor that is partly true may still be wrong because it", ["does not answer the exact question asked", "contains no numbers", "uses difficult vocabulary", "is short"], 0, "An answer must match both the passage and the question precisely."],
+      ["A purpose question should distinguish purpose from", ["topic alone", "thesis length", "quotation choice", "paragraph count"], 0, "Purpose describes the intended effect, not merely the subject."],
+      ["Eliminating answers first works well when", ["you can locate the claim in text that disproves each option", "you ignore context", "you choose the longest answer", "you read only the headline"], 0, "Textual disproof lets you narrow choices methodically."]
+    ])
+  },
+  "AP English Literature": {
+    "Unit 1 Reading Closely": _makeQuestions("AP English Literature", "Unit 1 Reading Closely", "LIT-CL1", [
+      ["Close reading begins with attention to", ["specific language and patterns in the text", "only author biography", "reader popularity", "publication sales"], 0, "Literary meaning grows from textual details."],
+      ["A word's connotation is its", ["associated meanings and emotional effects", "dictionary part of speech", "number of syllables", "alphabetical position"], 0, "Connotation includes implications beyond a word's literal definition."],
+      ["Repeated imagery may develop", ["a motif and thematic significance", "only page count", "publication format", "source citation"], 0, "Patterns across details can reinforce meaning."],
+      ["Textual evidence should be incorporated because it", ["grounds an interpretation in details", "makes an essay longer", "proves author popularity", "replaces analysis"], 0, "Evidence supports and limits literary interpretations."],
+      ["Ambiguity in literature often invites", ["multiple defensible interpretations", "one certain factual answer", "text summary", "ignoring context"], 0, "Ambiguity can support several interpretations grounded in evidence."]
+    ]),
+    "Unit 2 Character": _makeQuestions("AP English Literature", "Unit 2 Character", "LIT-CH2", [
+      ["Characterization develops through a character's", ["actions, thoughts, speech, and relationships", "physical location only", "chapter headings", "authorial fame"], 0, "Multiple narrative methods build characterization."],
+      ["A motivation is a character's", ["reason for acting", "physical description", "age only", "author's biography"], 0, "Motivation explains intention and behavior."],
+      ["A foil character highlights traits through", ["contrast with another character", "identical behavior in every scene", "author commentary only", "the title"], 0, "Foils illuminate differences through comparison."],
+      ["A dynamic character", ["changes significantly through the narrative", "never speaks", "appears only once", "remains exactly the same"], 0, "Dynamic characters undergo meaningful internal or relational change."],
+      ["Character relationships can reveal", ["power, conflict, values, and development", "only chronology", "book length", "genre conventions exclusively"], 0, "Interactions expose motives and thematic tensions."]
+    ]),
+    "Unit 3 Setting": _makeQuestions("AP English Literature", "Unit 3 Setting", "LIT-SE3", [
+      ["Setting includes", ["place, time, atmosphere, and social conditions", "only scenery", "the author's name", "publication price"], 0, "Setting has spatial, temporal, and cultural dimensions."],
+      ["Atmosphere is created primarily through", ["language that shapes mood and sensory experience", "plot summary", "reader ratings", "chapter numbers"], 0, "Description, diction, and imagery establish atmosphere."],
+      ["A historical setting can affect character choices through", ["available values, institutions, and constraints", "nothing beyond weather", "only typography", "author popularity"], 0, "Social conditions shape possibilities and conflict."],
+      ["A shift in setting may signal", ["a change in tone, perspective, or conflict", "a printing error", "the end of every interpretation", "no meaning"], 0, "Movement in place or time often creates literary contrast."],
+      ["Spatial descriptions are significant when they", ["connect physical details to theme or psychology", "are only decorative", "contain no figurative language", "name a location"], 0, "Details gain significance through their relation to meaning."]
+    ]),
+    "Unit 4 Structure": _makeQuestions("AP English Literature", "Unit 4 Structure", "LIT-ST4", [
+      ["Narrative structure organizes", ["events, revelations, contrasts, and pacing", "only vocabulary", "cover art", "publication date"], 0, "Structure determines how a story presents its events."],
+      ["A flashback can provide", ["context and revise current understanding", "a guarantee of realism", "proof of author intent", "automatic resolution"], 0, "Flashbacks alter chronology and deepen context."],
+      ["A structural shift often directs attention toward", ["changing values, conflicts, or themes", "word count", "the author's nationality", "genre sales"], 0, "Formal changes can mark important transitions."],
+      ["Juxtaposition places details side by side to create", ["contrast, tension, or comparison", "grammatical correction", "summary", "an index"], 0, "Juxtaposition highlights relationships between elements."],
+      ["A poem's line breaks can shape", ["emphasis, pause, syntax, and pacing", "its meaning not at all", "author biography", "page number only"], 0, "Lineation participates in a poem's formal effects."]
+    ]),
+    "Unit 5 Narration": _makeQuestions("AP English Literature", "Unit 5 Narration", "LIT-NR5", [
+      ["Point of view determines", ["whose perceptions the reader receives", "the plot's factual outcome", "only tense", "author identity"], 0, "Narrative perspective limits or shapes access to experience."],
+      ["An unreliable narrator may", ["mislead through ignorance, bias, or concealment", "use correct grammar", "be first-person only", "always lie"], 0, "Reliability depends on the narrator's knowledge and credibility."],
+      ["Free indirect discourse can blend", ["narrator and character perspectives", "only dialogue and stage directions", "author facts", "source citations"], 0, "This technique shifts attention between narrative and character voice."],
+      ["Narrative distance affects", ["the reader's closeness to a character's experience", "book weight", "whether an event occurs", "the setting only"], 0, "Distance shapes intimacy and interpretive access."],
+      ["A second-person address can make readers feel", ["directly positioned within the narrative situation", "aware of publication date only", "identical to every character", "free of ambiguity"], 0, "Second-person narration creates implied participation or address."]
+    ]),
+    "Unit 6 Figures of Speech and Symbolism": _makeQuestions("AP English Literature", "Unit 6 Figures of Speech and Symbolism", "LIT-FI6", [
+      ["A symbol gains meaning from", ["patterns and relationships within the text", "its common object alone", "the author's hobby", "its first letter"], 0, "Textual function and repetition support symbolic interpretation."],
+      ["Metaphor creates meaning by", ["directly equating unlike things", "listing causes", "stating definitions", "quoting sources"], 0, "Metaphor transfers qualities between its terms."],
+      ["Imagery appeals primarily to", ["sensory perception", "citation rules", "historical dates", "syntax alone"], 0, "Imagery evokes sights, sounds, textures, tastes, smells, or movement."],
+      ["Personification attributes", ["human qualities to nonhuman things", "facts to every narrator", "symbols to genres only", "events to dates"], 0, "Personification can animate objects or ideas."],
+      ["Allusion depends on audience recognition of", ["an external person, text, or event", "only word length", "punctuation", "narrator reliability"], 0, "Allusion activates associations with a shared reference."]
+    ]),
+    "Unit 7 Themes and Thematic Development": _makeQuestions("AP English Literature", "Unit 7 Themes and Thematic Development", "LIT-TH7", [
+      ["A theme is best expressed as", ["a claim about the text's central idea", "a single image", "the plot sequence", "a character's name"], 0, "Themes are developed insights rather than topics alone."],
+      ["A topic becomes a theme when the writer interprets how", ["a larger idea functions in the narrative", "many pages look", "an author signs the text", "a title sounds"], 0, "Theme requires a meaningful claim about human experience."],
+      ["Conflict contributes to thematic development by", ["forcing choices and revealing values", "adding only suspense", "lengthening description", "creating citation needs"], 0, "Conflict tests characters and ideas within the narrative."],
+      ["A thematic interpretation should remain accountable to", ["recurring details and narrative outcomes", "personal experience exclusively", "author wealth", "the title only"], 0, "Textual evidence limits plausible interpretations."],
+      ["A motif supports theme through", ["recurrence and changing significance", "one isolated example", "random punctuation", "publication history"], 0, "Repeated elements can develop a thematic pattern."]
+    ]),
+    "Unit 8 Literary Argument": _makeQuestions("AP English Literature", "Unit 8 Literary Argument", "LIT-AR8", [
+      ["A literary argument must make", ["an interpretive claim supported by textual evidence", "a summary of every page", "a personal confession", "an objective plot list"], 0, "Interpretation needs evidence and reasoning."],
+      ["The best evidence directly", ["illustrates the claim being developed", "mentions the broadest theme", "comes from a different work", "has the most words"], 0, "Relevant details show how the interpretation operates."],
+      ["Commentary explains how evidence", ["creates or develops meaning", "raises page count", "replaces the claim", "gives a biography"], 0, "Commentary turns quotation into literary analysis."],
+      ["A qualification can strengthen analysis by", ["acknowledging complexity within the text", "avoiding evidence", "contradicting the thesis automatically", "repeating an answer"], 0, "Qualification recognizes tensions and limits rather than flattening meaning."],
+      ["A strong conclusion demonstrates", ["why the interpretation matters and extends it", "adds a completely unrelated theme", "restates every quotation", "summarizes source notes"], 0, "The conclusion synthesizes insight without simply repeating."]
+    ])
+  }
+});
+
+function addGeneratedCourseBank(course, prefix, specs) {
+  const courseBank = {};
+  specs.forEach(([unit, title, focus], specIndex) => {
+    const rows = [];
+    const stems = [
+      concept => `Which statement best describes ${concept}?`,
+      concept => `Which action or evidence would most directly demonstrate understanding of ${concept}?`,
+      concept => `Which approach best explains the importance of ${concept}?`,
+      concept => `Which evidence would most strongly support an analysis of ${concept}?`,
+      concept => `Which conclusion is best supported by the study of ${concept}?`
+    ];
+    for (let i = 0; i < 15; i += 1) {
+      const concept = `${focus}${i % 3 === 0 ? "" : ` in context ${i + 1}`}`;
+      rows.push([
+        stems[i % stems.length](concept),
+        [
+          `Use accurate evidence and reasoning about ${focus}.`,
+          `Ignore the historical or conceptual context of ${focus}.`,
+          `Replace ${focus} with an unrelated generalization.`,
+          `Assume that evidence alone establishes causation without analysis.`
+        ],
+        0,
+        `${focus} is most accurately understood through relevant evidence, context, and reasoning rather than unsupported claims.`
+      ]);
+    }
+    courseBank[`${unit} ${title}`] = _makeQuestions(course, `${unit} ${title}`, `${prefix}-${String(specIndex + 1).padStart(2, "0")}`, rows);
+  });
+  unitQuestionBank[course] = courseBank;
+}
+
+addGeneratedCourseBank("AP United States History", "USH", [
+  ["Period 1", "1491–1607: Indigenous Americas to Colonization", "Native societies and the Columbian Exchange"],
+  ["Period 2", "1607–1754: Colonial America", "regional colonial development"],
+  ["Period 3", "1754–1800: Revolution and New Nation", "revolutionary conflict and constitutional government"],
+  ["Period 4", "1800–1848: Expansion and Reform", "market expansion and democratic reform"],
+  ["Period 5", "1844–1877: Civil War and Reconstruction", "sectional conflict and Reconstruction"],
+  ["Period 6", "1865–1898: Industrialization and Its Effects", "industrial capitalism and labor"],
+  ["Period 7", "1890–1945: Modern America", "Progressivism and twentieth-century conflict"],
+  ["Period 8", "1945–1980: Cold War", "containment and domestic change"],
+  ["Period 9", "1980–Present: Contemporary America", "globalization and political realignment"]
+]);
+
+addGeneratedCourseBank("AP Psychology", "PSY", [
+  ["Unit 1", "Scientific Foundations of Psychology", "research methods and ethics"],
+  ["Unit 2", "Biological Bases of Behavior", "the nervous system and behavior"],
+  ["Unit 3", "Sensation and Perception", "sensory processing and perception"],
+  ["Unit 4", "Learning", "classical conditioning, operant conditioning, and social learning"],
+  ["Unit 5", "Cognitive Psychology", "memory, thinking, and intelligence"],
+  ["Unit 6", "Developmental Psychology", "lifespan development"],
+  ["Unit 7", "Motivation, Emotion, and Personality", "motivation, emotion, and personality"],
+  ["Unit 8", "Clinical Psychology", "psychological disorders and treatment"],
+  ["Unit 9", "Social Psychology", "group behavior and social influence"]
+]);
+
+function addGeneratedFrqBank(course, prefix, specs) {
+  frqBank[course] = {};
+  specs.forEach(([unit, title, focus], specIndex) => {
+    const rows = [];
+    for (let i = 1; i <= 3; i += 1) {
+      const taskNames = ["source analysis", "data-based application", "argument and synthesis"];
+      const taskName = taskNames[i - 1];
+      const apushMaterials = [
+        {
+          title: "Primary source: contemporary claim",
+          text: `"We are told that the Union can be preserved only by yielding ground to every demand. My countrymen, if we submit to such demands, we surrender the principles for which our predecessors struggled."`
+        },
+        {
+          title: "Period table: selected demographic and economic data",
+          text: `Year 1: urban population 3 million, railroad mileage 30,000; Year 5: urban population 5 million, railroad mileage 60,000; Year 10: urban population 8 million, railroad mileage 95,000.`
+        },
+        {
+          title: "Primary source: public speech excerpt",
+          text: `"The Constitution binds us together, but its promises are fulfilled only when citizens examine government action and hold it accountable to liberty, equality, and the public welfare."`
+        }
+      ];
+      const psychologyMaterials = [
+        {
+          title: "Experiment record",
+          text: `Researchers randomly assigned 120 adults to two groups. Group A received focused practice (mean score 82, standard deviation 8); Group B received standard review (mean score 74, standard deviation 9). Every participant completed the same measure after 30 days.`
+        },
+        {
+          title: "Research table",
+          text: `Variable A: 2.0, 3.0, 4.0, 5.0; Variable B: 62, 68, 76, 81. The correlation is positive, with a visible linear pattern and no manipulation of either variable.`
+        },
+        {
+          title: "Applied case study",
+          text: `Maya avoids crowded buses, reports rapid heartbeat and dizziness, and leaves before a commute if possible. Her avoidance has worsened over six months and now prevents her from reaching work.`
+        }
+      ];
+      rows.push([
+        `${title}: ${taskName}`,
+        course === "AP United States History"
+          ? [
+              `${apushMaterials[0].title}:\n“${apushMaterials[0].text}”\nPolitical cartoon caption: “A divided republic must choose whether sectional interests outweigh shared national obligations.”\nUse the visible source and caption to analyze perspectives on ${focus}.`,
+              `${apushMaterials[1].title} for ${focus}:\n${apushMaterials[1].text}\nDescribe the strongest pattern in the table and use it to support a defensible historical claim.`,
+              `${apushMaterials[2].title}:\n${apushMaterials[2].text}\nPublic policy document summary: citizens demand stronger protections while opposing federal overreach. Develop an argument about ${focus}, using both provided positions as evidence.`
+            ][i - 1]
+          : [
+              `${psychologyMaterials[0].title} — study of ${focus}:\n${psychologyMaterials[0].text}\nIdentify the independent and dependent variables, compare the groups, and evaluate one ethical or methodological limitation.`,
+              `${psychologyMaterials[1].title} — variables associated with ${focus}:\n${psychologyMaterials[1].text}\nDescribe the pattern, distinguish correlation from causation, and identify one variable that might explain both.`,
+              `${psychologyMaterials[2].title} — application to ${focus}:\n${psychologyMaterials[2].text}\nCompare two relevant psychological explanations and select the stronger explanation using the case details and relevant limitations.`
+            ][i - 1],
+        [
+          [`Identify one relevant concept, event, or method used in the scenario.`, `State the concept accurately and connect it specifically to the scenario.`, `Accurately identifies and explains the relevant concept, event, or method.`],
+          [`Develop a defensible claim or research prediction about the scenario.`, `The claim must be specific and answerable with the available evidence.`, `The response states a precise, defensible claim or prediction.`],
+          [`Support the claim with the strongest relevant evidence from the scenario.`, `Explain the evidence rather than merely restating it.`, `Evidence is accurately selected and tied to the claim.`],
+          [`Explain the reasoning that connects the evidence to the conclusion.`, `Address causation, pattern, perspective, or alternative explanation where appropriate.`, `The explanation clearly traces evidence to conclusion and recognizes the required form of reasoning.`],
+          [`Consider a limitation, qualification, or competing interpretation.`, `Show why the qualification matters for the strength of the claim.`, `A relevant limitation or alternative interpretation is accurately explained and applied to the claim.`]
+        ]
+      ]);
+    }
+    frqBank[course][`${unit} ${title}`] = _makeFrqs(`${prefix}-${String(specIndex + 1).padStart(2, "0")}`, rows);
+  });
+}
+
+addGeneratedFrqBank("AP United States History", "FRQ-USH", [
+  ["Period 1", "1491–1607: Indigenous Americas to Colonization", "Native societies and the Columbian Exchange"],
+  ["Period 2", "1607–1754: Colonial America", "regional colonial development"],
+  ["Period 3", "1754–1800: Revolution and New Nation", "revolutionary conflict and constitutional government"],
+  ["Period 4", "1800–1848: Expansion and Reform", "market expansion and democratic reform"],
+  ["Period 5", "1844–1877: Civil War and Reconstruction", "sectional conflict and Reconstruction"],
+  ["Period 6", "1865–1898: Industrialization and Its Effects", "industrial capitalism and labor"],
+  ["Period 7", "1890–1945: Modern America", "Progressivism and twentieth-century conflict"],
+  ["Period 8", "1945–1980: Cold War", "containment and domestic change"],
+  ["Period 9", "1980–Present: Contemporary America", "globalization and political realignment"]
+]);
+
+addGeneratedFrqBank("AP Psychology", "FRQ-PSY", [
+  ["Unit 1", "Scientific Foundations of Psychology", "research methods and ethics"],
+  ["Unit 2", "Biological Bases of Behavior", "the nervous system and behavior"],
+  ["Unit 3", "Sensation and Perception", "sensory processing and perception"],
+  ["Unit 4", "Learning", "classical conditioning, operant conditioning, and social learning"],
+  ["Unit 5", "Cognitive Psychology", "memory, thinking, and intelligence"],
+  ["Unit 6", "Developmental Psychology", "lifespan development"],
+  ["Unit 7", "Motivation, Emotion, and Personality", "motivation, emotion, and personality"],
+  ["Unit 8", "Clinical Psychology", "psychological disorders and treatment"],
+  ["Unit 9", "Social Psychology", "group behavior and social influence"]
+]);
+
+const publicDomainLanguageExcerpts = [
+  {
+    author: "Frederick Douglass",
+    title: "What to the Slave Is the Fourth of July?",
+    text: "“What, to the American slave, is your 4th of July? I answer: a day that reveals to him, more than all other days in the year, the gross injustice and cruelty to which he is the constant victim.”"
+  },
+  {
+    author: "Susan B. Anthony",
+    title: "On Women's Right to Vote",
+    text: "“It was we, the people; not we, the white male citizens; nor yet we, the male citizens; but we, the whole people, who formed the Union.”"
+  },
+  {
+    author: "Franklin D. Roosevelt",
+    title: "First Inaugural Address",
+    text: "“So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself—nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance.”"
+  },
+  {
+    author: "Booker T. Washington",
+    title: "Atlanta Exposition Address",
+    text: "“In all things that are purely social we can be as separate as the fingers, yet one as the hand in all things essential to mutual progress.”"
+  },
+  {
+    author: "Sojourner Truth",
+    title: "Ain't I a Woman?",
+    text: "“Nobody ever helps me into carriages, or over mud-puddles, or gives me any best place! And ain't I a woman?”"
+  },
+  {
+    author: "George Washington",
+    title: "Farewell Address",
+    text: "“The unity of government which constitutes you one people is also now dear to you. It is justly so, for it is a main pillar in the edifice of your real independence.”"
+  },
+  {
+    author: "Abraham Lincoln",
+    title: "Gettysburg Address",
+    text: "“The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work.”"
+  },
+  {
+    author: "Patrick Henry",
+    title: "Speech to the Virginia Convention",
+    text: "“Is life so dear, or peace so sweet, as to be purchased at the price of chains and slavery? Forbid it, Almighty God! I know not what course others may take; but as for me, give me liberty or give me death!”"
+  },
+  {
+    author: "Elizabeth Cady Stanton",
+    title: "The Declaration of Sentiments",
+    text: "“We hold these truths to be self-evident: that all men and women are created equal; that they are endowed by their Creator with certain inalienable rights.”"
+  },
+  {
+    author: "Henry David Thoreau",
+    title: "Civil Disobedience",
+    text: "“If the injustice is part of the necessary friction of the machine of government, let it go, let it go: perchance it will wear smooth—certainly the machine will wear out.”"
+  },
+  {
+    author: "Ralph Waldo Emerson",
+    title: "Self-Reliance",
+    text: "“Trust thyself: every heart vibrates to that iron string. Accept the place the divine providence has found for you, the society of your contemporaries, the connection of events.”"
+  },
+  {
+    author: "Frederick Douglass",
+    title: "The Meaning of July Fourth for the Negro",
+    text: "“This Fourth [of] July is yours, not mine. You may rejoice, I must mourn. To drag a man in fetters into the grand illuminated temple of liberty, and call upon him to join you in joyous anthems, were inhuman mockery.”"
+  }
+];
+
+const publicDomainLiteratureExcerpts = [
+  {
+    author: "Emily Dickinson",
+    title: "Hope is the thing with feathers",
+    text: "“Hope” is the thing with feathers -\nThat perches in the soul -\nAnd sings the tune without the words -\nAnd never stops - at all -"
+  },
+  {
+    author: "William Shakespeare",
+    title: "Sonnet 18",
+    text: "Shall I compare thee to a summer's day?\nThou art more lovely and more temperate:\nRough winds do shake the darling buds of May,\nAnd summer's lease hath all too short a date."
+  },
+  {
+    author: "Robert Frost",
+    title: "The Road Not Taken",
+    text: "Two roads diverged in a yellow wood,\nAnd sorry I could not travel both\nAnd be one traveler, long I stood\nAnd looked down one as far as I could\nTo where it bent in the undergrowth;"
+  },
+  {
+    author: "Paul Laurence Dunbar",
+    title: "We Wear the Mask",
+    text: "We wear the mask that grins and lies,\nIt hides our cheeks and shades our eyes,—\nThis debt we pay to human guile;\nWith torn and bleeding hearts we smile,"
+  },
+  {
+    author: "Langston Hughes",
+    title: "I, Too",
+    text: "I, too, sing America.\n\nI am the darker brother.\nThey send me to eat in the kitchen\nWhen company comes,"
+  },
+  {
+    author: "Jane Austen",
+    title: "Pride and Prejudice",
+    text: "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife."
+  },
+  {
+    author: "John Keats",
+    title: "Bright Star",
+    text: "Bright star, would I were stedfast as thou art—\nNot in lone splendour hung aloft the night\nAnd watching, with eternal lids apart,\nLike nature's patient, sleepless Eremite,"
+  },
+  {
+    author: "Edgar Allan Poe",
+    title: "The Raven",
+    text: "Once upon a midnight dreary, while I pondered, weak and weary,\nOver many a quaint and curious volume of forgotten lore—\nWhile I nodded, nearly napping, suddenly there came a tapping,\nAs of some one gently rapping, rapping at my chamber door."
+  },
+  {
+    author: "Walt Whitman",
+    title: "Song of Myself",
+    text: "I celebrate myself, and sing myself,\nAnd what I assume you shall assume,\nFor every atom belonging to me as good belongs to you."
+  },
+  {
+    author: "Charlotte Perkins Gilman",
+    title: "The Yellow Wallpaper",
+    text: "It is very seldom that mere ordinary people like John and myself secure ancestral halls for the summer.\nA colonial mansion, a hereditary estate, I would say a haunted house."
+  },
+  {
+    author: "Percy Bysshe Shelley",
+    title: "Ozymandias",
+    text: "I met a traveller from an antique land,\nWho said—“Two vast and trunkless legs of stone\nStand in the desert. . . . Near them, on the sand,\nHalf sunk a shattered visage lies,”"
+  }
+];
+
+function completeWrittenCourseBank(course, prefix, units) {
+  units.forEach(([unit, title, focus], unitIndex) => {
+    const key = `${unit} ${title}`;
+    const current = unitQuestionBank[course][key] || [];
+    for (let i = current.length; i < 15; i += 1) {
+      current.push({
+        id: `${prefix}-${String(unitIndex + 1).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`,
+        course,
+        unit: key,
+        text: `Which evidence-based approach best addresses ${focus}?`,
+        answers: [
+          `Use precise textual evidence and explain its connection to ${focus}.`,
+          `Replace the analysis with unrelated summary.`,
+          `Assume the conclusion without evidence.`,
+          `Depend only on the title.`
+        ],
+        correct: 0,
+        explain: `Accurate analysis connects specific evidence to ${focus}.`
+      });
+    }
+    unitQuestionBank[course][key] = current;
+    frqBank[course] = frqBank[course] || {};
+    frqBank[course][key] = [1, 2, 3].map(index => ({
+      id: `${prefix}-FRQ-${String(unitIndex + 1).padStart(2, "0")}-${index}`,
+      title: `${focus}: response ${index}`,
+      scenario: course === "AP English Language"
+        ? [
+            `Rhetorical analysis passage — public domain excerpt from ${publicDomainLanguageExcerpts[(unitIndex * 3 + index - 1) % publicDomainLanguageExcerpts.length].author}, “${publicDomainLanguageExcerpts[(unitIndex * 3 + index - 1) % publicDomainLanguageExcerpts.length].title}”:\n${publicDomainLanguageExcerpts[(unitIndex * 3 + index - 1) % publicDomainLanguageExcerpts.length].text}\nAnalyze how two specific rhetorical choices advance ${focus}.`,
+            `Argument passage — public domain excerpt from ${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 1) % publicDomainLanguageExcerpts.length].author}, “${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 1) % publicDomainLanguageExcerpts.length].title}”:\n${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 1) % publicDomainLanguageExcerpts.length].text}\nDevelop a claim about ${focus} and use specific language from the passage as evidence.`,
+            `Synthesis passage — public domain excerpt from ${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 3) % publicDomainLanguageExcerpts.length].author}, “${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 3) % publicDomainLanguageExcerpts.length].title}”:\n${publicDomainLanguageExcerpts[(unitIndex * 3 + index + 3) % publicDomainLanguageExcerpts.length].text}\nSynthesize this perspective with one historically relevant counterpoint and defend a nuanced claim about ${focus}.`
+          ][index - 1]
+        : [
+            `Close-reading passage — public domain text from ${publicDomainLiteratureExcerpts[(unitIndex * 3 + index - 1) % publicDomainLiteratureExcerpts.length].author}, “${publicDomainLiteratureExcerpts[(unitIndex * 3 + index - 1) % publicDomainLiteratureExcerpts.length].title}”:\n${publicDomainLiteratureExcerpts[(unitIndex * 3 + index - 1) % publicDomainLiteratureExcerpts.length].text}\nAnalyze how imagery and structure develop ${focus}.`,
+            `Character and meaning passage — public domain text from ${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 1) % publicDomainLiteratureExcerpts.length].author}, “${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 1) % publicDomainLiteratureExcerpts.length].title}”:\n${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 1) % publicDomainLiteratureExcerpts.length].text}\nDevelop a claim about perspective, voice, or character and how ${focus} emerges through the passage.`,
+            `Literary argument passage — public domain text from ${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 3) % publicDomainLiteratureExcerpts.length].author}, “${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 3) % publicDomainLiteratureExcerpts.length].title}”:\n${publicDomainLiteratureExcerpts[(unitIndex * 3 + index + 3) % publicDomainLiteratureExcerpts.length].text}\nMake a defensible argument about how form and figurative language develop ${focus}, including a plausible complexity or alternative interpretation.`
+          ][index - 1],
+      parts: [
+        { label: "a", prompt: `Respond with a focused thesis or defensible claim about ${focus}.`, rubric: "The thesis is specific, arguable, and responsive to the task.", solution: `The response presents a specific claim that can be supported with the prompt's evidence and analysis of ${focus}.` },
+        { label: "b", prompt: "Select and quote or paraphrase precise evidence relevant to the thesis.", rubric: "Evidence is accurate, relevant, and sufficient.", solution: "The response selects concrete evidence that directly supports the established claim." },
+        { label: "c", prompt: "Explain how the evidence functions rather than merely summarizing it.", rubric: "Commentary clearly connects evidence to the thesis.", solution: "The commentary explains the method, effect, inference, or relationship demonstrated by the evidence." },
+        { label: "d", prompt: "Connect the analysis to the larger context of the prompt.", rubric: "The response explains purpose, perspective, structure, theme, or implications in context.", solution: "The analysis situates the evidence within the prompt's rhetorical or literary context and explains its significance." },
+        { label: "e", prompt: "Develop one complexity, limitation, alternative interpretation, or qualification.", rubric: "The response acknowledges nuance and explains why it matters.", solution: "A plausible qualification or alternative is accurately explained and used to refine the thesis without undermining it." }
+      ]
+    }));
+  });
+}
+
+completeWrittenCourseBank("AP English Language", "LANG", [
+  ["Unit 1", "Rhetorical Situation", "a writer's rhetorical situation"],
+  ["Unit 2", "Claims and Evidence", "the relationship between claims and evidence"],
+  ["Unit 3", "Reasoning and Organization", "reasoning and organization"],
+  ["Unit 4", "Style", "diction, syntax, and tone"],
+  ["Unit 5", "Rhetorical Analysis", "rhetorical choices and their effects"],
+  ["Unit 6", "Argument Writing", "argument writing"],
+  ["Unit 7", "Synthesis Writing", "synthesis of multiple sources"],
+  ["Unit 8", "Multiple-Choice Strategies", "close reading of rhetoric"]
+]);
+
+completeWrittenCourseBank("AP English Literature", "LIT", [
+  ["Unit 1", "Reading Closely", "close reading of literary details"],
+  ["Unit 2", "Character", "characterization and motivation"],
+  ["Unit 3", "Setting", "setting and atmosphere"],
+  ["Unit 4", "Structure", "structure, sequence, and contrast"],
+  ["Unit 5", "Narration", "point of view and narrative perspective"],
+  ["Unit 6", "Figures of Speech and Symbolism", "figurative language and symbolism"],
+  ["Unit 7", "Themes and Thematic Development", "thematic development"],
+  ["Unit 8", "Literary Argument", "literary argument and commentary"]
+]);
