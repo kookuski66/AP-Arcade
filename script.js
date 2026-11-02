@@ -390,15 +390,11 @@ const courseUnits = {
     ["Period 9","1980–Present: Contemporary America","Reagan era, globalization, technology, and domestic politics.","4–6",0]
   ],
   "AP Psychology":[
-    ["Unit 1","Scientific Foundations of Psychology","History, perspectives, research methods, and ethics.","10–14",0],
-    ["Unit 2","Biological Bases of Behavior","Brain structures, neurons, genetics, and sensation.","8–10",0],
-    ["Unit 3","Sensation and Perception","Sensory systems and perception of information.","6–8",0],
-    ["Unit 4","Learning","Classical and operant conditioning and social learning.","7–9",0],
-    ["Unit 5","Cognitive Psychology","Memory, thinking, problem solving, and intelligence.","13–17",0],
-    ["Unit 6","Developmental Psychology","Development across the lifespan and influences on growth.","7–9",0],
-    ["Unit 7","Motivation, Emotion, and Personality","Motivation theories, emotion, personality, and assessment.","11–15",0],
-    ["Unit 8","Clinical Psychology","Psychological disorders, diagnosis, and treatment.","12–16",0],
-    ["Unit 9","Social Psychology","Social behavior, attitudes, conformity, and group dynamics.","8–10",0]
+    ["Unit 1","Biological Bases of Behavior","Heredity, the nervous system, neurons, the brain, sleep, and sensation.","15–25",0],
+    ["Unit 2","Cognition","Perception, memory, thinking, problem-solving, intelligence, and achievement.","15–25",0],
+    ["Unit 3","Development and Learning","Development across the lifespan, gender and orientation, conditioning, and learning.","15–25",0],
+    ["Unit 4","Social Psychology and Personality","Attribution, attitudes, social situations, personality theories, motivation, and emotion.","15–25",0],
+    ["Unit 5","Mental and Physical Health","Health psychology, positive psychology, psychological disorders, and treatment.","15–25",0]
   ]
 };
 
@@ -586,6 +582,51 @@ function shuffle(items){
   return shuffled;
 }
 
+function randomizeQuestionChoices(question, cache = false){
+  if (!question || !Array.isArray(question.answers)) return question;
+  if (cache && Array.isArray(question._randomizedAnswers) && Number.isInteger(question._randomizedCorrect)) {
+    return {
+      ...question,
+      answers: [...question._randomizedAnswers],
+      correct: question._randomizedCorrect,
+      answerExplanations: Array.isArray(question._randomizedAnswerExplanations)
+        ? [...question._randomizedAnswerExplanations]
+        : question.answerExplanations
+    };
+  }
+  const indexedAnswers = question.answers.map((answer, index) => ({
+    answer,
+    originalIndex: index,
+    isCorrect: index === question.correct
+  }));
+  const randomizedAnswers = shuffle(indexedAnswers);
+  const answers = randomizedAnswers.map(entry => entry.answer);
+  const correct = randomizedAnswers.findIndex(entry => entry.isCorrect);
+  let answerExplanations = question.answerExplanations;
+  if (Array.isArray(question.answerExplanations)) {
+    answerExplanations = randomizedAnswers.map(entry =>
+      question.answerExplanations[entry.originalIndex]
+    );
+    question.answerExplanations = answerExplanations;
+  }
+  if (cache) {
+    question._randomizedAnswers = answers;
+    question._randomizedCorrect = correct;
+    question._randomizedAnswerExplanations = answerExplanations;
+  }
+  return { ...question, answers, correct, answerExplanations };
+}
+
+function answerFeedback(question, choice, correct){
+  const selectedExplanation = Array.isArray(question.answerExplanations)
+    ? question.answerExplanations[choice]
+    : null;
+  if (selectedExplanation) {
+    return `${selectedExplanation} ${question.explain}`;
+  }
+  return question.explain;
+}
+
 function allQuestions(){
   const bankQuestions = Object.entries(unitQuestionBank).flatMap(([course, courseBank]) =>
     Object.entries(courseBank).flatMap(([contentKey, pool]) => {
@@ -615,7 +656,7 @@ function createQuestionRun(){
     [deck[index], deck[swapIndex]] = [deck[swapIndex], deck[index]];
   }
   return deck.slice(0, runLength).map((question, index) => ({
-    ...question,
+    ...randomizeQuestionChoices(question),
     runId: `${question.id}-${Date.now()}-${index}`
   }));
 }
@@ -624,7 +665,7 @@ function activeQuestion(){
   if (state.mode === "review" && state.reviewQuestionId !== null) {
     const reviewedQuestion = allQuestions().find(question => String(question.id) === String(state.reviewQuestionId));
     if (!reviewedQuestion) throw new Error(`The reviewed question ${state.reviewQuestionId} is no longer available.`);
-    return reviewedQuestion;
+    return randomizeQuestionChoices(reviewedQuestion, true);
   }
   if (state.mode === "boss") {
     const run = Array.isArray(state.currentRun) ? state.currentRun : [];
@@ -640,7 +681,7 @@ function activeQuestion(){
     if (savedExamQuestion) return savedExamQuestion;
     const question = allQuestions().find(item => String(item.id) === String(current));
     if (!question) throw new Error(`Boss exam question ${current} is no longer available.`);
-    return question;
+    return randomizeQuestionChoices(question);
   }
   const pool = getQuestionPool();
   const questionsById = new Map(pool.map(question => [question.id, question]));
@@ -658,10 +699,22 @@ function activeQuestion(){
     state.currentRun = createQuestionRun();
     state.currentQuestionIndex = 0;
   } else {
-    state.currentRun = runIds.map((id, index) => ({
-      ...questionsById.get(id),
-      runId: typeof storedRun[index] === "object" ? storedRun[index].runId : undefined
-    }));
+    state.currentRun = runIds.map((id, index) => {
+      const originalQuestion = questionsById.get(id);
+      const storedQuestion = typeof storedRun[index] === "object" ? storedRun[index] : null;
+      if (storedQuestion && Array.isArray(storedQuestion.answers) && Number.isInteger(storedQuestion.correct)) {
+        return {
+          ...originalQuestion,
+          answers: [...storedQuestion.answers],
+          correct: storedQuestion.correct,
+          runId: storedQuestion.runId
+        };
+      }
+      return {
+        ...randomizeQuestionChoices(originalQuestion),
+        runId: storedQuestion?.runId
+      };
+    });
   }
   return state.currentRun[state.currentQuestionIndex];
 }
@@ -1213,7 +1266,7 @@ function startBossBattle(tierIndex){
   state.currentQuestionIndex = 0;
   state.runXp = 0;
   state.bossCourseRun = questionsByUnit.flatMap(({unit, questions}) =>
-    questions.map(question => ({ ...question, course, unitId: unit }))
+    questions.map(question => randomizeQuestionChoices({ ...question, course, unitId: unit }))
   );
   state.currentRun = shuffle(state.bossCourseRun);
   state.bossFrqRun = selectedFrqs.flatMap(({unit, frq}) =>
@@ -1702,7 +1755,7 @@ function answerQuestion(choice, mode = state.mode){
       awardXp(25);
       animateHeroAttack();
       buttons[choice].classList.add("correct");
-      setAcademicText(document.getElementById("bossFeedback"), `✓ CORRECT! ${q.explain}`);
+      setAcademicText(document.getElementById("bossFeedback"), `✓ CORRECT! ${answerFeedback(q, choice, true)}`);
       document.getElementById("bossFeedback").className = "feedback good";
     } else {
       state.energy = Math.max(0, state.energy - ENERGY_PER_QUESTION);
@@ -1710,7 +1763,7 @@ function answerQuestion(choice, mode = state.mode){
       animateBossAttack();
       buttons[choice].classList.add("wrong");
       buttons[q.correct].classList.add("correct");
-      setAcademicText(document.getElementById("bossFeedback"), `✗ NOT QUITE. ${q.explain}`);
+      setAcademicText(document.getElementById("bossFeedback"), `✗ NOT QUITE. ${answerFeedback(q, choice, false)}`);
       document.getElementById("bossFeedback").className = "feedback bad";
     }
     updateBattleBars();
@@ -1733,7 +1786,7 @@ function answerQuestion(choice, mode = state.mode){
       state.runXp += 20;
     }
     state.bossHealth = Math.max(0, state.bossHealth - 20);
-    setAcademicText(document.getElementById("practiceFeedback"), "✓ CORRECT! " + q.explain);
+    setAcademicText(document.getElementById("practiceFeedback"), "✓ CORRECT! " + answerFeedback(q, choice, true));
     document.getElementById("practiceFeedback").className = "feedback good";
     buttons[choice].classList.add("correct");
     if (state.bossHealth === 0 && mode !== "review") {
@@ -1743,7 +1796,7 @@ function answerQuestion(choice, mode = state.mode){
     }
   } else {
     if (!state.reviewed.includes(q.id)) state.reviewed.push(q.id);
-    setAcademicText(document.getElementById("practiceFeedback"), "✗ NOT QUITE. " + q.explain);
+    setAcademicText(document.getElementById("practiceFeedback"), "✗ NOT QUITE. " + answerFeedback(q, choice, false));
     document.getElementById("practiceFeedback").className = "feedback bad";
     buttons[choice].classList.add("wrong");
     buttons[q.correct].classList.add("correct");
@@ -2390,7 +2443,7 @@ window.APArcadeStudyData = {
   },
   getPracticeQuestion(course){
     const pool = getCourseQuestionPool(course);
-    return pool[Math.floor(Math.random() * pool.length)];
+    return randomizeQuestionChoices(pool[Math.floor(Math.random() * pool.length)], true);
   },
   recordPracticeAnswer(question, choice){
     state.questions += 1;

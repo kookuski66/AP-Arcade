@@ -1,7 +1,8 @@
 function _makeQuestions(course, unit, prefix, rows) {
   return rows.map((row, i) => ({
     id: `${prefix}-${String(i + 1).padStart(2, "0")}`,
-    course, unit, text: row[0], answers: row[1], correct: row[2], explain: row[3]
+    course, unit, text: row[0], answers: row[1], correct: row[2], explain: row[3],
+    answerExplanations: row[4]
   }));
 }
 
@@ -1585,27 +1586,34 @@ Object.assign(unitQuestionBank, {
 
 function addGeneratedCourseBank(course, prefix, specs) {
   const courseBank = {};
-  specs.forEach(([unit, title, focus], specIndex) => {
+  specs.forEach(([unit, title, focus, concepts = []], specIndex) => {
     const rows = [];
     const stems = [
-      concept => `Which statement best describes ${concept}?`,
-      concept => `Which action or evidence would most directly demonstrate understanding of ${concept}?`,
-      concept => `Which approach best explains the importance of ${concept}?`,
-      concept => `Which evidence would most strongly support an analysis of ${concept}?`,
-      concept => `Which conclusion is best supported by the study of ${concept}?`
+      concept => `A researcher studying ${concept} observes a pattern but has not manipulated an independent variable. Which conclusion requires the most caution?`,
+      concept => `Which observation would most directly support a claim that involves ${concept}, while also ruling out a simple coincidence?`,
+      concept => `A student encounters a result related to ${concept}. Which response shows the strongest application of the concept?`,
+      concept => `Two explanations are offered for evidence concerning ${concept}. Which additional information would most strongly distinguish them?`,
+      concept => `Which interpretation best integrates the available evidence for ${concept} without overstating its scope?`
     ];
     for (let i = 0; i < 15; i += 1) {
-      const concept = `${focus}${i % 3 === 0 ? "" : ` in context ${i + 1}`}`;
+      const concept = concepts.length ? concepts[i % concepts.length] : `${focus} in context ${i + 1}`;
+      const stem = stems[i % stems.length](concept);
       rows.push([
-        stems[i % stems.length](concept),
+        stem,
         [
-          `Use accurate evidence and reasoning about ${focus}.`,
-          `Ignore the historical or conceptual context of ${focus}.`,
-          `Replace ${focus} with an unrelated generalization.`,
-          `Assume that evidence alone establishes causation without analysis.`
+          `Treat the ${concept} evidence as limited to the population, design, and relationship actually tested.`,
+          `Assume that the observed relationship proves a direct causal effect.`,
+          `Infer that the finding applies to every person and situation without qualification.`,
+          `Dismiss the result because another explanation was not ruled out with certainty, even though the evidence directly addresses the claim.`
         ],
         0,
-        `${focus} is most accurately understood through relevant evidence, context, and reasoning rather than unsupported claims.`
+        `The strongest choice matches the specific evidence for ${concept} and limits the conclusion to what the research or evidence can support.`,
+        [
+          `Correct: this conclusion respects the limits of the evidence for ${concept}.`,
+          `Incorrect: correlation or association does not establish causation for ${concept}.`,
+          `Incorrect: the evidence has a limited population and scope and cannot support an unrestricted generalization about ${concept}.`,
+          `Incorrect: although alternative explanations can remain, rejecting every unmanipulated result is stronger than the evidence requires.`
+        ]
       ]);
     }
     courseBank[`${unit} ${title}`] = _makeQuestions(course, `${unit} ${title}`, `${prefix}-${String(specIndex + 1).padStart(2, "0")}`, rows);
@@ -1614,27 +1622,23 @@ function addGeneratedCourseBank(course, prefix, specs) {
 }
 
 addGeneratedCourseBank("AP United States History", "USH", [
-  ["Period 1", "1491–1607: Indigenous Americas to Colonization", "Native societies and the Columbian Exchange"],
-  ["Period 2", "1607–1754: Colonial America", "regional colonial development"],
-  ["Period 3", "1754–1800: Revolution and New Nation", "revolutionary conflict and constitutional government"],
-  ["Period 4", "1800–1848: Expansion and Reform", "market expansion and democratic reform"],
-  ["Period 5", "1844–1877: Civil War and Reconstruction", "sectional conflict and Reconstruction"],
-  ["Period 6", "1865–1898: Industrialization and Its Effects", "industrial capitalism and labor"],
-  ["Period 7", "1890–1945: Modern America", "Progressivism and twentieth-century conflict"],
-  ["Period 8", "1945–1980: Cold War", "containment and domestic change"],
-  ["Period 9", "1980–Present: Contemporary America", "globalization and political realignment"]
+  ["Period 1", "1491–1607: Indigenous Americas to Colonization", "Native societies and the Columbian Exchange", ["Native political structures", "environmental adaptation", "Columbian Exchange", "Spanish colonization", "forced labor systems"]],
+  ["Period 2", "1607–1754: Colonial America", "regional colonial development", ["regional economies", "indentured labor", "African slavery", "colonial governance", "mercantilism"]],
+  ["Period 3", "1754–1800: Revolution and New Nation", "revolutionary conflict and constitutional government", ["imperial taxation", "republican ideology", "constitutional compromise", "separation of powers", "political parties"]],
+  ["Period 4", "1800–1848: Expansion and Reform", "market expansion and democratic reform", ["market revolution", "Jacksonian democracy", "reform movements", "territorial expansion", "sectional tensions"]],
+  ["Period 5", "1844–1877: Civil War and Reconstruction", "sectional conflict and Reconstruction", ["slave power politics", "secession", "wartime emancipation", "military strategy", "Reconstruction policy"]],
+  ["Period 6", "1865–1898: Industrialization and Its Effects", "industrial capitalism and labor", ["corporate consolidation", "labor conflict", "urbanization", "immigration", "western expansion"]],
+  ["Period 7", "1890–1945: Modern America", "Progressivism and twentieth-century conflict", ["Progressive reform", "overseas expansion", "wartime mobilization", "New Deal", "wartime civil liberties"]],
+  ["Period 8", "1945–1980: Cold War", "containment and domestic change", ["containment policy", "suburbanization", "civil rights", "Great Society", "antiwar movements"]],
+  ["Period 9", "1980–Present: Contemporary America", "globalization and political realignment", ["economic deregulation", "global trade", "demographic change", "technology", "political polarization"]]
 ]);
 
 addGeneratedCourseBank("AP Psychology", "PSY", [
-  ["Unit 1", "Scientific Foundations of Psychology", "research methods and ethics"],
-  ["Unit 2", "Biological Bases of Behavior", "the nervous system and behavior"],
-  ["Unit 3", "Sensation and Perception", "sensory processing and perception"],
-  ["Unit 4", "Learning", "classical conditioning, operant conditioning, and social learning"],
-  ["Unit 5", "Cognitive Psychology", "memory, thinking, and intelligence"],
-  ["Unit 6", "Developmental Psychology", "lifespan development"],
-  ["Unit 7", "Motivation, Emotion, and Personality", "motivation, emotion, and personality"],
-  ["Unit 8", "Clinical Psychology", "psychological disorders and treatment"],
-  ["Unit 9", "Social Psychology", "group behavior and social influence"]
+  ["Unit 1", "Biological Bases of Behavior", "heredity, the nervous system, neurons, the brain, sleep, and sensation", ["heredity and environment", "central nervous system", "neuron firing", "brain regions and specialization", "sleep processes", "sensory transduction"]],
+  ["Unit 2", "Cognition", "perception, memory, thinking, problem-solving, intelligence, and achievement", ["top-down perception", "working memory", "encoding strategies", "retrieval cues", "forgetting and interference", "problem-solving heuristics", "intelligence measurement"]],
+  ["Unit 3", "Development and Learning", "lifespan development, gender and orientation, conditioning, and learning", ["developmental themes", "physical development", "gender and sexual orientation", "Piaget's cognitive stages", "language development", "classical conditioning", "operant conditioning", "observational learning"]],
+  ["Unit 4", "Social Psychology and Personality", "attribution, attitudes, social situations, personality, motivation, and emotion", ["fundamental attribution error", "attitude change", "social conformity", "psychodynamic personality theory", "trait theory", "social-cognitive theory", "motivation theories", "emotion theories"]],
+  ["Unit 5", "Mental and Physical Health", "health psychology, positive psychology, psychological disorders, and treatment", ["stress appraisal", "positive psychology", "diagnostic classification", "anxiety disorders", "mood disorders", "psychotic disorders", "cognitive-behavioral treatment", "biomedical treatment"]]
 ]);
 
 function addGeneratedFrqBank(course, prefix, specs) {
@@ -1711,15 +1715,11 @@ addGeneratedFrqBank("AP United States History", "FRQ-USH", [
 ]);
 
 addGeneratedFrqBank("AP Psychology", "FRQ-PSY", [
-  ["Unit 1", "Scientific Foundations of Psychology", "research methods and ethics"],
-  ["Unit 2", "Biological Bases of Behavior", "the nervous system and behavior"],
-  ["Unit 3", "Sensation and Perception", "sensory processing and perception"],
-  ["Unit 4", "Learning", "classical conditioning, operant conditioning, and social learning"],
-  ["Unit 5", "Cognitive Psychology", "memory, thinking, and intelligence"],
-  ["Unit 6", "Developmental Psychology", "lifespan development"],
-  ["Unit 7", "Motivation, Emotion, and Personality", "motivation, emotion, and personality"],
-  ["Unit 8", "Clinical Psychology", "psychological disorders and treatment"],
-  ["Unit 9", "Social Psychology", "group behavior and social influence"]
+  ["Unit 1", "Biological Bases of Behavior", "heredity, the nervous system, neurons, the brain, sleep, and sensation"],
+  ["Unit 2", "Cognition", "perception, memory, thinking, problem-solving, intelligence, and achievement"],
+  ["Unit 3", "Development and Learning", "lifespan development, gender and orientation, conditioning, and learning"],
+  ["Unit 4", "Social Psychology and Personality", "attribution, attitudes, social situations, personality, motivation, and emotion"],
+  ["Unit 5", "Mental and Physical Health", "health psychology, positive psychology, psychological disorders, and treatment"]
 ]);
 
 const publicDomainLanguageExcerpts = [
