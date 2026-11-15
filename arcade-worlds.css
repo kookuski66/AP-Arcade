@@ -1,0 +1,133 @@
+.arcade-intro{max-width:900px;color:#c7bedc;font-size:23px;line-height:1.35;margin:-12px 0 24px}
+.arcade-subject-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:22px 0 28px}
+.arcade-subject-card{display:flex;align-items:center;gap:12px;min-height:105px;padding:14px;text-align:left;background:#100c20;border:2px solid #392d54;border-left:5px solid var(--arcade-accent);color:#f5f0ff;transition:transform .15s,border-color .15s,background .15s}
+.arcade-subject-card:hover,.arcade-subject-card.selected{transform:translateY(-3px);border-color:var(--arcade-accent);background:#19132d;box-shadow:0 5px 0 #201637}
+.arcade-subject-card.biology{--arcade-accent:#8effd2}.arcade-subject-card.chemistry{--arcade-accent:#ff71a8}.arcade-subject-card.calculus{--arcade-accent:#b78cff}.arcade-subject-card.physics{--arcade-accent:#65a8ff}
+.arcade-subject-icon{font-size:35px;min-width:40px;text-align:center;color:var(--arcade-accent)}
+.arcade-subject-card small,.arcade-subject-card strong,.arcade-subject-card span span{display:block}
+.arcade-subject-card small{font:7px 'Press Start 2P',monospace;color:#aaa0bd;line-height:1.8}
+.arcade-subject-card strong{font:9px 'Press Start 2P',monospace;line-height:1.6}
+.arcade-subject-card span span{color:#aaa0bd;font-size:16px}
+.arcade-game{--arcade-accent:#8effd2;border:2px solid #4a3b69;background:#100c20;padding:22px;box-shadow:8px 8px #201637}
+.arcade-game.chemistry{--arcade-accent:#ff71a8}.arcade-game.calculus{--arcade-accent:#b78cff}.arcade-game.physics{--arcade-accent:#65a8ff}
+.arcade-game-heading{display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid #342a4a;padding-bottom:14px;margin-bottom:16px}
+.arcade-game-heading h2{color:var(--arcade-accent);margin:10px 0 0}
+.arcade-level-picker{display:grid;gap:7px;color:#8effd2;font:8px 'Press Start 2P',monospace}
+.arcade-level-picker select,.arcade-control select,.arcade-control input{background:#090714;border:1px solid #645a81;color:#fff;padding:9px;font:18px 'VT323',monospace}
+.arcade-stage{position:relative;border:2px solid #392d54;background:#090714;overflow:hidden}
+.arcade-stage canvas{display:block;width:100%;height:auto;image-rendering:pixelated}
+.arcade-stage-caption{display:flex;justify-content:space-between;gap:12px;padding:10px 12px;color:#c7bedc;background:#110d23;font-size:17px}
+.arcade-controls{display:flex;align-items:center;flex-wrap:wrap;gap:9px;margin:14px 0}
+.arcade-controls .pixel-btn{font-size:8px;padding:12px}
+.arcade-controls .pixel-btn[aria-pressed="true"]{border-color:#8effd2;color:#8effd2}
+.arcade-control{display:grid;gap:6px;color:#aaa0bd;font-size:16px}
+.arcade-control input[type="range"]{width:150px;padding:0;accent-color:var(--arcade-accent)}
+.arcade-fact{border-left:3px solid var(--arcade-accent);padding:10px 13px;background:#171128;color:#c7bedc;line-height:1.35}
+.arcade-fact strong{color:var(--arcade-accent)}
+.bio-briefing{border:1px solid #41675c;background:#10241f;padding:12px 16px;margin-bottom:12px;color:#d9f4e8}
+.bio-briefing p{margin:8px 0 0;line-height:1.35}
+.physics-clear{padding:42px;text-align:center;border:2px solid #8effd2;background:#11201e}
+.physics-clear h2{color:#8effd2}
+.physics-clear p{color:#c7bedc}
+.physics-clear .pixel-btn{margin-top:15px}
+.calc-tool,.physics-tool{border:1px solid #392d54;background:#171128;padding:12px}
+.arcade-panel-title{color:#ffcf65;font:9px 'Press Start 2P',monospace;line-height:1.8;margin:2px 0 12px}
+.arcade-chip{border:1px solid #5b496e;background:#100c20;padding:8px;color:#f5f0ff;font-size:16px}
+.arcade-chip.active{border-color:#ff71a8;color:#ff71a8}
+.calc-hud,.physics-hud{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0;color:#c7bedc;font:8px 'Press Start 2P',monospace}
+.calc-tools,.physics-tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:12px 0}
+.calc-tool p,.physics-tool p{color:#aaa0bd;margin:5px 0 10px;line-height:1.25}
+.calc-tool strong,.physics-tool strong{color:#b78cff}
+.calc-start-controls{margin-top:12px}
+.calc-start-controls span{color:#c7bedc}
+.arcade-game.physics [data-action="physics-fire"]{min-width:142px;border-color:#ffcf65;background:linear-gradient(#d08a31,#8f4c20);box-shadow:0 0 18px #ff9a3733,3px 3px #492c23}
+.arcade-game.physics [data-action="physics-fire"]:hover{filter:brightness(1.2)}
+.arcade-game.physics [data-action="physics-fire"]:active{transform:translate(2px,2px);box-shadow:1px 1px #492c23}
+.arcade-mobile-controls{display:none}
+@media(max-width:900px){.arcade-subject-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.arcade-game{padding:14px}.arcade-game-heading{align-items:flex-start;flex-direction:column}.calc-tools,.physics-tools{grid-template-columns:1fr}.arcade-subject-card{min-height:90px;padding:9px}.arcade-subject-icon{font-size:27px;min-width:30px}.arcade-subject-card strong{font-size:7px}.arcade-mobile-controls{display:flex}.arcade-stage-caption{font-size:15px}.physics-clear{padding:24px}}
+.arcade-stage canvas{touch-action:none;user-select:none;-webkit-user-select:none}
+.bio-hud{padding:9px 12px;border:1px solid #36554e;background:linear-gradient(90deg,#10251f,#151c2d);font-size:9px}
+.bio-hud strong{color:#8effd2;font-size:12px}
+.arcade-game.biology .arcade-stage{border-color:#50786d;box-shadow:0 0 28px #46dbad1a}
+.arcade-game.biology .arcade-stage canvas{background:#07101d}
+.bio-touch-controls{justify-content:center;gap:12px}
+.bio-touch-controls button{min-width:62px;min-height:52px;font-size:9px}
+.calc-touch-controls{justify-content:center;gap:8px}
+.calc-touch-controls button{min-height:48px}
+.arcade-game.calculus .arcade-stage{border-color:#705b9c;box-shadow:0 0 30px #b78cff1a}
+@media(max-width:620px){
+  .bio-hud{font-size:7px}
+  .bio-hud strong{font-size:9px}
+  .bio-touch-controls button{min-width:50px;padding:10px 8px}
+  .calc-touch-controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+
+.arcade-game.chemistry{--arcade-accent:#d4a0ff;padding:14px;background:radial-gradient(ellipse at 50% 0,#281c3e,#100c20 55%)}
+.chem-periodic-game{position:relative;color:#e8e1f1}
+.chem-round-banner{display:flex;justify-content:space-between;align-items:center;gap:18px;padding:10px 16px;border:2px solid #8a67ad;background:linear-gradient(110deg,#302043,#171226);box-shadow:0 4px #090711}
+.chem-prompt-copy{min-width:0}
+.chem-round-kicker{color:#c49ce8;font:8px 'Press Start 2P',monospace}
+.chem-round-kicker strong{color:#fff}
+.chem-prompt-copy h3{margin:7px 0 0;color:#fff4c4;font:12px 'Press Start 2P',monospace;line-height:1.6;text-shadow:0 0 12px #fff4c455}
+.chem-countdown{display:grid;gap:7px;min-width:112px;text-align:right}
+.chem-countdown span{color:#b5a8c6;font:7px 'Press Start 2P',monospace}
+.chem-countdown strong{color:#fff4c4;font:28px 'VT323',monospace}
+.chem-countdown i{display:block;height:7px;overflow:hidden;background:#090711;border:1px solid #57416c}
+.chem-countdown i b{display:block;width:100%;height:100%;background:#c990ff;transition:width .1s linear}
+.chem-game-stats{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:9px 0 6px;padding:8px 11px;border:1px solid #403252;background:#171226;color:#b8acc8;font:7px 'Press Start 2P',monospace}
+.chem-game-stats strong{margin-left:5px;color:#fff}
+.chem-game-stats span:last-child strong{color:#a7f2d2}
+.chem-game-instructions{margin:6px 0 8px;color:#c7bedc;font-size:15px;line-height:1.25}
+.chem-game-instructions kbd{display:inline-block;margin:0 2px;padding:2px 5px;border:1px solid #64537a;background:#211a2d;color:#fff;font:12px 'VT323',monospace}
+.chem-table-scroll{overflow:auto;padding:3px;border:2px solid #47365d;background:radial-gradient(ellipse at 50% 25%,#21182d,#0a0911 80%);box-shadow:inset 0 0 30px #000b}
+.chem-periodic-table{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));grid-template-rows:16px repeat(9,44px);gap:3px;min-width:800px;margin:0 auto}
+.chem-group-number{align-self:center;text-align:center;color:#81758d;font:7px 'Press Start 2P',monospace}
+.chem-element{position:relative;display:flex;flex-direction:column;justify-content:center;align-items:center;min-width:0;overflow:hidden;border:1px solid #777;background:linear-gradient(145deg,#27232e,#15121b);color:#fff;transition:transform .12s,opacity .2s,filter .2s,box-shadow .12s}
+.chem-element strong{font:16px 'VT323',monospace;line-height:1.05}
+.chem-element small{max-width:100%;overflow:hidden;color:#e2dce8;font:6px 'VT323',monospace;white-space:nowrap;text-overflow:clip}
+.chem-atomic-number{position:absolute;top:2px;left:3px;color:#f1eafa;font:6px 'VT323',monospace}
+.chem-alkali-metal{border-color:#e78b83;background:linear-gradient(145deg,#733d4d,#36202c)}
+.chem-alkaline-earth{border-color:#e8a66e;background:linear-gradient(145deg,#714d36,#32251e)}
+.chem-transition-metal{border-color:#d6bd67;background:linear-gradient(145deg,#655529,#302819)}
+.chem-post-transition{border-color:#a8bb76;background:linear-gradient(145deg,#4d5a35,#252b20)}
+.chem-metalloid{border-color:#68cbb0;background:linear-gradient(145deg,#285a56,#172b2c)}
+.chem-nonmetal{border-color:#69b9c9;background:linear-gradient(145deg,#26566a,#172837)}
+.chem-halogen{border-color:#779df1;background:linear-gradient(145deg,#344d88,#1b2342)}
+.chem-noble-gas{border-color:#b385ec;background:linear-gradient(145deg,#593978,#2b1d3d)}
+.chem-lanthanide{border-color:#d181c4;background:linear-gradient(145deg,#693b66,#321f38)}
+.chem-actinide{border-color:#e777a7;background:linear-gradient(145deg,#76344f,#381e31)}
+.chem-element[aria-current="location"]{z-index:2;outline:3px solid #a7f2d2;outline-offset:1px;box-shadow:0 0 16px #91ffd299,0 0 4px #fff;transform:translateY(-2px)}
+.chem-player-marker{position:absolute;right:1px;bottom:2px;width:23px;height:29px;image-rendering:pixelated;filter:drop-shadow(0 1px 3px #000)}
+.chem-element.chem-safe{z-index:1;outline:2px solid #a7f2d2;box-shadow:0 0 13px #91ffd288;filter:brightness(1.3)}
+.chem-element.chem-falling{animation:chem-tile-collapse .72s cubic-bezier(.45,0,.8,.2) forwards;pointer-events:none}
+.chem-element.chem-player-fall .chem-player-marker{animation:chem-player-drop .68s ease-in forwards}
+@keyframes chem-tile-collapse{35%{transform:translateY(12px) rotate(3deg)}to{transform:translateY(220px) rotate(15deg);opacity:0;filter:brightness(.5)}}
+@keyframes chem-player-drop{to{transform:translate(5px,160px) rotate(28deg);opacity:0}}
+.chem-series-label{align-self:center;color:#a89bb8;text-align:center;font:6px 'Press Start 2P',monospace}
+.chem-table-legend{display:flex;gap:10px 16px;flex-wrap:wrap;margin:8px 0;color:#b8acc8;font:6px 'Press Start 2P',monospace}
+.chem-table-legend span{display:inline-flex;align-items:center;gap:6px}
+.chem-table-legend i{width:12px;height:12px;border:1px solid #fff4}
+.chem-table-legend .alkali{background:#a34e5e}.chem-table-legend .transition{background:#887233}.chem-table-legend .metalloid{background:#338778}.chem-table-legend .nonmetal{background:#347a8f}.chem-table-legend .noble{background:#7449a0}
+.chem-move-controls{display:none}
+.chem-game-status{min-height:0;margin:7px 0 0;padding:7px 10px;border-left:3px solid #a7f2d2;background:#171226;color:#d7f8e9;line-height:1.3}
+.chem-game-over{position:absolute;z-index:5;inset:25% 28%;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:22px;border:2px solid #a7f2d2;background:#100d1df2;box-shadow:0 0 60px #000d;text-align:center}
+.chem-game-over h3{margin:4px;color:#fff4c4;font:12px 'Press Start 2P',monospace}
+.chem-game-over p{color:#d7ccdf}
+.chem-game-over strong{color:#a7f2d2}
+@media(max-width:700px){
+  .chem-round-banner{align-items:flex-start;flex-direction:column;gap:9px;padding:10px}
+  .chem-prompt-copy h3{font-size:10px}
+  .chem-countdown{grid-template-columns:auto 1fr;align-items:center;width:100%;text-align:left}
+  .chem-countdown i{grid-column:span 2}
+  .chem-periodic-table{min-width:800px}
+  .chem-game-stats{font-size:6px}
+  .chem-move-controls{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(2,46px);justify-content:center;gap:5px;margin:14px auto}
+  .chem-move-controls [data-direction="up"]{grid-column:2;grid-row:1}
+  .chem-move-controls [data-direction="left"]{grid-column:1;grid-row:2}
+  .chem-move-controls [data-direction="down"]{grid-column:2;grid-row:2}
+  .chem-move-controls [data-direction="right"]{grid-column:3;grid-row:2}
+  .chem-game-over{inset:25% 8%}
+}
+
+

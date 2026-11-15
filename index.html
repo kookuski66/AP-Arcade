@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="academic-practice.css">
   <link rel="stylesheet" href="account.css">
   <link rel="stylesheet" href="study-features.css">
+  <link rel="stylesheet" href="arcade-worlds.css">
 </head>
 <body>
   <div class="scanlines"></div>
@@ -27,7 +28,7 @@
       <button onclick="startBossBattle()">BOSS BATTLE</button>
       <button onclick="showPage('analytics')">ANALYTICS</button>
       <button onclick="showPage('planner')">PLANNER</button>
-      <button onclick="showPage('sandbox')">SCHOLAR'S WILDS</button>
+      <button onclick="showPage('sandbox')">ARCADE WORLDS</button>
       <button onclick="showPage('account')">ACCOUNT</button>
     </nav>
     <button class="profile-trigger" onclick="openProfile()" aria-label="Open character profile">
@@ -133,13 +134,42 @@
         </section>
         <section class="account-panel account-summary" aria-labelledby="freeContentHeading">
           <div class="section-heading"><span>▸</span> <span id="freeContentHeading">FREE CONTENT + SAVED PROGRESS</span></div>
-          <p>Every question set, boss difficulty, study guide, and the Scholar's Wilds are free. Sign in to sync your study progress and world between devices.</p>
+          <p>Every question set, boss difficulty, study guide, and subject arcade are free. Sign in to sync your study progress between devices.</p>
           <p id="publicContentStatus" class="content-status" aria-live="polite">Loading the full question banks...</p>
         </section>
       </div>
     </section>
 
     <section id="sandbox" class="page">
+      <div class="page-header">
+        <div><div class="eyebrow">FOUR SUBJECTS. FOUR WAYS TO PLAY.</div><h1>ARCADE WORLDS</h1></div>
+        <div class="level-badge">FREE TO PLAY</div>
+      </div>
+      <p class="arcade-intro">Leave the question screen behind. Learn by moving, making, balancing, and experimenting in worlds built for AP Biology, Chemistry, Calculus, and Physics.</p>
+      <div class="arcade-subject-grid" role="group" aria-label="Choose a subject game">
+        <button class="arcade-subject-card biology selected" type="button" data-arcade-game="biology" aria-pressed="true">
+          <span class="arcade-subject-icon" aria-hidden="true">♧</span><span><small>PLATFORMER</small><strong>AP BIOLOGY</strong><span>Journey through the cell</span></span>
+        </button>
+        <button class="arcade-subject-card chemistry" type="button" data-arcade-game="chemistry" aria-pressed="false">
+          <span class="arcade-subject-icon" aria-hidden="true">⚗</span><span><small>PERIODIC PANIC</small><strong>AP CHEMISTRY</strong><span>Survive the element tiles</span></span>
+        </button>
+        <button class="arcade-subject-card calculus" type="button" data-arcade-game="calculus" aria-pressed="false">
+          <span class="arcade-subject-icon" aria-hidden="true">∫</span><span><small>GRAPH SURFER</small><strong>AP CALCULUS AB</strong><span>Ride the shape of change</span></span>
+        </button>
+        <button class="arcade-subject-card physics" type="button" data-arcade-game="physics" aria-pressed="false">
+          <span class="arcade-subject-icon" aria-hidden="true">⚡</span><span><small>PROJECTILE PUZZLES</small><strong>AP PHYSICS 1</strong><span>Launch, bounce, and solve</span></span>
+        </button>
+      </div>
+
+      <section id="arcadeGame" class="arcade-game biology" aria-live="polite">
+        <div class="arcade-game-heading">
+          <div><div class="eyebrow" id="arcadeGameType">CELL RUNNER • 2D PLATFORMER</div><h2 id="arcadeGameTitle">THE CELL: ENERGY RUN</h2></div>
+          <label class="arcade-level-picker">LEVEL <select id="arcadeLevelSelect" aria-label="Choose a game level"></select></label>
+        </div>
+        <div id="arcadeGameContent" class="arcade-game-content"></div>
+      </section>
+
+      <div id="legacySandbox" class="hidden" aria-hidden="true">
       <div class="page-header">
         <div><div class="eyebrow">EXPLORE, BUILD, AND PRACTICE</div><h1>THE SCHOLAR'S WILDS</h1></div>
         <div class="level-badge">FREE TO PLAY</div>
@@ -221,6 +251,7 @@
             <button id="sandboxRespawn" class="pixel-btn primary hidden" type="button" onclick="respawnSandboxPlayer()">RESPAWN AT CAMP</button>
           </div>
         </section>
+      </div>
       </div>
     </section>
 
@@ -535,5 +566,6 @@
   <script src="account-config.js"></script>
   <script src="account.js?v=20261101"></script>
   <script src="study-features.js"></script>
+  <script src="arcade-worlds.js"></script>
 </body>
 </html>

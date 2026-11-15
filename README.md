@@ -17,8 +17,8 @@ AP Arcade is a free, retro-style study hub for AP Physics 1, AP Chemistry, AP Ca
 - Standard, Ascendant Trial, and Omega Gauntlet boss exams, all available to everyone.
 - XP, levels, character customization, analytics, and an adaptive weekly study planner.
 - Personal Study Coach inside the planner, built from saved missed questions and authored explanations without an external AI service.
-- Scholar's Wilds as its own free sandbox, with exploration, crafting, combat, and AP practice at the Study Shrine.
-- Browser-local saves for everyone and optional account sign-in to sync study progress and the Wilds save across devices.
+- Four subject-specific arcade games: AP Biology is a scrolling platformer through cell pathways with moving carrier proteins, enzyme checkpoints, ATP pickups, and bacterial/viral enemies; AP Chemistry is a periodic-table survival game where the character moves between element tiles to answer timed trend and category prompts; AP Calculus is an endless randomized graph runner with momentum-based slopes, asymptote phasing, hole jumps, secant bridges, and tangent ramps; AP Physics is a projectile puzzle game. The games reuse the player's profile sprite where appropriate and teach course concepts through play.
+- Browser-local saves for everyone and optional account sign-in to sync study progress across devices.
 
 The original practice items are authored in `academic-content.js`; they are not copied from College Board materials. The course maps follow the published AP unit frameworks. Subject-matter experts should still review questions, answer keys, scoring guides, and exam alignment against current AP Course and Exam Descriptions before publishing.
 
@@ -26,7 +26,7 @@ Framework references: [AP Physics 1](https://apcentral.collegeboard.org/courses/
 
 ## Supabase accounts and free question sets
 
-Accounts are optional. Without signing in, study progress and the Scholar's Wilds save stay in the current browser. When someone signs in, the current browser save is associated with that account and synced through the `player_progress` table. Account progress is private to its owner through row-level security.
+Accounts are optional. Without signing in, study progress stays in the current browser. When someone signs in, the current browser save is associated with that account and synced through the `player_progress` table. Account progress is private to its owner through row-level security.
 
 1. Apply all SQL files in `supabase/migrations/` in filename order. The earlier membership migrations are retained as history; the final migration removes the legacy subscription/grant tables, makes `premium_content` readable to all visitors, and creates the account progress table.
 2. Set the Supabase project URL and public anon key in `account-config.js`. These values are safe for browser use; never put a service-role key or other secret in a browser file.
